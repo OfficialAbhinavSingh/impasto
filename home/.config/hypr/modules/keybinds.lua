@@ -296,6 +296,9 @@ bind(mainMod .. " + I",         hl.dsp.global("quickshell:packages"),   { descri
 -- · clipboard history is a launcher mode
 bind(mainMod .. " + V",         hl.dsp.global("quickshell:clipboard"),  { description = "Shell · Open the clipboard history" })
 
+-- · emoji, a launcher mode too
+bind(mainMod .. " + period",    hl.dsp.global("quickshell:emoji"),      { description = "Shell · Pick an emoji" })
+
 -- · colour picker (hyprpicker); the result goes to the clipboard
 bind(mainMod .. " + SHIFT + C", hl.dsp.global("quickshell:picker"),     { description = "Shell · Pick a colour off the screen" })
 

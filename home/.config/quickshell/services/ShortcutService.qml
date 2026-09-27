@@ -50,6 +50,7 @@ Singleton {
         { name: "keys",           label: "Keys",                 description: "Shell · Show every key" },
         { name: "packages",       label: "Packages",             description: "Shell · Open the packages" },
         { name: "clipboard",      label: "Clipboard history",    description: "Shell · Open the clipboard history" },
+        { name: "emoji",          label: "Emoji",                description: "Shell · Pick an emoji" },
         { name: "picker",         label: "Colour picker",        description: "Shell · Pick a colour off the screen" },
         { name: "capture",        label: "Capture",              description: "Shell · Open the capture surface" },
         { name: "captureRegion",  label: "Capture a region",     description: "Shell · Capture a region" },

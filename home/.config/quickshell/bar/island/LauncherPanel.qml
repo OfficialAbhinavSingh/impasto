@@ -1,7 +1,7 @@
 // ╭──────────────────────────────────────────────────────────────────────────╮
 // │                                                                          │
 // │   L A U N C H E R   P A N E L                                            │
-// │   launcher · apps, calculator, windows, timer, clipboard                 │
+// │   launcher · apps, calculator, windows, timer, clipboard, emoji          │
 // │                                                                          │
 // │   github.com/andreumassanet/impasto                                      │
 // │                                                                          │
@@ -17,7 +17,8 @@ import "../../services"
 import "../../components"
 
 // Application launcher. The first character picks the mode: arithmetic, open
-// windows, a countdown, the clipboard history, or the shell's own actions.
+// windows, a countdown, the clipboard history, emoji, or the shell's own
+// actions.
 ColumnLayout {
     id: root
 
@@ -25,6 +26,12 @@ ColumnLayout {
     // height depends on it, and the island needs that before the panel exists.
     readonly property var results: LauncherService.results
     readonly property var mode: LauncherService.modeFor(LauncherService.query)
+
+    // Loaded here rather than from the search, which runs inside a binding.
+    onModeChanged: {
+        if (root.mode.id === "emoji")
+            EmojiService.load()
+    }
 
     signal closed()
     // `>` lists panels as rows; picking one hands the island over.
@@ -44,12 +51,18 @@ ColumnLayout {
         searchField.forceActiveFocus()
         HyprlandService.loadClients()
         LauncherService.refresh()
+        EmojiService.fresh = false
+        if (root.mode.id === "emoji")
+            EmojiService.load()
     }
 
     // Cleared on the way out, not on the way in: the island is sized from the
     // query a frame before this panel is built, so clearing it on open would
     // size the island for the last search and then resize it.
-    Component.onDestruction: LauncherService.query = ""
+    Component.onDestruction: {
+        LauncherService.query = ""
+        EmojiService.group = ""
+    }
 
     // Wraps around at both ends.
     function move(delta: int): void {
@@ -73,7 +86,7 @@ ColumnLayout {
     // Two kinds are not handed to the service. Panels and settings go up to
     // the island. A mode switches the field to that mode and keeps the
     // launcher open. Everything else the service runs, and the launcher closes.
-    function run(entry: var): void {
+    function run(entry: var, copy: bool): void {
         if (!entry)
             return
         if (entry.kind === "panel") {
@@ -88,12 +101,14 @@ ColumnLayout {
             searchField.forceActiveFocus()
             return
         }
-        LauncherService.activate(entry)
+        LauncherService.activate(entry, copy)
         root.closed()
     }
 
-    function activateSelected(): void {
-        root.run(root.results[resultList.currentIndex])
+    // Shift copies what Enter would type.
+    function activateSelected(event: var): void {
+        root.run(root.results[resultList.currentIndex],
+                 (event.modifiers & Qt.ShiftModifier) !== 0)
     }
 
     // Only clipboard entries can be forgotten: they are recorded without being
@@ -140,10 +155,19 @@ ColumnLayout {
             selectedTextColor: Theme.accentText
 
             onTextEdited: LauncherService.query = text
-            Keys.onReturnPressed: root.activateSelected()
-            Keys.onEnterPressed: root.activateSelected()
+            Keys.onReturnPressed: event => root.activateSelected(event)
+            Keys.onEnterPressed: event => root.activateSelected(event)
             Keys.onUpPressed: root.move(-1)
             Keys.onDownPressed: root.move(1)
+            // Tab steps through the emoji groups; elsewhere it does nothing.
+            Keys.onTabPressed: {
+                if (root.mode.id === "emoji")
+                    EmojiService.stepGroup(1)
+            }
+            Keys.onBacktabPressed: {
+                if (root.mode.id === "emoji")
+                    EmojiService.stepGroup(-1)
+            }
             // Shift+Delete: plain Delete edits the text, and this cannot be
             // undone.
             Keys.onDeletePressed: event => {
@@ -176,6 +200,81 @@ ColumnLayout {
                 color: Theme.textMuted
                 font: searchField.font
             }
+        }
+
+        // The skin tone every emoji that takes one is shown and copied in.
+        // Its mark is the tone itself, on a raised hand; a click steps it.
+        Text {
+            visible: root.mode.id === "emoji"
+            text: EmojiService.toneMarks[EmojiService.tone]
+            font.family: Theme.fontFamily
+            font.pixelSize: 18
+
+            MouseArea {
+                anchors.fill: parent
+                anchors.margins: -6
+                cursorShape: Qt.PointingHandCursor
+                onClicked: EmojiService.stepTone()
+            }
+        }
+    }
+
+    // ── GROUPS ──────────────────────────────────────────────────────────────
+    //
+    // The emoji mode's nine groups and the recent picks, each marked by an
+    // emoji; the one chosen is named at the end. Tab steps through them.
+    RowLayout {
+        Layout.fillWidth: true
+        Layout.preferredHeight: LauncherService.stripHeight
+        visible: LauncherService.showsStrip
+        spacing: 2
+
+        Repeater {
+            model: EmojiService.groups
+
+            delegate: Rectangle {
+                id: chip
+
+                required property var modelData
+                readonly property bool chosen: EmojiService.group === chip.modelData.id
+
+                Layout.preferredWidth: LauncherService.stripHeight + 2
+                Layout.preferredHeight: LauncherService.stripHeight
+                radius: Theme.radiusSmall
+                color: chip.chosen || chipMouse.containsMouse
+                    ? Theme.islandSurfaceHover : "transparent"
+
+                Behavior on color { ColorAnimation { duration: Theme.durationFast } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: chip.modelData.mark
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 16
+                    opacity: chip.chosen ? 1 : 0.6
+                }
+
+                MouseArea {
+                    id: chipMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        EmojiService.group = chip.modelData.id
+                        searchField.forceActiveFocus()
+                    }
+                }
+            }
+        }
+
+        Text {
+            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignRight
+            elide: Text.ElideRight
+            text: Tr.t(EmojiService.groups.find(entry => entry.id === EmojiService.group)?.label ?? "")
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.fontSizeLabel
+            color: Theme.textMuted
         }
     }
 
@@ -256,6 +355,9 @@ ColumnLayout {
                     // share a name and a size.
                     readonly property string picture: row.modelData.picture ?? ""
 
+                    // An emoji is its own mark, drawn in colour.
+                    readonly property string glyph: row.modelData.glyph ?? ""
+
                     Layout.preferredWidth: 26
                     Layout.preferredHeight: 26
                     Layout.alignment: Qt.AlignVCenter
@@ -290,9 +392,17 @@ ColumnLayout {
                         }
                     }
 
+                    Text {
+                        anchors.centerIn: parent
+                        visible: badge.glyph !== ""
+                        text: badge.glyph
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 22
+                    }
+
                     Rectangle {
                         anchors.fill: parent
-                        visible: !appIcon.visible && badge.picture === ""
+                        visible: !appIcon.visible && badge.picture === "" && badge.glyph === ""
                         radius: width / 2
                         color: Theme.islandSurfaceHover
 
@@ -378,7 +488,8 @@ ColumnLayout {
                 // On movement, not hover: a row appearing under a resting
                 // pointer would otherwise steal the selection on open.
                 onPositionChanged: row.ListView.view.currentIndex = row.index
-                onClicked: root.run(row.modelData)
+                onClicked: mouse => root.run(row.modelData,
+                    (mouse.modifiers & Qt.ShiftModifier) !== 0)
             }
         }
     }

@@ -48,6 +48,7 @@ singleton PickerService      1.0 services/PickerService.qml
 singleton CaptureService     1.0 services/CaptureService.qml
 singleton RecorderService    1.0 services/RecorderService.qml
 singleton ClipboardService   1.0 services/ClipboardService.qml
+singleton EmojiService       1.0 services/EmojiService.qml
 singleton SunsetService      1.0 services/SunsetService.qml
 singleton IdleService        1.0 services/IdleService.qml
 singleton GithubService      1.0 services/GithubService.qml

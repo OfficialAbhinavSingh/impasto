@@ -41,6 +41,10 @@ ttf-jetbrains-mono-nerd      # the terminal's type, and every glyph on the bar
 adwaita-fonts                # the GTK windows' type
 noto-fonts                   # the scripts the three above do not cover
 noto-fonts-emoji             # emoji, in colour
+unicode-emoji                # the emoji and their groups, for the launcher
+unicode-cldr-annotations     # their names and keywords, in every language
+iso-codes                    # country names, for the flags
+wtype                        # types a picked emoji into the window
 noto-fonts-cjk               # Chinese, Japanese and Korean, and their punctuation
 
 

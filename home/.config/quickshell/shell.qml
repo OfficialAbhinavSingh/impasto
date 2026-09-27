@@ -399,23 +399,31 @@ ShellRoot {
         onPressed: root.island?.toggle("packages")
     }
 
-    // The clipboard is a launcher mode: pressed again on that mode it closes,
-    // pressed on another mode it switches. The query is set before opening
-    // because with `launcherFits` the panel's height depends on it, and the
-    // island is sized before the panel exists.
+    // The clipboard and the emoji are launcher modes: pressed again on that
+    // mode it closes, pressed on another mode it switches. The query is set
+    // before opening because with `launcherFits` the panel's height depends on
+    // it, and the island is sized before the panel exists.
+    function openLauncherOn(mode: string): void {
+        const sigil = SettingsService.launcherPrefix(mode)
+        const showing = root.island?.state.openPanel === "launcher"
+        if (showing && LauncherService.query.startsWith(sigil)) {
+            root.island?.close()
+            return
+        }
+        LauncherService.query = sigil
+        root.island?.open("launcher")
+    }
+
     GlobalShortcut {
         name: "clipboard"
         description: "Open the launcher on the clipboard"
-        onPressed: {
-            const sigil = SettingsService.launcherPrefix("clipboard")
-            const showing = root.island?.state.openPanel === "launcher"
-            if (showing && LauncherService.query.startsWith(sigil)) {
-                root.island?.close()
-                return
-            }
-            LauncherService.query = sigil
-            root.island?.open("launcher")
-        }
+        onPressed: root.openLauncherOn("clipboard")
+    }
+
+    GlobalShortcut {
+        name: "emoji"
+        description: "Open the launcher on the emoji"
+        onPressed: root.openLauncherOn("emoji")
     }
 
     // hyprpicker freezes a screenshot of the screen, so an open panel has to
