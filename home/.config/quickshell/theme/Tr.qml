@@ -508,6 +508,8 @@ QtObject {
             "Objects": "Objetos",
             "Symbols": "Símbolos",
             "Flags": "Banderas",
+            "No animated wallpapers yet. Videos in ~/.local/share/wallpapers/animated show up here.":
+                "Aún no hay fondos animados. Los vídeos que pongas en ~/.local/share/wallpapers/animated aparecen aquí.",
             "Apps": "Aplicaciones",
 
             "Clipboard history": "Historial del portapapeles",
