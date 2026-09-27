@@ -71,14 +71,22 @@ Item {
         readonly property alias hovered: mouse.containsMouse
 
         readonly property var marks: ({
-            recorder: recorderMark, timer: timerMark, media: mediaMark
+            recorder: recorderMark, privacy: privacyMark, timer: timerMark, media: mediaMark
         })
         readonly property var figures: ({
-            recorder: recorderFigure, timer: timerFigure, media: mediaFigure
+            recorder: recorderFigure, privacy: privacyFigure, timer: timerFigure, media: mediaFigure
         })
 
+        // Centred on its side, except the privacy mark split across both:
+        // its glyphs and the program's name each keep to their outer edge,
+        // by the same margin, so the pair is symmetric about the time.
+        readonly property bool hugs: segment.activityId === "privacy" && segment.part !== "both"
+
         Row {
-            anchors.centerIn: parent
+            anchors.verticalCenter: parent.verticalCenter
+            x: !segment.hugs ? (parent.width - width) / 2
+                : segment.part === "mark" ? ModuleService.activityInset
+                : parent.width - width - ModuleService.activityInset
             spacing: 7
 
             Loader {
@@ -96,10 +104,14 @@ Item {
             }
         }
 
+        // The privacy mark has nothing to open, so its sides take neither the
+        // pointer nor a click: over them the island does what it does over
+        // the time, the glance and then the control centre.
         MouseArea {
             id: mouse
 
             anchors.fill: parent
+            enabled: segment.activityId !== "privacy"
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
@@ -145,6 +157,50 @@ Item {
                 font.pixelSize: Theme.fontSizeSmall
                 font.weight: Font.DemiBold
                 color: Theme.text
+            }
+        }
+
+        // ── PRIVACY ─────────────────────────────────────────────────────────
+        //
+        // What is in use, each in its fixed colour, and who is using it.
+        Component {
+            id: privacyMark
+
+            Row {
+                spacing: 6
+
+                Repeater {
+                    model: [
+                        { on: PrivacyService.microphone, glyph: "󰍬", tint: Theme.privacyMicrophone },
+                        { on: PrivacyService.cameraOn,   glyph: "󰄀", tint: Theme.privacyCamera },
+                        { on: PrivacyService.screen,     glyph: "󰍹", tint: Theme.privacyScreen }
+                    ].filter(kind => kind.on)
+
+                    Text {
+                        required property var modelData
+
+                        text: modelData.glyph
+                        font.family: Theme.fontMono
+                        font.pixelSize: Theme.fontSizeRegular + 1
+                        color: modelData.tint
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: privacyFigure
+
+            Text {
+                width: Math.min(implicitWidth, ModuleService.privacyNameLimit,
+                                ModuleService.activitySide - 2 * ModuleService.activityInset)
+                text: PrivacyService.who
+                elide: Text.ElideRight
+                // The time's type, muted: the name is the lesser of the two.
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.fontSizeRegular
+                font.weight: Font.DemiBold
+                color: Theme.textMuted
             }
         }
 

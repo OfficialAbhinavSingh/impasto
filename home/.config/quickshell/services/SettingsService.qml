@@ -216,10 +216,11 @@ Singleton {
         root.set(side === "left" ? "barLeft" : "barRight", packed)
     }
 
-    // Modules allowed beside the time on the island while running. One left
+    // What may sit beside the time on the island while it runs. A module left
     // out still works on the bar; it just doesn't take a side of the island.
-    // A recording is always there, and is not on this list.
-    readonly property var besideDefaults: ["timer", "media"]
+    // `privacy` is the microphone, camera or screen in use, which has no
+    // module. A recording is always there, and is not on this list.
+    readonly property var besideDefaults: ["privacy", "timer", "media"]
 
     function beside(id: string): bool {
         const kept = config.islandActivities

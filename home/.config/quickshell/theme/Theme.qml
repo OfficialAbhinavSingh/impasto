@@ -58,6 +58,13 @@ QtObject {
     readonly property color indicatorBad: "#ff453a"
     readonly property color indicatorTimer: "#64d2ff"
 
+    // What is being watched or listened to, in a phone's colours for the
+    // same thing: the microphone orange, the camera green, the screen blue.
+    // Fixed, as warnings are.
+    readonly property color privacyMicrophone: "#ff9f0a"
+    readonly property color privacyCamera: root.indicatorGood
+    readonly property color privacyScreen: "#0a84ff"
+
     // Ground and ink over photographs. Fixed, since the ground is always dark.
     readonly property color scrim: "#bf000000"
     // Not `onScrim`: QML parses "on" + capital as a signal handler.

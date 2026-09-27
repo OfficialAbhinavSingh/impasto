@@ -75,6 +75,9 @@ QtObject {
             "Region": "Región",
             "Workspaces": "Espacios de trabajo",
             "Tray": "Bandeja",
+            "Privacy": "Privacidad",
+            "What uses the microphone, camera or screen": "Qué usa el micrófono, la cámara o la pantalla",
+            "Not shown": "No se muestra",
             "now": "ahora",
             "Theme": "Tema",
             "Face": "Temática",
@@ -201,8 +204,8 @@ QtObject {
                 "Se muestra en la isla en reposo, y más grande en el vistazo.",
             "What is running sits either side of the time, two at most.":
                 "Lo que está en marcha va a los lados de la hora, dos como mucho.",
-            "A recording is always there and comes first; click its dot to stop it. Then a countdown, then media, and either still works from its chip on the bar when kept off the island.":
-                "La grabación siempre está y va primero; haz clic en su punto para pararla. Luego la cuenta atrás y luego la música, y las dos siguen funcionando desde su pieza en la barra si no van en la isla.",
+            "A recording is always there and comes first; click its dot to stop it. Then the microphone, camera or screen in use, a countdown and media; the last two still work from their chips on the bar when kept off the island.":
+                "La grabación siempre está y va primero; haz clic en su punto para pararla. Luego el micrófono, la cámara o la pantalla en uso, la cuenta atrás y la música; las dos últimas siguen funcionando desde su pieza en la barra si no van en la isla.",
             "On the island while it runs": "En la isla mientras está en marcha",
             "Only where its chip is put": "Solo donde esté su pieza",
 

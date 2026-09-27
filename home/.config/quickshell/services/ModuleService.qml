@@ -308,13 +308,17 @@ Singleton {
     // ── ACTIVITIES ──────────────────────────────────────────────────────────
     //
     // Up to two running activities shown beside the time, most urgent first:
-    // recording, countdown, music. A countdown or music can be kept off the
-    // island (`SettingsService.beside`) without affecting its module; a
-    // recording cannot, since it has no module and nothing else on screen.
+    // recording, the microphone, camera or screen in use, countdown, music. A
+    // countdown or music can be kept off the island (`SettingsService.beside`)
+    // without affecting its module; so can the privacy mark, which has no
+    // module, and the service behind it is not built while it is off. A
+    // recording cannot, since nothing else on screen shows or stops it.
     readonly property var activities: {
         const list = []
         if (RecorderService.recording)
             list.push("recorder")
+        if (SettingsService.beside("privacy") && PrivacyService.active)
+            list.push("privacy")
         if (TimerService.running && SettingsService.beside("timer"))
             list.push("timer")
         if (MediaService.playing && SettingsService.beside("media"))
@@ -327,7 +331,27 @@ Singleton {
     // splits across both sides (mark left, figure right); two take one each.
     readonly property int clockCore: SettingsService.clockShowsDate
         ? 150 : (SettingsService.clockShowsSeconds ? 88 : 72)
-    readonly property int activitySide: root.activities.length > 1 ? 92 : 64
+    readonly property int activitySide: {
+        if (root.activities.length > 1)
+            return 92
+        // A program's name is longer than a countdown's digits, so alone the
+        // privacy mark sizes both sides to the name and a margin, and the
+        // time stays centred.
+        if (root.activities[0] === "privacy")
+            return Math.max(64, Math.ceil(root.privacyName) + 2 * root.activityInset)
+        return 64
+    }
+
+    readonly property int activityInset: 14
+    readonly property int privacyNameLimit: 110
+    readonly property real privacyName: root.activities.indexOf("privacy") < 0 ? 0
+        : Math.min(root.privacyNameLimit, root.nameMetrics.advanceWidth(PrivacyService.who))
+
+    readonly property FontMetrics nameMetrics: FontMetrics {
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.fontSizeRegular
+        font.weight: Font.DemiBold
+    }
     readonly property int restWidth: root.activities.length === 0
         ? root.entry("clock").width
         : root.clockCore + 2 * root.activitySide
