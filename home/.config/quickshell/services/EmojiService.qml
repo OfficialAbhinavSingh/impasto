@@ -184,28 +184,4 @@ Singleton {
         root.remember(item.glyph)
         Quickshell.execDetached(["wl-copy", "--", root.glyphOf(item)])
     }
-
-    // ── TYPE ────────────────────────────────────────────────────────────────
-    //
-    // Typed into the window that had focus before the launcher, as a virtual
-    // keyboard, the way a desktop's own emoji picker does. The island lets go
-    // of the keyboard the moment it starts closing, so the wait is a few
-    // frames for the compositor to hand it back, not the morph. Without
-    // `wtype` it is copied instead.
-    readonly property int handback: 120
-
-    property string pending: ""
-
-    function type(item: var): void {
-        root.remember(item.glyph)
-        root.pending = root.glyphOf(item)
-        root.typeTimer.restart()
-    }
-
-    readonly property Timer typeTimer: Timer {
-        interval: root.handback
-        onTriggered: Quickshell.execDetached(["sh", "-c",
-            'if command -v wtype >/dev/null; then wtype -- "$1"; else wl-copy -- "$1"; fi',
-            "sh", root.pending])
-    }
 }

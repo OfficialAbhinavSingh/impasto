@@ -359,13 +359,13 @@ QtObject {
     }
 
     // Recent picks first when the term is empty; the glyph, in the chosen
-    // skin tone, is the row's mark. Not cut to `maxResults`: a group is
-    // browsed as much as searched, and the list only builds the rows in view.
+    // skin tone, is the row's mark and the name its only text. Not cut to
+    // `maxResults`: a group is browsed as much as searched, and the list only
+    // builds the rows in view.
     function emoji(term: string): var {
         return EmojiService.search(term).map(item => ({
             kind: "emoji", id: item.glyph, icon: "", item: item,
-            glyph: EmojiService.glyphOf(item), name: item.name,
-            subtitle: `${Tr.t(item.group)}  ·  ${Tr.t("Enter types it, Shift + Enter copies it")}`
+            glyph: EmojiService.glyphOf(item), name: item.name, subtitle: ""
         }))
     }
 
@@ -410,8 +410,7 @@ QtObject {
         }
     }
 
-    // `copy` is Shift: an emoji is copied rather than typed.
-    function activate(entry: var, copy: bool): void {
+    function activate(entry: var): void {
         if (!entry)
             return
         if (entry.kind === "app") {
@@ -433,10 +432,8 @@ QtObject {
             root.copy(entry.name)
         else if (entry.kind === "clip")
             ClipboardService.copy(entry.id)
-        else if (entry.kind === "emoji" && copy)
-            EmojiService.copy(entry.item)
         else if (entry.kind === "emoji")
-            EmojiService.type(entry.item)
+            EmojiService.copy(entry.item)
         // `panel` and `mode` entries are handled by the launcher panel: the
         // service does not know about the island, and a mode row keeps the
         // launcher open.

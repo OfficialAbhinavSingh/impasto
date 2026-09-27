@@ -497,7 +497,6 @@ QtObject {
             "Copy something again": "Vuelve a copiar algo",
             "Emoji": "Emoji",
             "Copy an emoji": "Copia un emoji",
-            "Enter types it, Shift + Enter copies it": "Enter lo escribe, Mayús + Enter lo copia",
             "Recent": "Recientes",
             "Smileys & Emotion": "Caras y emociones",
             "People & Body": "Personas y cuerpo",

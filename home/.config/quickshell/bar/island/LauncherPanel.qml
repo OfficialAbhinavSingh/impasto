@@ -86,7 +86,7 @@ ColumnLayout {
     // Two kinds are not handed to the service. Panels and settings go up to
     // the island. A mode switches the field to that mode and keeps the
     // launcher open. Everything else the service runs, and the launcher closes.
-    function run(entry: var, copy: bool): void {
+    function run(entry: var): void {
         if (!entry)
             return
         if (entry.kind === "panel") {
@@ -101,14 +101,12 @@ ColumnLayout {
             searchField.forceActiveFocus()
             return
         }
-        LauncherService.activate(entry, copy)
+        LauncherService.activate(entry)
         root.closed()
     }
 
-    // Shift copies what Enter would type.
-    function activateSelected(event: var): void {
-        root.run(root.results[resultList.currentIndex],
-                 (event.modifiers & Qt.ShiftModifier) !== 0)
+    function activateSelected(): void {
+        root.run(root.results[resultList.currentIndex])
     }
 
     // Only clipboard entries can be forgotten: they are recorded without being
@@ -155,8 +153,8 @@ ColumnLayout {
             selectedTextColor: Theme.accentText
 
             onTextEdited: LauncherService.query = text
-            Keys.onReturnPressed: event => root.activateSelected(event)
-            Keys.onEnterPressed: event => root.activateSelected(event)
+            Keys.onReturnPressed: root.activateSelected()
+            Keys.onEnterPressed: root.activateSelected()
             Keys.onUpPressed: root.move(-1)
             Keys.onDownPressed: root.move(1)
             // Tab steps through the emoji groups; elsewhere it does nothing.
@@ -222,7 +220,7 @@ ColumnLayout {
     // ── GROUPS ──────────────────────────────────────────────────────────────
     //
     // The emoji mode's nine groups and the recent picks, each marked by an
-    // emoji; the one chosen is named at the end. Tab steps through them.
+    // emoji and nothing else. Tab steps through them.
     RowLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: LauncherService.stripHeight
@@ -267,15 +265,7 @@ ColumnLayout {
             }
         }
 
-        Text {
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignRight
-            elide: Text.ElideRight
-            text: Tr.t(EmojiService.groups.find(entry => entry.id === EmojiService.group)?.label ?? "")
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeLabel
-            color: Theme.textMuted
-        }
+        Item { Layout.fillWidth: true }
     }
 
     Rectangle {
@@ -488,8 +478,7 @@ ColumnLayout {
                 // On movement, not hover: a row appearing under a resting
                 // pointer would otherwise steal the selection on open.
                 onPositionChanged: row.ListView.view.currentIndex = row.index
-                onClicked: mouse => root.run(row.modelData,
-                    (mouse.modifiers & Qt.ShiftModifier) !== 0)
+                onClicked: root.run(row.modelData)
             }
         }
     }
