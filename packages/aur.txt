@@ -27,6 +27,7 @@ wl-screenrec                 # the recorder's GPU encoder, tried before wf-recor
 unimatrix-git                # the matrix alias
 cbonsai                      # the bonsai alias
 tty-clock                    # the clock alias
+lavat                        # the lava function
 
 
 # ── THEMED APPLICATIONS ─────────────────────────────────────────────────────
