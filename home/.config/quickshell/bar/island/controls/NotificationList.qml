@@ -107,6 +107,8 @@ Card {
 
                 readonly property bool critical:
                     entry.modelData.urgency === NotificationUrgency.Critical
+                readonly property bool opens: NotificationService.defaultAction(
+                    NotificationService.openOf(entry.modelData)) !== null
 
                 width: ListView.view.width
                 height: 54
@@ -200,9 +202,21 @@ Card {
                     id: entryMouse
                     anchors.fill: parent
                     hoverEnabled: true
-                    // No click action: the server doesn't advertise actions, so
-                    // there is nothing to invoke.
                     acceptedButtons: Qt.NoButton
+                    cursorShape: entry.opens ? Qt.PointingHandCursor : Qt.ArrowCursor
+                }
+
+                // While its notification is still open, a click is its default
+                // action, and the island gets out of the way of the window it
+                // brings up. One from an earlier session only has its text. A
+                // handler, so the close button above keeps its own clicks.
+                TapHandler {
+                    enabled: entry.opens
+                    onTapped: {
+                        if (NotificationService.open(entry.modelData)
+                                && ModuleService.shownPanel !== "")
+                            ModuleService.togglePanel(ModuleService.shownPanel)
+                    }
                 }
             }
         }

@@ -75,6 +75,7 @@ QtObject {
             "Region": "Región",
             "Workspaces": "Espacios de trabajo",
             "Tray": "Bandeja",
+            "now": "ahora",
             "Theme": "Tema",
             "Face": "Temática",
             "Style": "Estilo",
