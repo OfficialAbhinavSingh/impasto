@@ -332,9 +332,19 @@ Singleton {
         ? root.entry("clock").width
         : root.clockCore + 2 * root.activitySide
 
-    // The glance the island opens under a resting pointer.
-    readonly property int summaryWidth: 384
-    readonly property int summaryHeight: MediaService.available ? 168 : 116
+    // The glance the island opens under a resting pointer: with a player,
+    // the cover, the controls and the time large beside them; without one,
+    // the time large, the weather under it and five days of the week.
+    //
+    // The weather only where it is already being asked for, on the bar or
+    // on the desktop: touching the service builds it, and building it makes
+    // a network request.
+    readonly property bool summaryWeather: (SettingsService.onBar("weather")
+            || DesktopService.placed("weather"))
+        && WeatherService.available
+
+    readonly property int summaryWidth: MediaService.available ? 500 : 390
+    readonly property int summaryHeight: MediaService.available ? 150 : 118
 
     // ── OPEN DETAIL ─────────────────────────────────────────────────────────
     //

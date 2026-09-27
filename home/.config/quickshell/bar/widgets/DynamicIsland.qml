@@ -43,13 +43,13 @@ Rectangle {
 
     // For the bar: attached, the notch fillets have to light with the island.
     readonly property bool hovered: hover.hovered
-    // Lit where a click does something: the clock at rest and the glance. Not
-    // at rest in the one-capsule style, where the band and the island are one
-    // shape and cannot light separately; not over panels, which have their
+    // Lit where a click does something: the clock at rest. Not at rest in the
+    // one-capsule style, where the band and the island are one shape and
+    // cannot light separately; not the glance, which is drawn on the black
+    // with a player's controls of its own; not over panels, which have their
     // own controls; and not while `landing` from one.
     readonly property bool lit: hover.hovered && !root.landing
-        && ((islandState.layer === islandState.layerModules && !root.hosted)
-            || islandState.layer === islandState.layerSummary)
+        && islandState.layer === islandState.layerModules && !root.hosted
     readonly property color surfaceColor: root.lit
         ? Theme.islandSurfaceHover
         : (SettingsService.islandAttached ? Theme.island : Theme.islandSurface)
