@@ -14,9 +14,9 @@ import Quickshell
 import "../../theme"
 import "../../services"
 
-// One side of the bar: the layout's ids drawn as capsules. The workspaces get
-// a capsule of their own; everything else shares one until a `split` starts
-// the next. A capsule holding a single item takes that item's shape
+// One side of the bar: the layout's ids drawn as capsules. The workspaces and
+// the tray get a capsule of their own; everything else shares one until a
+// `split` starts the next. A capsule holding a single item takes that item's shape
 // (`BarChip.alone`). Clicks open in the island (`Bar.qml`).
 Row {
     id: root
@@ -39,9 +39,9 @@ Row {
         for (const item of root.entries) {
             if (item.id === "split") {
                 flush()
-            } else if (item.id === "workspaces") {
+            } else if (item.id === "workspaces" || item.id === "tray") {
                 flush()
-                out.push({ kind: "workspaces", items: [] })
+                out.push({ kind: item.id, items: [] })
             } else {
                 chips.push(item)
             }
@@ -74,13 +74,16 @@ Row {
         property bool chromeless: false
 
         readonly property bool workspaces: group.kind === "workspaces"
+        readonly property bool tray: group.kind === "tray"
+        // A capsule drawn by its own widget rather than of chips.
+        readonly property bool own: group.workspaces || group.tray
 
         // The items this machine has. A capsule with none (no battery, no
         // backlight on a desktop) is not drawn.
         readonly property var present:
             group.items.filter(item => ModuleService.shows(item.id, item.when))
 
-        readonly property bool alone: !group.workspaces && group.present.length === 1
+        readonly property bool alone: !group.own && group.present.length === 1
 
         // A ring alone is its own outline; a capsule border a pixel outside it
         // would smudge. Not when its figure is always shown, which makes it a
@@ -96,8 +99,10 @@ Row {
 
         readonly property int pad: group.chromeless || group.alone ? 0 : 4
 
-        visible: group.workspaces || group.present.length > 0
-        width: group.workspaces
+        // The tray with no icons in it is not drawn.
+        visible: group.workspaces || (group.tray ? TrayService.items.length > 0
+                                                 : group.present.length > 0)
+        width: group.own
             ? (strip.item ? strip.item.implicitWidth : 0)
             : chips.implicitWidth + 2 * group.pad
         height: Theme.capsuleHeight
@@ -137,15 +142,23 @@ Row {
         Loader {
             id: strip
 
-            active: group.workspaces
-            sourceComponent: WorkspacesWidget {
-                chromeless: group.chromeless
-            }
+            active: group.own
+            sourceComponent: group.tray ? trayCapsule : workspaceStrip
+        }
+
+        Component {
+            id: workspaceStrip
+            WorkspacesWidget { chromeless: group.chromeless }
+        }
+
+        Component {
+            id: trayCapsule
+            TrayWidget { chromeless: group.chromeless }
         }
 
         Rectangle {
             anchors.fill: parent
-            visible: !group.workspaces
+            visible: !group.own
             radius: height / 2
             color: group.chromeless ? "transparent" : Theme.island
             border.color: Theme.islandBorder

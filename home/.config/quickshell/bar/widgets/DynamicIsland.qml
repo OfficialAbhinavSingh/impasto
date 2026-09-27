@@ -96,6 +96,8 @@ Rectangle {
         keys:       { width: ShortcutService.sheetWidth, height: ShortcutService.sheetHeight },
         packages:   { width: PackagesService.panelWidth, height: PackagesService.panelHeight },
         module:     root.moduleSize,
+        // A tray item's menu, a row per entry.
+        tray:       { width: TrayService.menuWidth, height: TrayService.menuHeight },
         overview:   { width: 1560, height: 72 + root.overviewRows * 190 }
     })
 
@@ -157,7 +159,8 @@ Rectangle {
         board: boardPanel,
         keys: keysPanel,
         packages: packagesPanel,
-        module: moduleDetail
+        module: moduleDetail,
+        tray: trayMenu
     })
 
     function open(panel: string): void {
@@ -537,6 +540,11 @@ Rectangle {
     Component {
         id: bluetoothDetail
         BluetoothDetail { onBack: root.open("controls") }
+    }
+
+    Component {
+        id: trayMenu
+        TrayMenuPanel { onClosed: root.close() }
     }
 
     Component {

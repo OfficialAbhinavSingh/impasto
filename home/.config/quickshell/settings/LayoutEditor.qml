@@ -53,7 +53,7 @@ Item {
             else
                 readings.push(entry.id)
         }
-        return [gauges, readings, Object.keys(ModuleService.buttons), ["workspaces", "split"]]
+        return [gauges, readings, Object.keys(ModuleService.buttons), ["workspaces", "tray", "split"]]
     }
 
     readonly property var catalogueIds:
@@ -94,7 +94,7 @@ Item {
     readonly property var picked: root.pickedSide === ""
         ? null : (root.listOf(root.pickedSide)[root.pickedIndex] ?? null)
     readonly property bool pickedModule: root.picked !== null
-        && root.picked.id !== "workspaces" && root.picked.id !== "split"
+        && root.picked.id !== "workspaces" && root.picked.id !== "tray" && root.picked.id !== "split"
         && !ModuleService.isButton(root.picked.id)
 
     function pick(side: string, index: int): void {
@@ -162,9 +162,9 @@ Item {
             if (item.id === "split") {
                 flush()
                 out.push({ kind: "split", items: [piece] })
-            } else if (item.id === "workspaces") {
+            } else if (item.id === "workspaces" || item.id === "tray") {
                 flush()
-                out.push({ kind: "workspaces", items: [piece] })
+                out.push({ kind: item.id, items: [piece] })
             } else {
                 chips.push(piece)
             }
@@ -176,6 +176,8 @@ Item {
     function nameOf(id: string): string {
         if (id === "workspaces")
             return Tr.t("Workspaces")
+        if (id === "tray")
+            return Tr.t("Tray")
         if (id === "split")
             return Tr.t("Split")
         if (ModuleService.isButton(id))
@@ -749,12 +751,26 @@ Item {
                     place: group.kind === "split" ? group.items[0].index : -1
                 }
 
-                // The live workspace strip, built only where the layout has one.
+                // The live workspace strip or tray, built only where the
+                // layout has one.
                 Loader {
                     id: strip
 
-                    active: group.kind === "workspaces"
-                    sourceComponent: Strip {
+                    active: group.kind === "workspaces" || group.kind === "tray"
+                    sourceComponent: group.kind === "tray" ? laneTray : laneStrip
+                }
+
+                Component {
+                    id: laneStrip
+                    Strip {
+                        side: lane.side
+                        place: group.items[0].index
+                    }
+                }
+
+                Component {
+                    id: laneTray
+                    TrayTile {
                         side: lane.side
                         place: group.items[0].index
                     }
@@ -900,6 +916,62 @@ Item {
         }
     }
 
+    // The live tray, or its glyph in a capsule while no application has an
+    // icon in it, so the piece can still be seen and moved.
+    readonly property string trayGlyph: "󱊔"
+
+    component TrayTile: Item {
+        id: trayTile
+
+        property string side: ""
+        property int place: -1
+        property bool ghost: false
+
+        readonly property bool isTile: visible
+        readonly property bool isGap: false
+        readonly property string entryId: "tray"
+        readonly property bool empty: TrayService.items.length === 0
+
+        width: trayTile.empty ? Theme.capsuleHeight : tray.implicitWidth
+        height: Theme.capsuleHeight
+
+        TrayWidget {
+            id: tray
+
+            anchors.fill: parent
+            visible: !trayTile.empty
+            chromeless: root.chromeless
+            still: true
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            visible: trayTile.empty
+            radius: height / 2
+            color: root.chromeless ? "transparent" : Theme.island
+            border.color: Theme.islandBorder
+            border.width: root.chromeless ? 0 : 1
+
+            Text {
+                anchors.centerIn: parent
+                text: root.trayGlyph
+                font.family: Theme.fontMono
+                font.pixelSize: Math.round(Theme.capsuleHeight * 0.44)
+                color: Theme.textMuted
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            visible: !trayTile.ghost && root.pickedSide === trayTile.side
+                && root.pickedIndex === trayTile.place
+            radius: height / 2
+            color: "transparent"
+            border.color: Theme.accent
+            border.width: 1
+        }
+    }
+
     // A standalone piece: the carried copy, and what sizes the drop gap.
     component Piece: Item {
         id: piece
@@ -909,7 +981,8 @@ Item {
         property string ownFigure: ""
         property bool ghost: false
 
-        readonly property bool module: piece.entryId !== "workspaces" && piece.entryId !== "split"
+        readonly property bool module: piece.entryId !== "workspaces" && piece.entryId !== "tray"
+            && piece.entryId !== "split"
 
         width: piece.module ? lone.width
             : piece.entryId === "split" ? 10 : (pieceStrip.item ? pieceStrip.item.width : 0)
@@ -944,10 +1017,18 @@ Item {
         Loader {
             id: pieceStrip
 
-            active: piece.entryId === "workspaces"
-            sourceComponent: Strip {
-                ghost: true
-            }
+            active: piece.entryId === "workspaces" || piece.entryId === "tray"
+            sourceComponent: piece.entryId === "tray" ? pieceTray : pieceWorkspaces
+        }
+
+        Component {
+            id: pieceWorkspaces
+            Strip { ghost: true }
+        }
+
+        Component {
+            id: pieceTray
+            TrayTile { ghost: true }
         }
     }
 
@@ -963,8 +1044,8 @@ Item {
         readonly property bool isGap: false
         readonly property bool ghost: false
         readonly property string side: "tray"
-        readonly property bool moduled: entry.entryId !== "workspaces" && entry.entryId !== "split"
-            && !ModuleService.isButton(entry.entryId)
+        readonly property bool moduled: entry.entryId !== "workspaces" && entry.entryId !== "tray"
+            && entry.entryId !== "split" && !ModuleService.isButton(entry.entryId)
 
         implicitWidth: content.implicitWidth + 16
         implicitHeight: root.tileHeight
@@ -983,7 +1064,8 @@ Item {
             Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: entry.moduled ? mark.width
-                    : ModuleService.isButton(entry.entryId) ? Theme.capsuleHeight : 0
+                    : ModuleService.isButton(entry.entryId) || entry.entryId === "tray"
+                        ? Theme.capsuleHeight : 0
                 height: Theme.capsuleHeight
 
                 ChipFace {
@@ -995,11 +1077,12 @@ Item {
                     width: entry.moduled ? implicitWidth : 0
                 }
 
-                // Buttons show their glyph.
+                // Buttons show their glyph, and so does the tray.
                 Text {
                     anchors.centerIn: parent
-                    visible: ModuleService.isButton(entry.entryId)
-                    text: visible ? ModuleService.buttons[entry.entryId].glyph : ""
+                    visible: ModuleService.isButton(entry.entryId) || entry.entryId === "tray"
+                    text: entry.entryId === "tray" ? root.trayGlyph
+                        : visible ? ModuleService.buttons[entry.entryId].glyph : ""
                     font.family: Theme.fontMono
                     font.pixelSize: Math.round(Theme.capsuleHeight * 0.44)
                     color: Theme.text

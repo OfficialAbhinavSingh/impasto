@@ -112,7 +112,7 @@ Singleton {
     // Whether an id from a saved layout is still a piece: one taken out of
     // the catalogue is dropped rather than drawn as something else.
     function placeable(id: string): bool {
-        return id === "workspaces" || id === "split" || root.isButton(id)
+        return id === "workspaces" || id === "tray" || id === "split" || root.isButton(id)
             || root.catalogue.some(item => item.id === id && item.bar)
     }
 
@@ -401,6 +401,7 @@ Singleton {
         case "calendar":
         case "timer":
         case "workspaces":
+        case "tray":
         case "notifications":
             return true
         case "media":

@@ -49,6 +49,7 @@ singleton CaptureService     1.0 services/CaptureService.qml
 singleton RecorderService    1.0 services/RecorderService.qml
 singleton ClipboardService   1.0 services/ClipboardService.qml
 singleton EmojiService       1.0 services/EmojiService.qml
+singleton TrayService        1.0 services/TrayService.qml
 singleton SunsetService      1.0 services/SunsetService.qml
 singleton IdleService        1.0 services/IdleService.qml
 singleton GithubService      1.0 services/GithubService.qml
@@ -87,6 +88,7 @@ BarPreview       1.0 components/BarPreview.qml
 WindowsPreview   1.0 components/WindowsPreview.qml
 SettingsHero     1.0 components/SettingsHero.qml
 Avatar           1.0 components/Avatar.qml
+TrayIcon         1.0 components/TrayIcon.qml
 SettingField     1.0 components/SettingField.qml
 GroupHeading     1.0 components/GroupHeading.qml
 TabStrip         1.0 components/TabStrip.qml
@@ -102,6 +104,7 @@ Bar              1.0 bar/Bar.qml
 Deck             1.0 deck/Deck.qml
 DynamicIsland    1.0 bar/widgets/DynamicIsland.qml
 WorkspacesWidget 1.0 bar/widgets/WorkspacesWidget.qml
+TrayWidget       1.0 bar/widgets/TrayWidget.qml
 BatteryWidget    1.0 bar/widgets/BatteryWidget.qml
 BarZone          1.0 bar/widgets/BarZone.qml
 BarChip          1.0 bar/widgets/BarChip.qml
@@ -183,4 +186,5 @@ ClockBlock       1.0 bar/island/controls/ClockBlock.qml
 GamesBlock       1.0 bar/island/controls/GamesBlock.qml
 ControlsTray     1.0 bar/island/controls/ControlsTray.qml
 NetworkDetail    1.0 bar/island/NetworkDetail.qml
+TrayMenuPanel    1.0 bar/island/TrayMenuPanel.qml
 BluetoothDetail  1.0 bar/island/BluetoothDetail.qml
