@@ -28,8 +28,13 @@ Item {
     property bool available: true
     property bool dimmed: false
 
+    // A chevron at the end that opens more, as Wi-Fi's tile does. The drag
+    // stops short of it.
+    property bool expandable: false
+
     signal moved(int value)
     signal iconClicked()
+    signal expandClicked()
 
     implicitHeight: 40
 
@@ -90,18 +95,41 @@ Item {
                 font.weight: Font.DemiBold
                 color: root.dimmed ? Theme.textMuted : Theme.text
             }
+
+            Text {
+                visible: root.expandable
+                text: "󰅂"
+                font.family: Theme.fontMono
+                font.pixelSize: 13
+                color: more.containsMouse ? Theme.text : Theme.textMuted
+
+                Behavior on color { ColorAnimation { duration: Theme.durationFast } }
+            }
         }
 
         // Invisible; supplies only the drag behaviour.
         Slider {
             id: slider
             anchors.fill: parent
+            anchors.rightMargin: root.expandable ? 32 : 0
             from: root.from
             to: root.to
             value: root.value
             enabled: root.available
             opacity: 0
             onMoved: root.moved(Math.round(slider.value))
+        }
+
+        MouseArea {
+            id: more
+
+            anchors.right: parent.right
+            width: 32
+            height: parent.height
+            visible: root.expandable
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.expandClicked()
         }
     }
 }

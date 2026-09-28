@@ -182,6 +182,7 @@ Singleton {
             detail: AudioService.sourceMuted ? "Muted" : "Live"
             active: !AudioService.sourceMuted
             available: AudioService.sourceReady
+            expandable: AudioService.sourceReady; panel: "microphone"
             action: () => AudioService.toggleSourceMute()
         },
         Toggle {
@@ -201,6 +202,7 @@ Singleton {
             detail: SunsetService.detail
             active: SunsetService.on
             available: SunsetService.available
+            expandable: SunsetService.available; panel: "nightlight"
             action: () => SunsetService.toggle()
         },
         Toggle {

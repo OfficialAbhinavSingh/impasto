@@ -142,6 +142,23 @@ QtObject {
 
     readonly property int panelPadding: 20
 
+    // A page the control centre opens into (sound): its heading, a
+    // section's title, a row (a level or a choice), the gap between rows and
+    // between sections, and the column every row's name takes, so every bar
+    // on a page starts at the same place.
+    readonly property int detailHeader: 38
+    readonly property int detailTitle: 24
+    readonly property int detailRow: 36
+    readonly property int detailRowGap: 4
+    readonly property int detailGap: 14
+    readonly property int detailLabel: 128
+
+    // The height of a titled section of `rows` rows, with its gap above.
+    function detailSection(rows: int): int {
+        return root.detailGap + root.detailTitle
+            + rows * root.detailRow + Math.max(0, rows - 1) * root.detailRowGap
+    }
+
     // ── DOCK ────────────────────────────────────────────────────────────────
     //
     // Everything scales off the icon size. The margin matches `gaps_out`.

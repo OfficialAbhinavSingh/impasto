@@ -42,21 +42,11 @@ Singleton {
         return base.charAt(0).toUpperCase() + base.slice(1)
     }
 
-    // Streams that read audio but not from a microphone: a capture of what is
-    // playing (the spectrum's cava, a recorder's system sound) or a level
-    // meter.
-    function listens(node: var): bool {
-        if (node.type !== PwNodeType.AudioInStream)
-            return false
-        if (root.prop(node, "stream.capture.sink") === "true"
-                || root.prop(node, "stream.monitor") === "true")
-            return false
-        return root.prop(node, "application.name") !== "cava"
-    }
-
     readonly property var nodes: Pipewire.nodes.values
 
-    readonly property var listeners: root.nodes.filter(node => root.listens(node))
+    // Applications recording the microphone (`AudioService.captures`, which
+    // leaves out captures of what plays).
+    readonly property var listeners: AudioService.captures
 
     // A video stream reading from somewhere: a camera through PipeWire, or a
     // shared screen.

@@ -187,5 +187,12 @@ ClockBlock       1.0 bar/island/controls/ClockBlock.qml
 GamesBlock       1.0 bar/island/controls/GamesBlock.qml
 ControlsTray     1.0 bar/island/controls/ControlsTray.qml
 NetworkDetail    1.0 bar/island/NetworkDetail.qml
+SoundDetail      1.0 bar/island/SoundDetail.qml
+DetailHeading    1.0 bar/island/DetailHeading.qml
+DetailSection    1.0 bar/island/DetailSection.qml
+LevelRow         1.0 bar/island/LevelRow.qml
+DetailChoice     1.0 bar/island/DetailChoice.qml
+MicrophoneDetail 1.0 bar/island/MicrophoneDetail.qml
+NightLightDetail 1.0 bar/island/NightLightDetail.qml
 TrayMenuPanel    1.0 bar/island/TrayMenuPanel.qml
 BluetoothDetail  1.0 bar/island/BluetoothDetail.qml

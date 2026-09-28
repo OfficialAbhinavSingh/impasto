@@ -79,8 +79,10 @@ Item {
                 value: AudioService.volume
                 available: AudioService.ready
                 dimmed: AudioService.muted
+                expandable: true
                 onMoved: value => AudioService.setVolume(value)
                 onIconClicked: AudioService.toggleMute()
+                onExpandClicked: root.panelRequested("sound")
             }
         }
     }

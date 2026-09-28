@@ -76,6 +76,14 @@ QtObject {
             "Workspaces": "Espacios de trabajo",
             "Tray": "Bandeja",
             "Privacy": "Privacidad",
+            "Sound": "Sonido",
+            "Warmth": "Calidez",
+            "Presets": "Rápidos",
+            "Candle": "Vela",
+            "Warm": "Cálida",
+            "Soft": "Suave",
+            "Neutral": "Neutra",
+            "Recording": "Grabando",
             "What uses the microphone, camera or screen": "Qué usa el micrófono, la cámara o la pantalla",
             "Not shown": "No se muestra",
             "now": "ahora",
@@ -693,14 +701,6 @@ QtObject {
             "None — the system handles the lid": "Ninguna — la tapa la gestiona el sistema",
 
             "Night light": "Luz nocturna",
-            "Warmer colours for the evening.":
-                "Colores más cálidos para la noche.",
-            "It adjusts the gamma ramp, so screenshots keep their original colours. There is no schedule: it stays on until you turn it off.":
-                "Ajusta la rampa gamma, así que las capturas conservan sus colores originales. No hay horario: se queda encendida hasta que la apagas.",
-            "Warm the screen": "Calentar la pantalla",
-            "Needs hyprsunset, which is not installed":
-                "Necesita hyprsunset, que no está instalado",
-            "Colour temperature": "Temperatura de color",
 
             // ── INPUT ───────────────────────────────────────────────────────
             "Layouts": "Distribuciones",

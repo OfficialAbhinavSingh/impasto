@@ -81,6 +81,10 @@ Rectangle {
         launcher:   { width: LauncherService.panelWidth,
                       height: LauncherService.panelHeight },
         wifi:       { width: 420,  height: 500 },
+        // The control centre's volume, opened out.
+        sound:      { width: AudioService.panelWidth, height: AudioService.panelHeight },
+        microphone: { width: AudioService.panelWidth, height: AudioService.microphoneHeight },
+        nightlight: { width: SunsetService.panelWidth, height: SunsetService.panelHeight },
         bluetooth:  { width: 420,  height: 500 },
         session:    { width: 720,  height: 180 },
         // A row per creature, plus one for the next egg.
@@ -152,6 +156,9 @@ Rectangle {
         palette: appearancePanel,
         launcher: launcherPanel,
         wifi: networkDetail,
+        sound: soundDetail,
+        microphone: microphoneDetail,
+        nightlight: nightLightDetail,
         bluetooth: bluetoothDetail,
         stats: statsPanel,
         overview: overviewPanel,
@@ -538,6 +545,21 @@ Rectangle {
     Component {
         id: networkDetail
         NetworkDetail { onBack: root.open("controls") }
+    }
+
+    Component {
+        id: soundDetail
+        SoundDetail { onBack: root.open("controls") }
+    }
+
+    Component {
+        id: microphoneDetail
+        MicrophoneDetail { onBack: root.open("controls") }
+    }
+
+    Component {
+        id: nightLightDetail
+        NightLightDetail { onBack: root.open("controls") }
     }
 
     Component {
