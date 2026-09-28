@@ -112,6 +112,9 @@ Singleton {
             if (JSON.stringify(root.watcher.command) === JSON.stringify(root.wanted))
                 return
             root.watcher.running = false
+            // A restart for new arguments is not a crash; without this the
+            // settings loading just after startup leave the watcher off.
+            root.started = 0
         }
         if (root.wanted.length === 0)
             return
