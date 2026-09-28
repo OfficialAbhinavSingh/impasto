@@ -32,6 +32,8 @@ Rectangle {
 
     // Inside the one capsule it drops its own capsule and padding.
     property bool chromeless: false
+    property bool overWallpaper: false
+    readonly property color dim: root.overWallpaper ? Theme.barInkDim : Theme.indicatorDim
     // `SettingsService.workspaceStyle` unless a picker draws another.
     property string style: SettingsService.workspaceStyle
     // A still strip for the settings: five, the second focused, the first and
@@ -190,7 +192,7 @@ Rectangle {
                     radius: Math.min(width, height) / 2
 
                     color: slot.focused || slot.hovered || slot.occupied
-                        ? Theme.accent : Theme.indicatorDim
+                        ? Theme.accent : root.dim
                     // Dimming separates occupied from focused without a third
                     // shape.
                     opacity: slot.focused || slot.hovered ? 1 : (slot.occupied ? 0.55 : 1)
@@ -211,11 +213,25 @@ Rectangle {
 
                     color: slot.focused || slot.hovered ? Theme.accent
                         : slot.occupied ? Qt.alpha(Theme.accent, 0.55) : "transparent"
-                    border.color: Theme.indicatorDim
+                    border.color: root.dim
                     border.width: slot.focused || slot.hovered || slot.occupied ? 0 : 1.5
 
                     Behavior on width { NumberAnimation { duration: Theme.durationMedium; easing.type: Theme.easing } }
                     Behavior on color { ColorAnimation { duration: Theme.durationFast } }
+                }
+
+                // Over the wallpaper, a hovered number takes the chips' own
+                // hover pill: the accent alone vanishes into a light picture.
+                Rectangle {
+                    visible: root.written && root.overWallpaper
+                    anchors.centerIn: parent
+                    width: Math.max(0, parent.width - root.slotSpacing)
+                    height: Theme.capsuleHeight - 8
+                    radius: height / 2
+                    color: Theme.surfaceHoverIn(QsWindow.window)
+                    opacity: slot.hovered && !slot.focused ? 1 : 0
+
+                    Behavior on opacity { NumberAnimation { duration: Theme.durationFast } }
                 }
 
                 // The written styles: on the sliding pill when focused, in full
@@ -231,8 +247,8 @@ Rectangle {
                     font.weight: Font.DemiBold
                     font.features: { "tnum": 1 }
                     color: slot.focused ? Theme.accentText
-                        : slot.hovered ? Theme.accent
-                        : slot.occupied ? Theme.text : Theme.indicatorDim
+                        : slot.hovered && !root.overWallpaper ? Theme.accent
+                        : slot.occupied ? Theme.text : root.dim
 
                     Behavior on color { ColorAnimation { duration: Theme.durationFast } }
                 }

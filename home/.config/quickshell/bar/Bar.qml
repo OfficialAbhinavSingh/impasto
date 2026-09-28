@@ -675,6 +675,14 @@ PanelWindow {
             Behavior on color { ColorAnimation { duration: Theme.durationMedium } }
         }
 
+        component BareShadow: MultiEffect {
+            shadowEnabled: true
+            blurMax: Theme.barShadowReach
+            shadowBlur: 1
+            shadowVerticalOffset: 1
+            shadowColor: Theme.barShadow
+        }
+
         // ── SIDES ───────────────────────────────────────────────────────────────
         //
         // Grouped, the sides are anchored to the island's animated edges, so they
@@ -692,21 +700,22 @@ PanelWindow {
             height: root.height
             clip: sides.cropped
 
+            // On the wallpaper, the sides are cast twice: the shadow's own
+            // shadow is what makes a thin dark edge dense enough to hold white
+            // off a light picture, which one blurred copy of a small glyph is
+            // not.
+            layer.enabled: root.bare
+            layer.effect: BareShadow {}
+
             BarZone {
                 id: leftZone
 
                 entries: SettingsService.barItems("left")
                 chromeless: root.unified || root.bare
+                overWallpaper: root.bare
 
-                // On the wallpaper, lifted off it by a soft shadow.
                 layer.enabled: root.bare
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowBlur: 0.4
-                    shadowVerticalOffset: 1
-                    shadowHorizontalOffset: 0
-                    shadowColor: Theme.barShadow
-                }
+                layer.effect: BareShadow {}
                 x: (root.unified ? root.bodyX + root.hostedInset
                     : root.spread ? root.edgeMargin
                     : root.islandLeft - Theme.capsuleSpacing - leftZone.width) - sides.x
@@ -727,16 +736,10 @@ PanelWindow {
 
                 entries: SettingsService.barItems("right")
                 chromeless: root.unified || root.bare
+                overWallpaper: root.bare
 
-                // On the wallpaper, lifted off it by a soft shadow.
                 layer.enabled: root.bare
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowBlur: 0.4
-                    shadowVerticalOffset: 1
-                    shadowHorizontalOffset: 0
-                    shadowColor: Theme.barShadow
-                }
+                layer.effect: BareShadow {}
                 x: (root.unified ? root.bodyX + root.bodyWidth - root.hostedInset - rightZone.width
                     : root.spread ? root.width - root.edgeMargin - rightZone.width
                     : root.islandRight + Theme.capsuleSpacing) - sides.x

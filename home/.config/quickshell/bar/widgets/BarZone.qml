@@ -28,6 +28,8 @@ Row {
 
     // Inside the one capsule, where the band is already the ground.
     property bool chromeless: false
+    // Straight on the wallpaper, with no ground of any kind under it.
+    property bool overWallpaper: false
 
     readonly property var groups: {
         const out = []
@@ -64,6 +66,7 @@ Row {
             kind: modelData.kind
             items: modelData.items
             chromeless: root.chromeless
+            overWallpaper: root.overWallpaper
         }
     }
 
@@ -73,6 +76,7 @@ Row {
         property string kind: "chips"
         property var items: []
         property bool chromeless: false
+        property bool overWallpaper: false
 
         readonly property bool workspaces: group.kind === "workspaces"
         readonly property bool tray: group.kind === "tray"
@@ -182,7 +186,10 @@ Row {
 
         Component {
             id: workspaceStrip
-            WorkspacesWidget { chromeless: group.chromeless }
+            WorkspacesWidget {
+                chromeless: group.chromeless
+                overWallpaper: group.overWallpaper
+            }
         }
 
         Component {
