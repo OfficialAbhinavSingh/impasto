@@ -72,10 +72,12 @@ Item {
         readonly property alias hovered: mouse.containsMouse
 
         readonly property var marks: ({
-            recorder: recorderMark, privacy: privacyMark, timer: timerMark, media: mediaMark
+            recorder: recorderMark, privacy: privacyMark, timer: timerMark, media: mediaMark,
+            workspace: workspaceMark
         })
         readonly property var figures: ({
-            recorder: recorderFigure, privacy: privacyFigure, timer: timerFigure, media: mediaFigure
+            recorder: recorderFigure, privacy: privacyFigure, timer: timerFigure, media: mediaFigure,
+            workspace: workspaceFigure
         })
 
         // Centred on its side, except the privacy mark split across both:
@@ -118,6 +120,8 @@ Item {
             onClicked: {
                 if (segment.activityId === "recorder")
                     RecorderService.toggle()
+                else if (segment.activityId === "workspace")
+                    ModuleService.togglePanel("overview")
                 else
                     ModuleService.activate(segment.activityId)
             }
@@ -282,6 +286,100 @@ Item {
 
                 Component.onCompleted: CavaService.subscribe()
                 Component.onDestruction: CavaService.release()
+            }
+        }
+
+        // ── WORKSPACE ───────────────────────────────────────────────────────
+        //
+        // The one this screen shows, for a bar without the workspaces strip:
+        // its number, or its name when it has one, in the privacy name's type.
+        // A click opens the overview.
+        Component {
+            id: workspaceMark
+
+            Text {
+                text: "󰕰"
+                font.family: Theme.fontMono
+                font.pixelSize: Theme.fontSizeRegular + 1
+                color: Theme.textMuted
+            }
+        }
+
+        Component {
+            id: workspaceFigure
+
+            // A new label slides in from below when the workspace is further
+            // along and from above when it is back, and the old one out the
+            // other way.
+            Item {
+                id: shown
+
+                readonly property string screenName: QsWindow.window && QsWindow.window.screen
+                    ? QsWindow.window.screen.name : ""
+                readonly property int number: HyprlandService.activeOn(shown.screenName)
+                    || HyprlandService.activeId
+                readonly property string label: {
+                    const found = HyprlandService.named.find(workspace => workspace.id === shown.number)
+                    const name = found && typeof found.name === "string" ? found.name : ""
+                    return name !== "" && name !== `${shown.number}` ? name : `${shown.number}`
+                }
+
+                property int was: 0
+                property string leaving: ""
+                property real travel: 0
+
+                width: Math.min(Math.max(incoming.implicitWidth, outgoing.visible ? outgoing.implicitWidth : 0),
+                                ModuleService.activitySide - 2 * ModuleService.activityInset)
+                height: incoming.implicitHeight
+                clip: true
+
+                onNumberChanged: {
+                    const forward = shown.number > shown.was
+                    shown.leaving = incoming.text
+                    shown.was = shown.number
+                    slide.stop()
+                    shown.travel = forward ? 1 : -1
+                    slide.start()
+                }
+
+                Component.onCompleted: shown.was = shown.number
+
+                NumberAnimation {
+                    id: slide
+
+                    target: shown
+                    property: "travel"
+                    to: 0
+                    duration: Theme.durationMedium
+                    easing.type: Theme.easing
+                }
+
+                Text {
+                    id: outgoing
+
+                    visible: shown.travel !== 0
+                    y: (shown.travel - Math.sign(shown.travel)) * shown.height
+                    width: shown.width
+                    text: shown.leaving
+                    elide: Text.ElideRight
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeRegular
+                    font.weight: Font.DemiBold
+                    color: Theme.textMuted
+                }
+
+                Text {
+                    id: incoming
+
+                    y: shown.travel * shown.height
+                    width: shown.width
+                    text: shown.label
+                    elide: Text.ElideRight
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeRegular
+                    font.weight: Font.DemiBold
+                    color: Theme.textMuted
+                }
             }
         }
     }

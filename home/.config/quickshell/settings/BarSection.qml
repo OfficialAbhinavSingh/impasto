@@ -209,10 +209,10 @@ SettingsSection {
         SettingGroup {
             title: Tr.t("Beside the time")
             note: Tr.t("What is running sits either side of the time, two at most.")
-            hint: Tr.t("A recording is always there and comes first; click its dot to stop it. Then the microphone, camera or screen in use, a countdown and media; the last two still work from their chips on the bar when kept off the island.")
+            hint: Tr.t("A recording is always there and comes first; click its dot to stop it. Then the microphone, camera or screen in use, a countdown and media, which still work from their chips on the bar when kept off the island. The workspace comes last, for a bar without the strip; click it for the overview.")
 
             Repeater {
-                model: SettingsService.besideDefaults
+                model: SettingsService.besideChoices
 
                 SettingRow {
                     id: besideRow
@@ -220,13 +220,17 @@ SettingsSection {
                     required property string modelData
 
                     readonly property bool privacy: besideRow.modelData === "privacy"
+                    readonly property bool workspace: besideRow.modelData === "workspace"
+                    readonly property bool on: SettingsService.beside(besideRow.modelData)
 
                     label: besideRow.privacy ? Tr.t("Privacy")
+                        : besideRow.workspace ? Tr.t("Workspace")
                         : Tr.t(ModuleService.entry(besideRow.modelData).name)
                     reading: besideRow.privacy
-                        ? (SettingsService.beside("privacy")
-                            ? Tr.t("What uses the microphone, camera or screen") : Tr.t("Not shown"))
-                        : SettingsService.beside(besideRow.modelData)
+                        ? (besideRow.on ? Tr.t("What uses the microphone, camera or screen") : Tr.t("Not shown"))
+                        : besideRow.workspace
+                            ? (besideRow.on ? Tr.t("The one you are on") : Tr.t("Not shown"))
+                        : besideRow.on
                             ? Tr.t("On the island while it runs") : Tr.t("Only where its chip is put")
 
                     ToggleSwitch {

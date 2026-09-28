@@ -214,8 +214,10 @@ QtObject {
                 "Se muestra en la isla en reposo, y más grande en el vistazo.",
             "What is running sits either side of the time, two at most.":
                 "Lo que está en marcha va a los lados de la hora, dos como mucho.",
-            "A recording is always there and comes first; click its dot to stop it. Then the microphone, camera or screen in use, a countdown and media; the last two still work from their chips on the bar when kept off the island.":
-                "La grabación siempre está y va primero; haz clic en su punto para pararla. Luego el micrófono, la cámara o la pantalla en uso, la cuenta atrás y la música; las dos últimas siguen funcionando desde su pieza en la barra si no van en la isla.",
+            "A recording is always there and comes first; click its dot to stop it. Then the microphone, camera or screen in use, a countdown and media, which still work from their chips on the bar when kept off the island. The workspace comes last, for a bar without the strip; click it for the overview.":
+                "Una grabación siempre está y va primero; haz clic en su punto para pararla. Luego el micrófono, la cámara o la pantalla en uso, una cuenta atrás y la música, que siguen funcionando desde su chip en la barra si los quitas de la isla. El escritorio va el último, para una barra sin la tira; haz clic en él para ver la vista general.",
+            "Workspace": "Escritorio",
+            "The one you are on": "En el que estás",
             "On the island while it runs": "En la isla mientras está en marcha",
             "Only where its chip is put": "Solo donde esté su pieza",
 

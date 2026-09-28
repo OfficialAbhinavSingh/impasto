@@ -315,7 +315,8 @@ Singleton {
     // ── ACTIVITIES ──────────────────────────────────────────────────────────
     //
     // Up to two running activities shown beside the time, most urgent first:
-    // recording, the microphone, camera or screen in use, countdown, music. A
+    // recording, the microphone, camera or screen in use, countdown, music,
+    // and the workspace, for a bar without the strip. A
     // countdown or music can be kept off the island (`SettingsService.beside`)
     // without affecting its module; so can the privacy mark, which has no
     // module, and the service behind it is not built while it is off. A
@@ -330,6 +331,9 @@ Singleton {
             list.push("timer")
         if (MediaService.playing && SettingsService.beside("media"))
             list.push("media")
+        // Always there when kept, so it is last: the others come and go.
+        if (SettingsService.beside("workspace"))
+            list.push("workspace")
         return list.slice(0, 2)
     }
 

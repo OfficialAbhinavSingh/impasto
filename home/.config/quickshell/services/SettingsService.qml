@@ -225,6 +225,8 @@ Singleton {
     // `privacy` is the microphone, camera or screen in use, which has no
     // module. A recording is always there, and is not on this list.
     readonly property var besideDefaults: ["privacy", "timer", "media"]
+    // Every one the settings offer; the workspace is off until chosen.
+    readonly property var besideChoices: ["privacy", "timer", "media", "workspace"]
 
     function beside(id: string): bool {
         const kept = config.islandActivities
