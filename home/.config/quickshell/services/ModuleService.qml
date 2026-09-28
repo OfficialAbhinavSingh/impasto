@@ -378,7 +378,17 @@ Singleton {
             || DesktopService.placed("weather"))
         && WeatherService.available
 
-    readonly property int summaryWidth: MediaService.available ? 500 : 390
+    // The widths fit a 24-hour time; a longer format (seconds, AM/PM) widens
+    // the glance by what it adds, measured at the glance's type.
+    readonly property int summaryWidth: (MediaService.available ? 500 : 390)
+        + Math.max(0, Math.ceil(root.timeMetrics.advanceWidth(
+            Qt.formatTime(new Date(2000, 0, 1, 20, 48, 58), SettingsService.clockFormat))
+            - root.timeMetrics.advanceWidth("20:48")))
+    readonly property FontMetrics timeMetrics: FontMetrics {
+        font.family: Theme.fontFamily
+        font.pixelSize: 62
+        font.weight: Font.Black
+    }
     readonly property int summaryHeight: MediaService.available ? 150 : 118
 
     // ── OPEN DETAIL ─────────────────────────────────────────────────────────

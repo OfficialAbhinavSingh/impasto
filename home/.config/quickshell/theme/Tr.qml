@@ -145,6 +145,11 @@ QtObject {
             "Your account, the lock screen and idle behaviour.":
                 "Tu cuenta, la pantalla de bloqueo y la inactividad.",
             "Lock screen": "Pantalla de bloqueo",
+            "Lock": "Bloquear",
+            "Suspend": "Suspender",
+            "Log out": "Cerrar sesión",
+            "Restart": "Reiniciar",
+            "Shut down": "Apagar",
             "When you leave": "Cuando te vas",
             "System": "Sistema",
             "Profiles, language, this machine and reset.":

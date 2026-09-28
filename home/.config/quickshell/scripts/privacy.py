@@ -21,9 +21,11 @@ lock screen. PipeWire and WirePlumber are reported as `pipewire`: the program
 behind them is a PipeWire stream, which the shell reads itself.
 """
 
+import ctypes
 import glob
 import json
 import os
+import signal
 import subprocess
 import sys
 
@@ -57,6 +59,12 @@ def report(devices, last):
     return now
 
 
+def die_with_parent():
+    """Take inotifywait down with this script when the shell stops it."""
+    libc = ctypes.CDLL(None, use_errno=True)
+    libc.prctl(1, signal.SIGTERM)  # PR_SET_PDEATHSIG
+
+
 def main():
     devices = set(glob.glob(DEVICES))
     last = report(devices, None)
@@ -64,7 +72,8 @@ def main():
         return
     watch = subprocess.Popen(
         ["inotifywait", "-m", "-q", "-e", "open,close", "--format", "%w", *sorted(devices)],
-        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
+        preexec_fn=die_with_parent)
     if watch.stdout is None:
         return
     for _ in watch.stdout:

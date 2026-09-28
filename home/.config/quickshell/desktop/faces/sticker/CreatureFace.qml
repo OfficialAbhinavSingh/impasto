@@ -41,7 +41,7 @@ Spread {
         PetFace {
             anchors.centerIn: parent
             size: plate.side * 0.56
-            lively: true
+            lively: false
         }
     }
 

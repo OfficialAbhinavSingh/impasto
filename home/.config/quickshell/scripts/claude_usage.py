@@ -363,6 +363,8 @@ def limits():
         kept = json.loads(LIMITS_CACHE.read_text())
     except (OSError, ValueError):
         kept = None
+    if not isinstance(kept, dict) or not isinstance(kept.get("report"), dict):
+        kept = None
     now = time.time()
     if kept and now - kept.get("at", 0) < LIMITS_FRESH:
         print(json.dumps({"available": True, "plan": plan(), **kept["report"]}))

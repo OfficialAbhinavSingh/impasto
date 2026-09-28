@@ -358,7 +358,7 @@ ColumnLayout {
 
             Text {
                 anchors.centerIn: parent
-                text: cell.modelData.glyph
+                text: cell.modelData.glyph ?? ""
                 font.family: Theme.fontFamily
                 font.pixelSize: 28
             }

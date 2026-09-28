@@ -171,41 +171,6 @@ Item {
     }
 
     // ── CAPSULE ─────────────────────────────────────────────────────────────
-    //
-    // The desk's ground (`Theme.deskStyle`, the bar's unless set apart):
-    // solid black at the widget's opacity, or glass with its rim and edge. The border
-    // keeps its own alpha, so a translucent capsule still has an edge.
-    Rectangle {
-        id: capsule
-
-        anchors.fill: parent
-        visible: !root.onPicture
-        radius: Theme.desktopRadius
-        color: Theme.deskSolid
-            ? Qt.rgba(root.ink.ground.r, root.ink.ground.g, root.ink.ground.b, root.solidity)
-            : Theme.groundOf(Theme.deskStyle)
-        border.color: Theme.deskSolid ? root.ink.border : Theme.rimOf(Theme.deskStyle)
-        border.width: 1
-
-        Behavior on color { ColorAnimation { duration: Theme.durationMedium } }
-    }
-
-    GlassSheen {
-        shape: capsule
-        visible: Theme.deskGlass && !root.onPicture
-    }
-
-    // Disabled while arranging so dragging does not press buttons. `enabled`
-    // rather than an overlay item, which would take the drag as well.
-    Face {
-        anchors.fill: parent
-        moduleId: root.moduleId
-        family: root.family
-        theme: DesktopService.themeOf(root.row)
-        ink: root.ink
-        row: root.row
-        enabled: !root.editing
-    }
 
     // Without a capsule the contents get a drop shadow to stay readable on the
     // wallpaper. A sticker brings its own ground, so its shadow is the
@@ -217,15 +182,69 @@ Item {
     readonly property bool sticker: DesktopService.themeOf(root.row) === "sticker"
         && root.moduleId !== "notes" && root.moduleId !== "spectrum"
 
-    layer.enabled: root.sticker ? SettingsService.widgetShadow
-        : root.onPicture && root.moduleId !== "spectrum"
-    layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowBlur: 1
-        blurMax: root.sticker ? Theme.shadowRange : 32
-        shadowOpacity: root.sticker ? Theme.shadowOpacity : 0.6
-        shadowVerticalOffset: root.sticker ? Theme.shadowSpread : 2
-        shadowColor: Theme.island
+    // The layer holds the ground and the face and nothing else, grown by
+    // `reach` on every side: a layer is clipped to its item, and the arranging
+    // outline, badge and handle sit outside the widget, as do the corners of
+    // a tilted sticker.
+    Item {
+        id: body
+
+        readonly property int reach: Theme.shadowRange
+
+        anchors.fill: parent
+        anchors.margins: -reach
+        layer.enabled: root.sticker ? SettingsService.widgetShadow
+            : root.onPicture && root.moduleId !== "spectrum"
+        layer.effect: MultiEffect {
+            shadowEnabled: true
+            shadowBlur: 1
+            blurMax: root.sticker ? Theme.shadowRange : 32
+            shadowOpacity: root.sticker ? Theme.shadowOpacity : 0.6
+            shadowVerticalOffset: root.sticker ? Theme.shadowSpread : 2
+            shadowColor: Theme.island
+        }
+
+        Item {
+            x: body.reach
+            y: body.reach
+            width: root.width
+            height: root.height
+
+            // The desk's ground (`Theme.deskStyle`, the bar's unless set apart):
+            // solid black at the widget's opacity, or glass with its rim and edge. The border
+            // keeps its own alpha, so a translucent capsule still has an edge.
+            Rectangle {
+                id: capsule
+
+                anchors.fill: parent
+                visible: !root.onPicture
+                radius: Theme.desktopRadius
+                color: Theme.deskSolid
+                    ? Qt.rgba(root.ink.ground.r, root.ink.ground.g, root.ink.ground.b, root.solidity)
+                    : Theme.groundOf(Theme.deskStyle)
+                border.color: Theme.deskSolid ? root.ink.border : Theme.rimOf(Theme.deskStyle)
+                border.width: 1
+
+                Behavior on color { ColorAnimation { duration: Theme.durationMedium } }
+            }
+
+            GlassSheen {
+                shape: capsule
+                visible: Theme.deskGlass && !root.onPicture
+            }
+
+            // Disabled while arranging so dragging does not press buttons. `enabled`
+            // rather than an overlay item, which would take the drag as well.
+            Face {
+                anchors.fill: parent
+                moduleId: root.moduleId
+                family: root.family
+                theme: DesktopService.themeOf(root.row)
+                ink: root.ink
+                row: root.row
+                enabled: !root.editing
+            }
+        }
     }
 
     // ── ARRANGING ───────────────────────────────────────────────────────────

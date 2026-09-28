@@ -96,17 +96,25 @@ def window(limit, observed):
             "used": used / 100, "resets": int(resets)}
 
 
+def modified(path):
+    """A log's mtime, or 0 for one rotated away since it was listed."""
+    try:
+        return path.stat().st_mtime
+    except OSError:
+        return 0
+
+
 def main():
     if not SESSIONS.is_dir():
         fail()
     logs = sorted(SESSIONS.rglob("rollout-*.jsonl"),
-                  key=lambda path: path.stat().st_mtime, reverse=True)[:NEWEST]
+                  key=modified, reverse=True)[:NEWEST]
     for path in logs:
         found = last_record(path)
         if found is None:
             continue
         record, limits = found
-        observed = parse_timestamp(record.get("timestamp") or "") or int(path.stat().st_mtime)
+        observed = parse_timestamp(record.get("timestamp") or "") or int(modified(path))
         windows = [window(limits.get(key), observed) for key in ("primary", "secondary")]
         plan = limits.get("plan_type") or ""
         print(json.dumps({

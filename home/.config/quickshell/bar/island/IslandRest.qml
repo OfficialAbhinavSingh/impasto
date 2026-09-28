@@ -99,9 +99,12 @@ Item {
                 sourceComponent: segment.marks[segment.activityId] ?? null
             }
 
+            // Sharing the island, the privacy mark is its glyphs alone: a
+            // side of two activities has no room for a program's name.
             Loader {
                 anchors.verticalCenter: parent.verticalCenter
                 active: segment.part !== "mark" && segment.activityId !== ""
+                    && !(segment.activityId === "privacy" && segment.part === "both")
                 visible: active
                 sourceComponent: segment.figures[segment.activityId] ?? null
             }
@@ -325,6 +328,7 @@ Item {
                 }
 
                 property int was: 0
+                property string settled: ""
                 property string leaving: ""
                 property real travel: 0
 
@@ -335,14 +339,18 @@ Item {
 
                 onNumberChanged: {
                     const forward = shown.number > shown.was
-                    shown.leaving = incoming.text
+                    shown.leaving = shown.settled
+                    shown.settled = shown.label
                     shown.was = shown.number
                     slide.stop()
                     shown.travel = forward ? 1 : -1
                     slide.start()
                 }
 
-                Component.onCompleted: shown.was = shown.number
+                Component.onCompleted: {
+                    shown.was = shown.number
+                    shown.settled = shown.label
+                }
 
                 NumberAnimation {
                     id: slide

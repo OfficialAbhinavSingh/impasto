@@ -101,7 +101,9 @@ QtObject {
                 root.currentProcess.running = true
             } else {
                 console.warn("Could not apply wallpaper:", root.asked)
+                // `apply` named it already: read back what is really up
                 root.asked = ""
+                root.currentProcess.running = true
             }
         }
     }
