@@ -44,6 +44,7 @@ Singleton {
     readonly property alias desktopTheme: config.desktopTheme
     readonly property alias desktopOpacity: config.desktopOpacity
     readonly property alias centreButtons: config.centreButtons
+    readonly property alias centreTop: config.centreTop
     readonly property alias centreBlocks: config.centreBlocks
     readonly property alias centreColumns: config.centreColumns
     readonly property alias centreRows: config.centreRows
@@ -676,10 +677,14 @@ Singleton {
 
         // ── CONTROL CENTRE ──────────────────────────────────────────────
         //
-        // The shortcuts block's buttons, ids from `ControlsService.doors`.
-        // Null means the service default, so buttons added later still
-        // appear; [] means none.
+        // The top row's doors before `centreTop`, ids from
+        // `ControlsService.doors`; read only as that row's default.
         property var centreButtons: null
+
+        // The top row: `{ left, right }`, session action and door ids in
+        // order. Null is the session's actions left and the doors above
+        // right; two empty sides are no row at all.
+        property var centreTop: null
 
         // The grid's columns and rows; 0 is the default the default layout
         // fills.

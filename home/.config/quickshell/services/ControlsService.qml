@@ -19,8 +19,8 @@ import "../theme"
 // the settings page read it.
 //
 // The session's actions and the shortcuts ("doors", each opening another
-// island panel or the settings) are blocks like the rest, so a centre without
-// them has no row for them either.
+// island panel or the settings) are small buttons in a top row chosen in the
+// settings, and blocks on the grid as well.
 //
 // The grid is `columns` × `rows` cells, chosen in the settings up to
 // `Theme.centreColumns` × `Theme.centreRows`. Blocks span
@@ -79,7 +79,8 @@ Singleton {
         return value !== null && value !== undefined && typeof value.length === "number"
     }
 
-    // The default doors of a shortcuts block. Unknown ids are skipped.
+    // The doors the top row had before it was chosen whole (`centreTop`).
+    // Unknown ids are skipped.
     readonly property var buttons: {
         const kept = SettingsService.centreButtons
         const list = root.stored(kept) ? kept : root.defaultButtons
@@ -90,12 +91,58 @@ Singleton {
         return root.doors.find(entry => entry.id === id) ?? null
     }
 
+    // ── TOP ROW ─────────────────────────────────────────────────────────────
+    //
+    // Small buttons over the grid, on a left and a right side, each arranged
+    // by dragging (`TopRowEditor`, in the settings and while arranging):
+    // `centreTop` is `{ left, right }`, lists of session action and door ids.
+    // Null is the session's actions on the left and the doors the row had
+    // (`buttons`) on the right; both empty takes the row away, space and all.
+    readonly property var topCatalogue: SessionService.actions
+        .map(action => Object.assign({ session: true }, action))
+        .concat(root.doors.map(door => Object.assign({ session: false }, door)))
+
+    function topEntry(id: string): var {
+        return root.topCatalogue.find(entry => entry.id === id) ?? null
+    }
+
+    readonly property var topSides: {
+        const kept = SettingsService.centreTop
+        const clean = list => (root.stored(list) ? Array.from(list) : [])
+            .filter(id => root.topEntry(id) !== null)
+        if (kept && root.stored(kept.left) && root.stored(kept.right))
+            return { left: clean(kept.left), right: clean(kept.right) }
+        return {
+            left: SessionService.actions.map(action => action.id),
+            right: clean(root.buttons)
+        }
+    }
+
+    readonly property var topLeft: root.topSides.left.map(id => root.topEntry(id))
+    readonly property var topRight: root.topSides.right.map(id => root.topEntry(id))
+    readonly property bool hasTop: root.topLeft.length + root.topRight.length > 0
+
+    // Those on neither side, for the editor's tray.
+    readonly property var topSpare: root.topCatalogue.filter(entry =>
+        root.topSides.left.indexOf(entry.id) < 0 && root.topSides.right.indexOf(entry.id) < 0)
+
+    // Takes `id` off wherever it is and puts it on `side` ("left", "right",
+    // or "" for off the row) at `index`.
+    function placeTop(id: string, side: string, index: int): void {
+        const left = root.topSides.left.filter(other => other !== id)
+        const right = root.topSides.right.filter(other => other !== id)
+        const target = side === "left" ? left : side === "right" ? right : null
+        if (target)
+            target.splice(Math.max(0, Math.min(index, target.length)), 0, id)
+        SettingsService.set("centreTop", { left: left, right: right })
+    }
+
     // Doors for one shortcuts block, from its own `doors` field (set in the
-    // inspector), else the legacy `centreButtons`, else the defaults.
+    // inspector), else the defaults.
     function doorKeysOf(key: string): var {
         const block = root.entryOf(key)
         const own = block ? block.doors : undefined
-        const list = root.stored(own) ? Array.from(own) : root.buttons
+        const list = root.stored(own) ? Array.from(own) : root.defaultButtons
         return list.filter(id => root.door(id) !== null)
     }
 
@@ -461,8 +508,13 @@ Singleton {
     readonly property int boardHeight:
         root.rows * Theme.centreCellHeight + (root.rows - 1) * Theme.centreGutter
 
+    // The top row and the gap under it, when it has anything.
+    readonly property int rowHeight: 28
+    readonly property int rowGap: 14
+
     readonly property int panelWidth: root.boardWidth + 2 * Theme.panelPadding
     readonly property int panelHeight: root.boardHeight + 2 * Theme.panelPadding
+        + (root.hasTop ? root.rowHeight + root.rowGap : 0)
 
     function offsetX(col: int): real {
         return col * Theme.centreStrideX

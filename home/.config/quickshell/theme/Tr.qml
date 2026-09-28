@@ -422,6 +422,12 @@ QtObject {
             "Classic": "Clásico",
             "Frosted": "Esmerilado",
             "Arrange the control centre": "Colocar el centro de control",
+            "The top row": "La fila de arriba",
+            "Small buttons over the grid, on either side. With none, there is no row.":
+                "Botones pequeños sobre la cuadrícula, a cualquiera de los dos lados. Sin ninguno, no hay fila.",
+            "Drag a button onto either side; drag it back here to take it off.":
+                "Arrastra un botón a cualquiera de los lados; devuélvelo aquí para quitarlo.",
+            "Every button is on the row": "Todos los botones están en la fila",
             "Default layout": "Disposición inicial",
             "Shortcuts": "Atajos",
 

@@ -613,14 +613,38 @@ PanelWindow {
             anchors.fill: parent
             z: 3
 
-            // The grid's size first, right under the island, then the card.
+            // Right under the island, the grid's size and the top row's
+            // editor, then the card of blocks.
             Loader {
-                id: gridSize
+                id: arranging
 
                 x: (parent.width - width) / 2
                 y: root.islandTopMargin + island.height + Theme.desktopGutter
                 active: root.live && ControlsService.editing
-                sourceComponent: GridSize {}
+                sourceComponent: Column {
+                    spacing: Theme.centreGutter
+
+                    GridSize {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+
+                    Rectangle {
+                        width: 560
+                        height: topRow.implicitHeight + 2 * 14
+                        radius: Theme.radiusLarge
+                        color: Theme.island
+                        border.color: Theme.islandBorder
+                        border.width: 1
+
+                        TopRowEditor {
+                            id: topRow
+
+                            x: 14
+                            y: 14
+                            width: parent.width - 28
+                        }
+                    }
+                }
             }
 
             Loader {
@@ -628,7 +652,7 @@ PanelWindow {
                 active: root.live && ControlsService.editing
                 sourceComponent: ControlsTray {
                     host: overlay
-                    homeTop: gridSize.y + (gridSize.item ? gridSize.item.height : 0)
+                    homeTop: arranging.y + (arranging.item ? arranging.item.height : 0)
                         + Theme.desktopGutter
                 }
             }

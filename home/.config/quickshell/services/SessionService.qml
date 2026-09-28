@@ -15,8 +15,8 @@ import Quickshell.Io
 import Quickshell.Hyprland
 
 // Session actions as data, rendered from one list. `destructive` marks the
-// ones that end the session; the session block (`ButtonsBlock`) asks for
-// confirmation, not this service.
+// ones that end the session; the session block (`ButtonsBlock`) and the top
+// row (`TopButtons`) ask for confirmation, not this service.
 Singleton {
     id: root
 

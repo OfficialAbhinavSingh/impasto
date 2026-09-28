@@ -13,11 +13,12 @@ import Quickshell
 
 import "../../theme"
 import "../../services"
+import "../../components"
 import "./controls"
 
-// The control centre: a grid of blocks (`ControlsService.blocks`) that the
-// user arranges like desktop widgets, on a grid of the size chosen in the
-// settings.
+// The control centre: a row of small buttons, when any are chosen, over a
+// grid of blocks (`ControlsService.blocks`) that the user arranges like
+// desktop widgets.
 //
 // Right-click the background to arrange: drag blocks from the tray
 // (`ControlsTray`, hung under the island by the bar) onto a cell, pull a
@@ -33,6 +34,8 @@ ColumnLayout {
     signal settingsRequested()
 
     readonly property bool editing: ControlsService.editing
+
+    spacing: ControlsService.rowGap
 
     // Escape leaves arranging first; otherwise it reaches the island, which
     // closes.
@@ -51,6 +54,41 @@ ColumnLayout {
     Component.onDestruction: {
         ControlsService.edit(false)
         ControlsService.board = null
+    }
+
+    // ── TOP ROW ─────────────────────────────────────────────────────────────
+    //
+    // Two sides, arranged in the settings or while arranging
+    // (`ControlsService.topSides`); with both empty it is not laid out, and
+    // the panel is that much shorter.
+
+    RowLayout {
+        visible: ControlsService.hasTop
+        Layout.fillWidth: true
+        // A Layout nested in a Layout fills by default; without this it takes
+        // the grid's height.
+        Layout.fillHeight: false
+        Layout.preferredHeight: ControlsService.rowHeight
+        spacing: 12
+
+        TopButtons {
+            entries: ControlsService.topLeft
+            onRan: root.closed()
+            onPanelRequested: panel => root.panelRequested(panel)
+            onSettingsRequested: root.settingsRequested()
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
+        TopButtons {
+            entries: ControlsService.topRight
+            onRan: root.closed()
+            onPanelRequested: panel => root.panelRequested(panel)
+            onSettingsRequested: root.settingsRequested()
+        }
     }
 
     // ── GRID ────────────────────────────────────────────────────────────────

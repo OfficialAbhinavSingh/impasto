@@ -80,6 +80,7 @@ PetShelf         1.0 components/PetShelf.qml
 UsageBar         1.0 components/UsageBar.qml
 Figure           1.0 components/Figure.qml
 ModuleCard       1.0 components/ModuleCard.qml
+TopRowEditor     1.0 components/TopRowEditor.qml
 GlassSheen       1.0 components/GlassSheen.qml
 CardLimit        1.0 components/CardLimit.qml
 CardFact         1.0 components/CardFact.qml
@@ -187,6 +188,7 @@ GameBoard        1.0 bar/island/games/GameBoard.qml
 NotificationList 1.0 bar/island/controls/NotificationList.qml
 AppearanceCard   1.0 bar/island/controls/AppearanceCard.qml
 WeatherCard      1.0 bar/island/controls/WeatherCard.qml
+TopButtons       1.0 bar/island/controls/TopButtons.qml
 ButtonsBlock     1.0 bar/island/controls/ButtonsBlock.qml
 GridSize         1.0 bar/island/controls/GridSize.qml
 Block            1.0 bar/island/controls/Block.qml

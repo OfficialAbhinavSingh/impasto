@@ -1,7 +1,7 @@
 // ╭──────────────────────────────────────────────────────────────────────────╮
 // │                                                                          │
 // │   C O N T R O L S   S E C T I O N                                        │
-// │   control centre · the size of its grid, and arranging it                │
+// │   control centre · its grid, and the buttons over it                     │
 // │                                                                          │
 // │   github.com/andreumassanet/impasto                                      │
 // │                                                                          │
@@ -14,9 +14,10 @@ import "../theme"
 import "../services"
 import "../components"
 
-// The control centre's grid: its size (also under the island while
-// arranging), the way into arranging it, and back to its default. A toggles
-// or shortcuts block picks what it carries in `BlockInspector`.
+// The control centre: its grid's size (also under the island while
+// arranging), the way into arranging it and back to its default, and the
+// buttons of its top row. A toggles or shortcuts block picks what it carries
+// in `BlockInspector`.
 SettingsSection {
     id: root
 
@@ -71,6 +72,19 @@ SettingsSection {
                         root.arranging()
                     }
                 }
+            }
+        }
+    }
+
+    // ── THE TOP ROW ─────────────────────────────────────────────────────────
+
+    SettingGroup {
+        title: Tr.t("The top row")
+        note: Tr.t("Small buttons over the grid, on either side. With none, there is no row.")
+
+        SettingBlock {
+            TopRowEditor {
+                Layout.fillWidth: true
             }
         }
     }
