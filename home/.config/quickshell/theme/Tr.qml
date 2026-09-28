@@ -471,10 +471,10 @@ QtObject {
             "Show the dock": "Mostrar el dock",
             "Edge": "Borde",
             "Alignment": "Alineación",
-            "Everything on the dock scales with the icon size.":
-                "Todo el dock escala con el tamaño de los iconos.",
-            "Background sets how opaque the capsule behind the icons is; lower it to let the blurred wallpaper through.":
-                "Fondo fija la opacidad de la cápsula tras los iconos; bájalo para que se vea el fondo desenfocado.",
+            "Background sets how opaque the classic capsule is; lower it to let the blurred wallpaper through.":
+                "Fondo fija la opacidad de la cápsula clásica; bájalo para que se vea el fondo desenfocado.",
+            "The capsule's ground, and the icon size everything on the dock scales with.":
+                "El fondo de la cápsula, y el tamaño de icono con el que escala todo el dock.",
             "Icon size": "Tamaño de icono",
             "Behaviour": "Comportamiento",
             "What else the dock shows, and which screens it is on.":

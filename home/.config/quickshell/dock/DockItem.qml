@@ -107,7 +107,7 @@ Item {
             anchors.fill: parent
             anchors.margins: -3
             radius: Theme.radiusMedium
-            color: Theme.islandSurfaceHover
+            color: Theme.veilHoverOf(Theme.dockStyle)
             opacity: root.hovered || root.held ? 1 : 0
             visible: opacity > 0
 

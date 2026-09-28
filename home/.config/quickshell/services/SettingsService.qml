@@ -55,6 +55,7 @@ Singleton {
     readonly property alias dockAlignment: config.dockAlignment
     readonly property alias dockIconSize: config.dockIconSize
     readonly property alias dockOpacity: config.dockOpacity
+    readonly property alias dockGround: config.dockGround
     readonly property alias dockRunning: config.dockRunning
     readonly property alias dockEverywhere: config.dockEverywhere
     readonly property alias dockAutohide: config.dockAutohide
@@ -428,7 +429,7 @@ Singleton {
         onLoaded: {
             root.arrived = true
             // A ground named "frosted" is read as glass.
-            for (const key of ["surfaceStyle", "desktopGround"])
+            for (const key of ["surfaceStyle", "desktopGround", "dockGround"])
                 if (config[key] === "frosted")
                     config[key] = "glass"
         }
@@ -742,6 +743,9 @@ Singleton {
 
         // Percent; the compositor blurs behind the layer.
         property int dockOpacity: 100
+
+        // The capsule's ground, as `surfaceStyle`, or "" for the bar's.
+        property string dockGround: ""
 
         // Also show running applications that aren't pinned.
         property bool dockRunning: true

@@ -63,11 +63,16 @@ QtObject {
     readonly property bool deskSolid: root.deskStyle !== "glass"
     readonly property bool deskGlass: root.deskStyle === "glass"
 
+    // The dock's, the same way (`SettingsService.dockGround`).
+    readonly property string dockStyle: SettingsService.dockGround || root.surfaceStyle
+    readonly property bool dockSolid: root.dockStyle !== "glass"
+    readonly property bool dockGlass: root.dockStyle === "glass"
+
     // The same three on glass: white veils, by style. Only the bar's and the
     // desk's windows are glass, each in its own style (a `glassy` window
-    // with a `groundStyle`); everything else — the settings, the lock, the
-    // dock — stays black, so a part drawn in both asks by its window
-    // (`surfaceIn`).
+    // with a `groundStyle`), and the dock, which asks `dockStyle` directly;
+    // everything else — the settings, the lock — stays black, so a part
+    // drawn in both asks by its window (`surfaceIn`).
     function veilOf(style: string): color {
         return style === "glass" ? Qt.rgba(1, 1, 1, 0.08) : root.islandSurface
     }

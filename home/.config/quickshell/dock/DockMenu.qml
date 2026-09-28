@@ -13,6 +13,7 @@ import Quickshell
 
 import "../theme"
 import "../services"
+import "../components"
 
 // Right-click menu for a dock icon: the application's windows by title, with
 // the focused one marked and each one's workspace, then the application's own
@@ -75,12 +76,20 @@ Item {
     width: implicitWidth
     height: implicitHeight
 
+    // The dock's ground.
     Rectangle {
+        id: ground
+
         anchors.fill: parent
         radius: Theme.radiusMedium
-        color: Theme.island
-        border.color: Theme.islandBorder
+        color: Theme.groundOf(Theme.dockStyle)
+        border.color: Theme.rimOf(Theme.dockStyle)
         border.width: 1
+
+        GlassSheen {
+            shape: ground
+            visible: Theme.dockGlass
+        }
     }
 
     ColumnLayout {
@@ -106,7 +115,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Theme.dockMenuRow
                 radius: Theme.radiusSmall
-                color: windowMouse.containsMouse ? Theme.islandSurfaceHover : "transparent"
+                color: windowMouse.containsMouse ? Theme.veilHoverOf(Theme.dockStyle) : "transparent"
 
                 Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 
@@ -183,7 +192,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Theme.dockMenuRow
                 radius: Theme.radiusSmall
-                color: actionMouse.containsMouse ? Theme.islandSurfaceHover : "transparent"
+                color: actionMouse.containsMouse ? Theme.veilHoverOf(Theme.dockStyle) : "transparent"
 
                 Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 
