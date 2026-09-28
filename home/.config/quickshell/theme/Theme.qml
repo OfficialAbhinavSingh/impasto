@@ -115,6 +115,8 @@ QtObject {
     // rim, and falling from the top edge.
     readonly property real glassEdge: 0.12
     readonly property color glassSheen: Qt.rgba(1, 1, 1, 0.10)
+    // How far down the shape that light reaches, as a fraction of its height.
+    readonly property real glassSheenReach: 0.35
 
     // ── SEMANTIC COLOURS ────────────────────────────────────────────────────
 

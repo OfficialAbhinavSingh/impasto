@@ -19,6 +19,9 @@ Item {
     id: root
 
     required property Item shape
+    // Off where the ground runs on past its own rectangle (the attached
+    // notch), whose edge follows the fillets instead (`NotchOutline`).
+    property bool edges: true
 
     anchors.fill: parent
     visible: Theme.glass
@@ -48,12 +51,17 @@ Item {
         bottomRightRadius: root.shape.bottomRightRadius
         gradient: Gradient {
             GradientStop { position: 0; color: Theme.glassSheen }
-            GradientStop { position: 0.35; color: "transparent" }
+            GradientStop { position: Theme.glassSheenReach; color: "transparent" }
         }
     }
 
-    Band { inset: 1; strength: 1 }
-    Band { inset: 2; strength: 0.6 }
-    Band { inset: 3; strength: 0.35 }
-    Band { inset: 4; strength: 0.15 }
+    Item {
+        anchors.fill: parent
+        visible: root.edges
+
+        Band { inset: 1; strength: 1 }
+        Band { inset: 2; strength: 0.6 }
+        Band { inset: 3; strength: 0.35 }
+        Band { inset: 4; strength: 0.15 }
+    }
 }

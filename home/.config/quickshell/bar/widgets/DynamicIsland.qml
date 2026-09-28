@@ -203,6 +203,7 @@ Rectangle {
     GlassSheen {
         shape: root
         visible: Theme.glass && !root.paper && !root.hosted
+        edges: !SettingsService.islandAttached
     }
 
     IslandState {

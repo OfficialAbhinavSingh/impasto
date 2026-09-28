@@ -26,11 +26,18 @@ Item {
     // The shape's lower corners.
     property real radius: 0
     property color color: Theme.borderIn(QsWindow.window)
+    // How far inside the rim the stroke runs, for the glass's thick edge.
+    property int inset: 0
 
     // The fillet's radius: NotchFillet's square is its diameter wide.
     readonly property real fillet: Theme.radiusNotch * 2
     readonly property real r: Math.max(0, Math.min(root.radius,
         (root.shapeRight - root.shapeLeft) / 2, root.shapeHeight - root.fillet))
+
+    // The stroke's centre inside the shape's edge, and the lower corners'
+    // radius there; the fillets' arcs grow by as much as the corners shrink.
+    readonly property real d: root.inset + 0.5
+    readonly property real ri: Math.max(0, root.r - root.d)
 
     anchors.fill: parent
 
@@ -45,36 +52,36 @@ Item {
             capStyle: ShapePath.FlatCap
 
             startX: root.shapeLeft - root.fillet
-            startY: -0.5
+            startY: -root.d
 
             PathArc {
-                x: root.shapeLeft + 0.5
+                x: root.shapeLeft + root.d
                 y: root.fillet
-                radiusX: root.fillet + 0.5
-                radiusY: root.fillet + 0.5
+                radiusX: root.fillet + root.d
+                radiusY: root.fillet + root.d
             }
-            PathLine { x: root.shapeLeft + 0.5; y: root.shapeHeight - root.r }
+            PathLine { x: root.shapeLeft + root.d; y: root.shapeHeight - root.r }
             PathArc {
                 x: root.shapeLeft + root.r
-                y: root.shapeHeight - 0.5
-                radiusX: Math.max(0, root.r - 0.5)
-                radiusY: Math.max(0, root.r - 0.5)
+                y: root.shapeHeight - root.d
+                radiusX: root.ri
+                radiusY: root.ri
                 direction: PathArc.Counterclockwise
             }
-            PathLine { x: root.shapeRight - root.r; y: root.shapeHeight - 0.5 }
+            PathLine { x: root.shapeRight - root.r; y: root.shapeHeight - root.d }
             PathArc {
-                x: root.shapeRight - 0.5
+                x: root.shapeRight - root.d
                 y: root.shapeHeight - root.r
-                radiusX: Math.max(0, root.r - 0.5)
-                radiusY: Math.max(0, root.r - 0.5)
+                radiusX: root.ri
+                radiusY: root.ri
                 direction: PathArc.Counterclockwise
             }
-            PathLine { x: root.shapeRight - 0.5; y: root.fillet }
+            PathLine { x: root.shapeRight - root.d; y: root.fillet }
             PathArc {
                 x: root.shapeRight + root.fillet
-                y: -0.5
-                radiusX: root.fillet + 0.5
-                radiusY: root.fillet + 0.5
+                y: -root.d
+                radiusX: root.fillet + root.d
+                radiusY: root.fillet + root.d
             }
         }
     }

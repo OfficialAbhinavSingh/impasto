@@ -165,6 +165,11 @@ PanelWindow {
     // sides stay capsules, centred on `laneY`.
     readonly property int islandTopMargin: SettingsService.islandAttached ? 0 : Theme.barTopMargin
 
+    // How far the glass's light from the top reaches down the notch
+    // (`GlassSheen`), for the fillets that carry it on.
+    readonly property real notchSheen: Theme.glass && !island.paper
+        ? Theme.glassSheenReach * (root.unified ? band.height : island.height) : 0
+
     // The line everything on the bar is centred on. Attached, the island
     // reaches the screen edge, so its centre is half a margin higher and the
     // sides move up to match.
@@ -559,6 +564,7 @@ PanelWindow {
                 GlassSheen {
                     shape: band
                     visible: Theme.glass && !island.paper
+                    edges: !SettingsService.islandAttached
                 }
 
                 // Clicking the band opens the island. The sides sit above it and
@@ -650,6 +656,7 @@ PanelWindow {
             visible: SettingsService.islandAttached
             mirrored: true
             color: island.surfaceColor
+            sheenReach: root.notchSheen
         }
 
         NotchFillet {
@@ -659,6 +666,26 @@ PanelWindow {
             anchors.top: parent.top
             visible: SettingsService.islandAttached
             color: island.surfaceColor
+            sheenReach: root.notchSheen
+        }
+
+        // On glass, attached, the island and its fillets are one pane: the
+        // light from the top runs on into the fillets, and the thick edge
+        // follows the outline below rather than the island's own rectangle.
+        Repeater {
+            model: SettingsService.islandAttached && Theme.glass && !island.paper
+                ? [[1, 1], [2, 0.6], [3, 0.35], [4, 0.15]] : []
+
+            NotchOutline {
+                required property var modelData
+
+                inset: modelData[0]
+                shapeLeft: root.shapeLeft
+                shapeRight: root.shapeRight
+                shapeHeight: root.unified ? band.height : island.height
+                radius: island.radius
+                color: Qt.rgba(1, 1, 1, Theme.glassEdge * modelData[1])
+            }
         }
 
         // Attached, the hairline runs down the fillets and round the shape, and
