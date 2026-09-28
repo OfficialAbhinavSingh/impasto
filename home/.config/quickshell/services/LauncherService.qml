@@ -87,18 +87,29 @@ QtObject {
     readonly property int stripHeight: 30
     readonly property bool showsStrip: root.modeFor(root.query).id === "emoji"
 
+    // The emoji mode is a grid of glyphs rather than rows: square cells, as
+    // many to a line as the panel holds.
+    readonly property int emojiCell: 52
+    readonly property int emojiColumns:
+        Math.floor((root.panelWidth - 2 * Theme.panelPadding) / root.emojiCell)
+
     // Field, divider, and the gap on either side of the divider, plus the
     // strip and its gap when it shows.
     readonly property int chromeHeight: root.fieldHeight + 2 * root.gap + 1
         + (root.showsStrip ? root.stripHeight + root.gap : 0)
 
-    // At least one row, for the "no results" line.
-    readonly property int rows:
-        Math.max(1, Math.min(root.results.length, root.maxResults))
+    // At least one row, for the "no results" line. The grid counts lines of
+    // glyphs, capped at the same number as a list of rows.
+    readonly property int rows: root.showsStrip
+        ? Math.max(1, Math.min(Math.ceil(root.results.length / root.emojiColumns),
+                               root.maxResults))
+        : Math.max(1, Math.min(root.results.length, root.maxResults))
 
     function heightFor(rows: int): int {
-        return root.chromeHeight + rows * root.rowHeight
-            + (rows - 1) * root.rowSpacing + 2 * Theme.panelPadding
+        const list = root.showsStrip
+            ? rows * root.emojiCell
+            : rows * root.rowHeight + (rows - 1) * root.rowSpacing
+        return root.chromeHeight + list + 2 * Theme.panelPadding
     }
 
     readonly property int panelWidth: 560
@@ -359,9 +370,9 @@ QtObject {
     }
 
     // Recent picks first when the term is empty; the glyph, in the chosen
-    // skin tone, is the row's mark and the name its only text. Not cut to
+    // skin tone, is the whole cell, and the name is only searched. Not cut to
     // `maxResults`: a group is browsed as much as searched, and the list only
-    // builds the rows in view.
+    // builds the cells in view.
     function emoji(term: string): var {
         return EmojiService.search(term).map(item => ({
             kind: "emoji", id: item.glyph, icon: "", item: item,

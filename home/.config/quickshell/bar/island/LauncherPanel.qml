@@ -27,6 +27,10 @@ ColumnLayout {
     readonly property var results: LauncherService.results
     readonly property var mode: LauncherService.modeFor(LauncherService.query)
 
+    // Emoji are a grid of glyphs; every other mode is a list of rows.
+    readonly property bool grid: root.mode.id === "emoji"
+    readonly property var view: root.grid ? emojiGrid : resultList
+
     // Loaded here rather than from the search, which runs inside a binding.
     onModeChanged: {
         if (root.mode.id === "emoji")
@@ -64,11 +68,20 @@ ColumnLayout {
         EmojiService.group = ""
     }
 
-    // Wraps around at both ends.
+    // The list wraps around at both ends. The grid stops at its edges, since
+    // a line wrapped to the other end would land in a different column.
     function move(delta: int): void {
         const count = root.results.length
         if (count === 0)
             return
+        if (root.grid) {
+            const next = emojiGrid.currentIndex + delta
+            if (next < 0 || next >= count)
+                return
+            emojiGrid.currentIndex = next
+            emojiGrid.positionViewAtIndex(next, GridView.Contain)
+            return
+        }
         resultList.currentIndex = (resultList.currentIndex + delta + count) % count
         resultList.positionViewAtIndex(resultList.currentIndex, ListView.Contain)
     }
@@ -106,7 +119,7 @@ ColumnLayout {
     }
 
     function activateSelected(): void {
-        root.run(root.results[resultList.currentIndex])
+        root.run(root.results[root.view.currentIndex])
     }
 
     // Only clipboard entries can be forgotten: they are recorded without being
@@ -115,7 +128,7 @@ ColumnLayout {
     function forgetSelected(): void {
         if (root.mode.id !== "clipboard")
             return
-        const entry = root.results[resultList.currentIndex]
+        const entry = root.results[root.view.currentIndex]
         if (entry)
             ClipboardService.forget(entry.id)
     }
@@ -155,8 +168,20 @@ ColumnLayout {
             onTextEdited: LauncherService.query = text
             Keys.onReturnPressed: root.activateSelected()
             Keys.onEnterPressed: root.activateSelected()
-            Keys.onUpPressed: root.move(-1)
-            Keys.onDownPressed: root.move(1)
+            Keys.onUpPressed: root.move(root.grid ? -LauncherService.emojiColumns : -1)
+            Keys.onDownPressed: root.move(root.grid ? LauncherService.emojiColumns : 1)
+            // In the grid the arrows move along a line; the field is a search
+            // term, rarely edited in the middle.
+            Keys.onLeftPressed: event => {
+                event.accepted = root.grid
+                if (root.grid)
+                    root.move(-1)
+            }
+            Keys.onRightPressed: event => {
+                event.accepted = root.grid
+                if (root.grid)
+                    root.move(1)
+            }
             // Tab steps through the emoji groups; elsewhere it does nothing.
             Keys.onTabPressed: {
                 if (root.mode.id === "emoji")
@@ -285,15 +310,71 @@ ColumnLayout {
         color: Theme.textMuted
     }
 
+    // ── EMOJI ───────────────────────────────────────────────────────────────
+    //
+    // The glyphs alone, as many to a line as fit; the name is only searched.
+    GridView {
+        id: emojiGrid
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        visible: root.grid
+        clip: true
+        cellWidth: LauncherService.emojiCell
+        cellHeight: LauncherService.emojiCell
+        model: ScriptModel {
+            values: root.grid ? root.results : []
+
+            onValuesChanged: {
+                emojiGrid.currentIndex = 0
+                emojiGrid.positionViewAtBeginning()
+            }
+        }
+        boundsBehavior: Flickable.StopAtBounds
+        currentIndex: 0
+
+        delegate: Rectangle {
+            id: cell
+
+            required property var modelData
+            required property int index
+
+            readonly property bool selected: GridView.view.currentIndex === cell.index
+
+            width: LauncherService.emojiCell
+            height: LauncherService.emojiCell
+            radius: Theme.radiusSmall
+            color: cell.selected ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
+
+            Behavior on color { ColorAnimation { duration: Theme.durationFast } }
+
+            Text {
+                anchors.centerIn: parent
+                text: cell.modelData.glyph
+                font.family: Theme.fontFamily
+                font.pixelSize: 28
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onPositionChanged: cell.GridView.view.currentIndex = cell.index
+                onClicked: root.run(cell.modelData)
+            }
+        }
+    }
+
     ListView {
         id: resultList
 
         Layout.fillWidth: true
         Layout.fillHeight: true
+        visible: !root.grid
         clip: true
         spacing: LauncherService.rowSpacing
         model: ScriptModel {
-            values: root.results
+            values: root.grid ? [] : root.results
 
             // Back to the top once the rows have landed, not when the list
             // changes: a row inserted above the selection would shift it.
