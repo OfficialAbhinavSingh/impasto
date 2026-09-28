@@ -63,7 +63,10 @@ Item {
         root.catalogueIds.map(id => ({ id: id, shape: "", figure: "", when: "" }))
 
     readonly property string barStyle: SettingsService.barStyle
-    readonly property bool chromeless: root.barStyle === "island"
+    readonly property bool unified: root.barStyle === "island"
+    // No capsules round the sides: in one capsule the band is their ground,
+    // and bare they sit on the wallpaper.
+    readonly property bool chromeless: root.unified || SettingsService.barSides === "bare"
 
     readonly property int tileHeight: Theme.capsuleHeight + 4
     readonly property int street: 8
@@ -303,7 +306,7 @@ Item {
                 readonly property real islandWidth: ModuleService.entry("clock").width
                 readonly property real reach: Math.max(leftSide.implicitWidth, rightSide.implicitWidth)
                 readonly property real half: scene.islandWidth / 2 + Theme.capsuleSpacing
-                    + scene.reach + root.sceneMargin + (root.chromeless ? root.bandPad : 0)
+                    + scene.reach + root.sceneMargin + (root.unified ? root.bandPad : 0)
                 readonly property real natural: 2 * scene.half
 
                 width: Math.max(stage.width, scene.natural)
@@ -316,16 +319,20 @@ Item {
 
                 // Single-capsule style: one band, sides at its ends.
                 Rectangle {
-                    visible: root.chromeless
+                    id: band
+
+                    visible: root.unified
                     readonly property real reach: scene.islandWidth / 2 + Theme.capsuleSpacing
                         + scene.reach + root.bandPad
                     x: scene.middle - reach
                     width: 2 * reach
                     height: Theme.capsuleHeight
                     radius: height / 2
-                    color: Theme.island
-                    border.color: Theme.islandBorder
+                    color: Theme.islandGround
+                    border.color: Theme.islandRim
                     border.width: 1
+
+                    GlassSheen { shape: band }
                 }
 
                 Side {
@@ -335,7 +342,7 @@ Item {
                     x: {
                         if (root.barStyle === "spread")
                             return root.sceneMargin
-                        if (root.chromeless)
+                        if (root.unified)
                             return scene.middle - scene.islandWidth / 2 - Theme.capsuleSpacing
                                 - scene.reach
                         return scene.middle - scene.islandWidth / 2 - Theme.capsuleSpacing
@@ -345,13 +352,21 @@ Item {
 
                 // The island at rest, with the real time on it.
                 Rectangle {
+                    id: clockIsland
+
                     x: scene.middle - scene.islandWidth / 2
                     width: scene.islandWidth
                     height: Theme.capsuleHeight
                     radius: height / 2
-                    color: Theme.island
-                    border.color: Theme.islandBorder
-                    border.width: root.chromeless ? 0 : 1
+                    // On glass the band is the ground and would double it.
+                    color: root.unified && Theme.glass ? "transparent" : Theme.islandGround
+                    border.color: Theme.islandRim
+                    border.width: root.unified ? 0 : 1
+
+                    GlassSheen {
+                        shape: clockIsland
+                        visible: Theme.glass && !root.unified
+                    }
 
                     ClockModule {
                         anchors.fill: parent
@@ -365,7 +380,7 @@ Item {
                     x: {
                         if (root.barStyle === "spread")
                             return scene.width - root.sceneMargin - rightSide.implicitWidth
-                        if (root.chromeless)
+                        if (root.unified)
                             return scene.middle + scene.islandWidth / 2 + Theme.capsuleSpacing
                                 + scene.reach - rightSide.implicitWidth
                         return scene.middle + scene.islandWidth / 2 + Theme.capsuleSpacing
@@ -711,12 +726,19 @@ Item {
                 height: Theme.capsuleHeight
 
                 Rectangle {
+                    id: capsule
+
                     anchors.fill: parent
                     visible: group.kind === "chips"
                     radius: height / 2
-                    color: root.chromeless ? "transparent" : Theme.island
-                    border.color: Theme.islandBorder
+                    color: root.chromeless ? "transparent" : Theme.islandGround
+                    border.color: Theme.islandRim
                     border.width: root.chromeless || group.bare ? 0 : 1
+
+                    GlassSheen {
+                        shape: capsule
+                        visible: Theme.glass && !root.chromeless && !group.bare
+                    }
 
                     Row {
                         id: chips
@@ -948,8 +970,8 @@ Item {
             anchors.fill: parent
             visible: trayTile.empty
             radius: height / 2
-            color: root.chromeless ? "transparent" : Theme.island
-            border.color: Theme.islandBorder
+            color: root.chromeless ? "transparent" : Theme.islandGround
+            border.color: Theme.islandRim
             border.width: root.chromeless ? 0 : 1
 
             Text {
