@@ -78,6 +78,7 @@ PanelWindow {
     WlrLayershell.namespace: "impasto-desktop"
     // The widgets take the island's glass (`Theme.surfaceIn`).
     readonly property bool glassy: true
+    readonly property string groundStyle: Theme.deskStyle
 
     // Raised above the windows while arranging, and only then.
     WlrLayershell.layer: root.editing ? WlrLayer.Top : WlrLayer.Bottom

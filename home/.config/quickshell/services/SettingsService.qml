@@ -92,6 +92,7 @@ Singleton {
     readonly property alias widgetShadow: config.widgetShadow
     readonly property alias windowGlass: config.windowGlass
     readonly property alias surfaceStyle: config.surfaceStyle
+    readonly property alias desktopGround: config.desktopGround
     readonly property alias wallpaperTransition: config.wallpaperTransition
     readonly property alias greeting: config.greeting
     readonly property alias fontFamily: config.fontFamily
@@ -486,6 +487,9 @@ Singleton {
         // "frosted" smoke over the compositor's blur, "glass" thinner with a
         // lit edge (`Theme.islandGround`).
         property string surfaceStyle: "classic"
+
+        // The desktop widgets' ground, as above, or "" for the bar's.
+        property string desktopGround: ""
 
         // Row id from `WallpaperService.transitions`; `random` picks anew on
         // each change.

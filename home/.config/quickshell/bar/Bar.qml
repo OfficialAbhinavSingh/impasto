@@ -49,6 +49,7 @@ PanelWindow {
     WlrLayershell.namespace: "impasto-bar"
     // What is drawn here takes the island's glass (`Theme.surfaceIn`).
     readonly property bool glassy: true
+    readonly property string groundStyle: Theme.surfaceStyle
 
     readonly property alias island: island
 

@@ -410,12 +410,12 @@ QtObject {
             "Columns": "Columnas",
             "Rows": "Filas",
             "Ground": "Fondo",
-            "Choose the Classic ground in Appearance → Depth to change it":
-                "Elige el fondo Clásico en Apariencia → Profundidad para cambiarla",
+            "Choose the Classic ground above to change it":
+                "Elige el fondo Clásico de arriba para cambiarla",
+            "As the bar": "Como la barra",
+            "Bar and island": "Barra e isla",
             "Blur and glass": "Desenfoque y cristal",
             "What shows through a window.": "Lo que se ve a través de una ventana.",
-            "The island, the bar and the desktop's widgets, in one material.":
-                "La isla, la barra y los widgets del escritorio, en un mismo material.",
             "Solid black": "Negro sólido",
             "Frosted over a blur, with a rim of light": "Esmerilado sobre un desenfoque, con un borde de luz",
             "Thin glass with a lit edge, over a blur": "Cristal fino con el borde iluminado, sobre un desenfoque",

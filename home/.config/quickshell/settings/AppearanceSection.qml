@@ -378,48 +378,12 @@ SettingsSection {
 
     // ── DEPTH ───────────────────────────────────────────────────────────────
     //
-    // How the shell sits on the wallpaper: the ground of the island, the bar
-    // and the widgets, and a shadow under each layer.
+    // How the shell sits on the wallpaper: a shadow under each layer.
 
     ColumnLayout {
         Layout.fillWidth: true
         spacing: root.spacing
         visible: root.tab === "depth"
-
-        SettingGroup {
-            title: Tr.t("Ground")
-            note: Tr.t("The island, the bar and the desktop's widgets, in one material.")
-
-            SettingTiles {
-                label: Tr.t("Style")
-                reading: Tr.t(Theme.glass ? "Thin glass with a lit edge, over a blur"
-                    : Theme.solid ? "Solid black" : "Frosted over a blur, with a rim of light")
-
-                Repeater {
-                    model: [
-                        { id: "classic", label: "Classic" },
-                        { id: "frosted", label: "Frosted" },
-                        { id: "glass", label: "Glass" }
-                    ]
-
-                    PreviewTile {
-                        id: groundTile
-
-                        required property var modelData
-
-                        stageHeight: 56
-                        caption: Tr.t(groundTile.modelData.label)
-                        selected: (Theme.solid ? "classic" : SettingsService.surfaceStyle) === groundTile.modelData.id
-                        onPicked: SettingsService.set("surfaceStyle", groundTile.modelData.id)
-
-                        GroundSwatch {
-                            anchors.centerIn: parent
-                            style: groundTile.modelData.id
-                        }
-                    }
-                }
-            }
-        }
 
         // One shadow per layer, side by side: the windows are Hyprland's, the
         // bar, the dock and the widgets the shell's own.

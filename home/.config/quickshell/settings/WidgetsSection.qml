@@ -219,6 +219,40 @@ SettingsSection {
                 }
             }
 
+            // The widgets' own ground, or the bar's.
+            SettingTiles {
+                label: Tr.t("Ground")
+                reading: SettingsService.desktopGround === "" ? Tr.t("As the bar")
+                    : Theme.deskGlass ? Tr.t("Thin glass with a lit edge, over a blur")
+                    : Theme.deskSolid ? Tr.t("Solid black") : Tr.t("Frosted over a blur, with a rim of light")
+
+                Repeater {
+                    model: [
+                        { id: "", label: "As the bar" },
+                        { id: "classic", label: "Classic" },
+                        { id: "frosted", label: "Frosted" },
+                        { id: "glass", label: "Glass" }
+                    ]
+
+                    PreviewTile {
+                        id: deskTile
+
+                        required property var modelData
+
+                        stageHeight: 56
+                        caption: Tr.t(deskTile.modelData.label)
+                        selected: SettingsService.desktopGround === deskTile.modelData.id
+                        onPicked: SettingsService.set("desktopGround", deskTile.modelData.id)
+
+                        GroundSwatch {
+                            anchors.centerIn: parent
+                            style: deskTile.modelData.id === "" ? SettingsService.surfaceStyle
+                                : deskTile.modelData.id
+                        }
+                    }
+                }
+            }
+
             SettingSlider {
                 label: Tr.t("Background")
                 value: SettingsService.desktopOpacity
@@ -227,8 +261,8 @@ SettingsSection {
                 stepSize: 5
                 unit: "%"
                 // A see-through ground sets it: the capsules are the island's glass.
-                locked: !Theme.solid
-                reason: Tr.t("Choose the Classic ground in Appearance → Depth to change it")
+                locked: !Theme.deskSolid
+                reason: Tr.t("Choose the Classic ground above to change it")
                 onMoved: value => SettingsService.set("desktopOpacity", Math.round(value))
             }
         }

@@ -52,28 +52,46 @@ QtObject {
     readonly property color islandSurfaceHover: "#1f1f1f"
     readonly property color islandBorder: "#262626"
 
-    // The same three on the island's glass: white veils. Only the bar's and
-    // the desk's windows are glass (a `glassy` property on the window);
-    // everything else — the settings, the lock, the dock — stays black, so a
-    // part drawn in both asks by its window (`surfaceIn`).
-    readonly property color veil: root.solid ? root.islandSurface : Qt.rgba(1, 1, 1, root.glass ? 0.10 : 0.08)
-    readonly property color veilHover: root.solid ? root.islandSurfaceHover : Qt.rgba(1, 1, 1, root.glass ? 0.17 : 0.14)
-    readonly property color veilLine: root.solid ? root.islandBorder : Qt.rgba(1, 1, 1, root.glass ? 0.16 : 0.12)
+    // The desk's widgets have a ground of their own, or the bar's
+    // (`SettingsService.desktopGround`, empty to follow).
+    readonly property string deskStyle: SettingsService.desktopGround || root.surfaceStyle
+    readonly property bool deskSolid: root.deskStyle !== "frosted" && root.deskStyle !== "glass"
+    readonly property bool deskGlass: root.deskStyle === "glass"
 
-    function glassIn(window: var): bool {
-        return !root.solid && !!window && window.glassy === true
+    // The same three on glass: white veils, by style. Only the bar's and the
+    // desk's windows are glass, each in its own style (a `glassy` window
+    // with a `groundStyle`); everything else — the settings, the lock, the
+    // dock — stays black, so a part drawn in both asks by its window
+    // (`surfaceIn`).
+    function veilOf(style: string): color {
+        return style === "glass" ? Qt.rgba(1, 1, 1, 0.10)
+            : style === "frosted" ? Qt.rgba(1, 1, 1, 0.08) : root.islandSurface
+    }
+
+    function veilHoverOf(style: string): color {
+        return style === "glass" ? Qt.rgba(1, 1, 1, 0.17)
+            : style === "frosted" ? Qt.rgba(1, 1, 1, 0.14) : root.islandSurfaceHover
+    }
+
+    function veilLineOf(style: string): color {
+        return style === "glass" ? Qt.rgba(1, 1, 1, 0.16)
+            : style === "frosted" ? Qt.rgba(1, 1, 1, 0.12) : root.islandBorder
+    }
+
+    function styleIn(window: var): string {
+        return !!window && window.glassy === true ? (window.groundStyle ?? root.surfaceStyle) : "classic"
     }
 
     function surfaceIn(window: var): color {
-        return root.glassIn(window) ? root.veil : root.islandSurface
+        return root.veilOf(root.styleIn(window))
     }
 
     function surfaceHoverIn(window: var): color {
-        return root.glassIn(window) ? root.veilHover : root.islandSurfaceHover
+        return root.veilHoverOf(root.styleIn(window))
     }
 
     function borderIn(window: var): color {
-        return root.glassIn(window) ? root.veilLine : root.islandBorder
+        return root.veilLineOf(root.styleIn(window))
     }
     // The outline of the island, the capsules and the desk's widgets: the
     // hairline on solid, a line of light on either glass.

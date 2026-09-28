@@ -975,7 +975,7 @@ Item {
             // Solid ground only: on glass the capsule is the island's.
 
             Item {
-                visible: root.styled && Theme.solid
+                visible: root.styled && Theme.deskSolid
                 width: parent.width
                 height: 40
 

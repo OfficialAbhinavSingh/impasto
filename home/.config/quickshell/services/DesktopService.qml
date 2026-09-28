@@ -1200,7 +1200,7 @@ Singleton {
     // ── APPEARANCE ──────────────────────────────────────────────────────────
     //
     // Opacity, like theme, defaults to the desktop setting unless the row
-    // overrides it; it is the solid ground's (`Theme.solid`), since on glass a
+    // overrides it; it is the solid ground's (`Theme.deskSolid`), since on glass a
     // capsule is the island's material. Colours always come from the active
     // palette.
 
@@ -1236,10 +1236,10 @@ Singleton {
     // any literal in `Qt.color()`.
     function inkFor(widget: var): var {
         const ink = {
-            ground: Theme.island, border: Theme.veilLine,
+            ground: Theme.island, border: Theme.veilLineOf(Theme.deskStyle),
             text: Theme.text, muted: Theme.textMuted,
             accent: Theme.accent, accentText: Theme.accentText,
-            raised: Theme.veilHover, dim: Theme.indicatorDim
+            raised: Theme.veilHoverOf(Theme.deskStyle), dim: Theme.indicatorDim
         }
         return ink
     }

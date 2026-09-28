@@ -115,7 +115,7 @@ Item {
         id: cast
 
         readonly property int reach: Theme.shadowRange + 4
-        readonly property bool cut: !Theme.solid || root.solidity < 1
+        readonly property bool cut: !Theme.deskSolid || root.solidity < 1
 
         visible: SettingsService.widgetShadow && !root.onPicture
         x: -cast.reach
@@ -172,8 +172,8 @@ Item {
 
     // ── CAPSULE ─────────────────────────────────────────────────────────────
     //
-    // The island's material (`SettingsService.surfaceStyle`): solid black at
-    // the widget's opacity, or the island's glass, rim and edge. The border
+    // The desk's ground (`Theme.deskStyle`, the bar's unless set apart):
+    // solid black at the widget's opacity, or glass with its rim and edge. The border
     // keeps its own alpha, so a translucent capsule still has an edge.
     Rectangle {
         id: capsule
@@ -181,10 +181,10 @@ Item {
         anchors.fill: parent
         visible: !root.onPicture
         radius: Theme.desktopRadius
-        color: Theme.solid
+        color: Theme.deskSolid
             ? Qt.rgba(root.ink.ground.r, root.ink.ground.g, root.ink.ground.b, root.solidity)
-            : Theme.islandGround
-        border.color: Theme.solid ? root.ink.border : Theme.islandRim
+            : Theme.groundOf(Theme.deskStyle)
+        border.color: Theme.deskSolid ? root.ink.border : Theme.rimOf(Theme.deskStyle)
         border.width: 1
 
         Behavior on color { ColorAnimation { duration: Theme.durationMedium } }
@@ -192,7 +192,7 @@ Item {
 
     GlassSheen {
         shape: capsule
-        visible: Theme.glass && !root.onPicture
+        visible: Theme.deskGlass && !root.onPicture
     }
 
     // Disabled while arranging so dragging does not press buttons. `enabled`

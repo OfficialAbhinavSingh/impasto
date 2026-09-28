@@ -102,6 +102,36 @@ SettingsSection {
                 }
             }
 
+            SettingTiles {
+                label: Tr.t("Ground")
+                reading: Tr.t(Theme.glass ? "Thin glass with a lit edge, over a blur"
+                    : Theme.solid ? "Solid black" : "Frosted over a blur, with a rim of light")
+
+                Repeater {
+                    model: [
+                        { id: "classic", label: "Classic" },
+                        { id: "frosted", label: "Frosted" },
+                        { id: "glass", label: "Glass" }
+                    ]
+
+                    PreviewTile {
+                        id: groundTile
+
+                        required property var modelData
+
+                        stageHeight: 56
+                        caption: Tr.t(groundTile.modelData.label)
+                        selected: (Theme.solid ? "classic" : SettingsService.surfaceStyle) === groundTile.modelData.id
+                        onPicked: SettingsService.set("surfaceStyle", groundTile.modelData.id)
+
+                        GroundSwatch {
+                            anchors.centerIn: parent
+                            style: groundTile.modelData.id
+                        }
+                    }
+                }
+            }
+
             // Only the single-capsule style has a band that can span the
             // screen; locked in the other two.
             SettingRow {
