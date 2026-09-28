@@ -50,7 +50,10 @@ Item {
             width: parent.height - 2 * root.margin
             height: width
             radius: width * Theme.pictureCorner
-            color: Theme.islandSurfaceHover
+            // Only under the placeholder: a player that sends its own logo
+            // rather than a cover sends it on transparency, and a box behind
+            // it reads as part of the picture.
+            color: art.visible ? "transparent" : Theme.surfaceHoverIn(QsWindow.window)
 
             Image {
                 id: art
@@ -295,7 +298,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             radius: width / 2
-            color: Theme.islandSurfaceHover
+            color: Theme.surfaceHoverIn(QsWindow.window)
             opacity: mouse.containsMouse && control.live ? 1 : 0
 
             Behavior on opacity { NumberAnimation { duration: Theme.durationFast } }

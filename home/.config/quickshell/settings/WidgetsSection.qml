@@ -219,32 +219,6 @@ SettingsSection {
                 }
             }
 
-            SettingTiles {
-                label: Tr.t("Style")
-
-                Repeater {
-                    model: DesktopService.styles
-
-                    PreviewTile {
-                        id: styleTile
-
-                        required property var modelData
-
-                        stageHeight: 56
-                        caption: Tr.t(styleTile.modelData.label)
-                        selected: SettingsService.desktopStyle === styleTile.modelData.id
-                        onPicked: SettingsService.set("desktopStyle", styleTile.modelData.id)
-
-                        StyleSwatch {
-                            anchors.centerIn: parent
-                            factor: 1.6
-                            style: styleTile.modelData.id
-                            ink: DesktopService.inkFor({ style: styleTile.modelData.id })
-                        }
-                    }
-                }
-            }
-
             SettingSlider {
                 label: Tr.t("Background")
                 value: SettingsService.desktopOpacity
@@ -252,6 +226,9 @@ SettingsSection {
                 to: 100
                 stepSize: 5
                 unit: "%"
+                // A see-through ground sets it: the capsules are the island's glass.
+                locked: !Theme.solid
+                reason: Tr.t("Choose the Classic ground in Appearance → Depth to change it")
                 onMoved: value => SettingsService.set("desktopOpacity", Math.round(value))
             }
         }

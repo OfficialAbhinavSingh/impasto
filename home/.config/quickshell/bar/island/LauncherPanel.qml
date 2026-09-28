@@ -240,7 +240,7 @@ ColumnLayout {
                 Layout.preferredHeight: LauncherService.stripHeight
                 radius: Theme.radiusSmall
                 color: chip.chosen || chipMouse.containsMouse
-                    ? Theme.islandSurfaceHover : "transparent"
+                    ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
                 Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 
@@ -271,7 +271,7 @@ ColumnLayout {
     Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
-        color: Theme.islandBorder
+        color: Theme.borderIn(QsWindow.window)
     }
 
     // Explicit empty state. In a sigil mode, usually only the sigil has been
@@ -320,7 +320,7 @@ ColumnLayout {
             width: ListView.view.width
             height: LauncherService.rowHeight
             radius: Theme.radiusSmall
-            color: row.selected ? Theme.islandSurfaceHover : "transparent"
+            color: row.selected ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
             Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 
@@ -368,7 +368,7 @@ ColumnLayout {
                         anchors.fill: parent
                         visible: badge.picture !== "" && thumbnail.status === Image.Ready
                         radius: width * Theme.pictureCorner
-                        color: Theme.islandSurfaceHover
+                        color: Theme.surfaceHoverIn(QsWindow.window)
 
                         Image {
                             id: thumbnail
@@ -394,7 +394,7 @@ ColumnLayout {
                         anchors.fill: parent
                         visible: !appIcon.visible && badge.picture === "" && badge.glyph === ""
                         radius: width / 2
-                        color: Theme.islandSurfaceHover
+                        color: Theme.surfaceHoverIn(QsWindow.window)
 
                         Text {
                             anchors.centerIn: parent
@@ -456,7 +456,7 @@ ColumnLayout {
                     visible: (row.modelData.sigil ?? "") !== ""
                     radius: Theme.radiusSmall - 2
                     color: Theme.island
-                    border.color: Theme.islandBorder
+                    border.color: Theme.borderIn(QsWindow.window)
                     border.width: 1
 
                     Text {

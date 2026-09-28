@@ -9,10 +9,12 @@
 
 import QtQuick
 
+import Quickshell
 import "../../theme"
 import "../../services"
 import "../island"
 import "../modules"
+import "../../components"
 
 // One capsule that changes shape to fit whatever it shows. IslandState picks
 // the layer, this sizes the capsule for it, and a Loader swaps the contents;
@@ -39,7 +41,7 @@ Rectangle {
     readonly property color paperColor: NotesService.paperOf(root.paperNote ? root.paperNote.tint : "yellow")
     // A module detail brings its own margins.
     readonly property int panelPad: root.paper
-        ? 0 : (islandState.openPanel === "module" ? 4 : Theme.panelPadding)
+        ? 0 : (islandState.openPanel === "module" ? Theme.cardInset : Theme.panelPadding)
 
     // For the bar: attached, the notch fillets have to light with the island.
     readonly property bool hovered: hover.hovered
@@ -50,9 +52,15 @@ Rectangle {
     // own controls; and not while `landing` from one.
     readonly property bool lit: hover.hovered && !root.landing
         && islandState.layer === islandState.layerModules && !root.hosted
-    readonly property color surfaceColor: root.lit
-        ? Theme.islandSurfaceHover
-        : (SettingsService.islandAttached ? Theme.island : Theme.islandSurface)
+    // Solid, a floating island at rest is a shade off the black; on glass it
+    // is the capsules' ground, since a lighter veil reads as another material.
+    readonly property color surfaceColor: {
+        if (!Theme.solid)
+            return root.lit ? Theme.islandGroundLit : Theme.islandGround
+        if (root.lit)
+            return Theme.islandSurfaceHover
+        return SettingsService.islandAttached ? Theme.islandGround : Theme.islandSurface
+    }
 
     // ── HOSTED ──────────────────────────────────────────────────────────────
     //
@@ -191,6 +199,12 @@ Rectangle {
             root.open(panel)
     }
 
+    // Under everything the island holds; a note's paper is not glass.
+    GlassSheen {
+        shape: root
+        visible: Theme.glass && !root.paper && !root.hosted
+    }
+
     IslandState {
         id: islandState
 
@@ -316,10 +330,16 @@ Rectangle {
         ? Theme.radiusLarge
         : Math.min(root.height / 2, Theme.radiusLarge + 4)
 
-    color: islandState.expanded
-        ? (root.paper ? root.paperColor : Theme.island)
-        : root.surfaceColor
-    border.color: Theme.islandBorder
+    // In one capsule the band behind is the ground and covers the island
+    // whole; a see-through island painted over it would double the glass.
+    color: {
+        if (root.paper)
+            return root.paperColor
+        if (root.hosted && !Theme.solid)
+            return "transparent"
+        return islandState.expanded ? Theme.islandGround : root.surfaceColor
+    }
+    border.color: Theme.islandRim
 
     // No hairline in the one-capsule style: at rest the island's edges run
     // through the band's interior, and while growing the band is the outer

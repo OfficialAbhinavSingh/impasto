@@ -139,7 +139,7 @@ FocusScope {
         anchors.topMargin: TrayService.rowSpacing
         width: parent.width
         height: 1
-        color: Theme.islandBorder
+        color: Theme.borderIn(QsWindow.window)
     }
 
     // ── ENTRIES ─────────────────────────────────────────────────────────────
@@ -174,14 +174,14 @@ FocusScope {
                 visible: row.modelData.isSeparator
                 width: parent.width
                 height: 1
-                color: Theme.islandBorder
+                color: Theme.borderIn(QsWindow.window)
             }
 
             Rectangle {
                 anchors.fill: parent
                 visible: !row.modelData.isSeparator
                 radius: Theme.radiusSmall
-                color: Theme.islandSurfaceHover
+                color: Theme.surfaceHoverIn(QsWindow.window)
                 opacity: row.lit ? 1 : 0
 
                 Behavior on opacity { NumberAnimation { duration: Theme.durationFast } }

@@ -131,7 +131,7 @@ ColumnLayout {
     Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
-        color: Theme.islandBorder
+        color: Theme.borderIn(QsWindow.window)
     }
 
     // ── ROWS ────────────────────────────────────────────────────────────────
@@ -200,7 +200,7 @@ ColumnLayout {
                 width: ListView.view.width
                 height: PackagesService.rowHeight
                 radius: Theme.radiusSmall
-                color: row.selected ? Theme.islandSurfaceHover : "transparent"
+                color: row.selected ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
                 Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 
@@ -226,7 +226,7 @@ ColumnLayout {
                         Layout.preferredWidth: 26
                         Layout.preferredHeight: 26
                         radius: width / 2
-                        color: Theme.islandSurfaceHover
+                        color: Theme.surfaceHoverIn(QsWindow.window)
 
                         Text {
                             anchors.centerIn: parent
@@ -378,7 +378,7 @@ ColumnLayout {
     Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
-        color: Theme.islandBorder
+        color: Theme.borderIn(QsWindow.window)
     }
 
     // ── STATUS LINE ─────────────────────────────────────────────────────────

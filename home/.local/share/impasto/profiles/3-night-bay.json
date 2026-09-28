@@ -25,7 +25,6 @@
     "chipShape": "ring",
     "chipFigure": "hover",
     "desktopTheme": "modern",
-    "desktopStyle": "capsule",
     "desktopOpacity": 75,
     "desktopWidgets": [
       {

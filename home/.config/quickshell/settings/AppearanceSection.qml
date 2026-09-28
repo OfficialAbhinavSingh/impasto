@@ -222,9 +222,9 @@ SettingsSection {
         }
 
         SettingGroup {
-            title: Tr.t("Depth")
-            note: Tr.t("What shows through a window, and what it sits on.")
-            hint: Tr.t("Blur shows behind anything translucent, such as the terminal. Glass (a Hyprland plugin, tuned in look.lua) frosts and refracts what is behind a window, and the shadow lifts windows and bar capsules off the wallpaper.")
+            title: Tr.t("Blur and glass")
+            note: Tr.t("What shows through a window.")
+            hint: Tr.t("Blur shows behind anything translucent, such as the terminal. Glass (a Hyprland plugin, tuned in look.lua) frosts and refracts what is behind a window.")
 
             SettingSlider {
                 label: Tr.t("Blur")
@@ -257,16 +257,6 @@ SettingsSection {
                 }
             }
 
-            SettingRow {
-                label: Tr.t("Shadow")
-                reading: SettingsService.windowShadow
-                    ? Tr.t("Lifted off the wallpaper") : Tr.t("Flat")
-
-                ToggleSwitch {
-                    checked: SettingsService.windowShadow
-                    onToggled: checked => SettingsService.set("windowShadow", checked)
-                }
-            }
         }
 
         // ── WINDOW RULES ────────────────────────────────────────────────────
@@ -380,6 +370,82 @@ SettingsSection {
                             font.pixelSize: Theme.fontSizeLabel
                             color: Theme.textMuted
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    // ── DEPTH ───────────────────────────────────────────────────────────────
+    //
+    // How the shell sits on the wallpaper: the ground of the island, the bar
+    // and the widgets, and a shadow under each layer.
+
+    ColumnLayout {
+        Layout.fillWidth: true
+        spacing: root.spacing
+        visible: root.tab === "depth"
+
+        SettingGroup {
+            title: Tr.t("Ground")
+            note: Tr.t("The island, the bar and the desktop's widgets, in one material.")
+
+            SettingTiles {
+                label: Tr.t("Style")
+                reading: Tr.t(Theme.glass ? "Thin glass with a lit edge, over a blur"
+                    : Theme.solid ? "Solid black" : "Frosted over a blur, with a rim of light")
+
+                Repeater {
+                    model: [
+                        { id: "classic", label: "Classic" },
+                        { id: "frosted", label: "Frosted" },
+                        { id: "glass", label: "Glass" }
+                    ]
+
+                    PreviewTile {
+                        id: groundTile
+
+                        required property var modelData
+
+                        stageHeight: 56
+                        caption: Tr.t(groundTile.modelData.label)
+                        selected: (Theme.solid ? "classic" : SettingsService.surfaceStyle) === groundTile.modelData.id
+                        onPicked: SettingsService.set("surfaceStyle", groundTile.modelData.id)
+
+                        GroundSwatch {
+                            anchors.centerIn: parent
+                            style: groundTile.modelData.id
+                        }
+                    }
+                }
+            }
+        }
+
+        // One shadow per layer, side by side: the windows are Hyprland's, the
+        // bar, the dock and the widgets the shell's own.
+        SettingGroup {
+            title: Tr.t("Shadows")
+            note: Tr.t("What is lifted off the wallpaper.")
+
+            Repeater {
+                model: [
+                    { key: "windowShadow", label: "Windows" },
+                    { key: "barShadow", label: "Bar and dock" },
+                    { key: "widgetShadow", label: "Desktop widgets" }
+                ]
+
+                SettingRow {
+                    id: shadowRow
+
+                    required property var modelData
+
+                    label: Tr.t(shadowRow.modelData.label)
+                    reading: SettingsService[shadowRow.modelData.key]
+                        ? Tr.t("Lifted off the wallpaper") : Tr.t("Flat")
+
+                    ToggleSwitch {
+                        checked: SettingsService[shadowRow.modelData.key]
+                        onToggled: checked => SettingsService.set(shadowRow.modelData.key, checked)
                     }
                 }
             }

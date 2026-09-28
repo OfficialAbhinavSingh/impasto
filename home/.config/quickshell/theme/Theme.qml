@@ -26,11 +26,64 @@ QtObject {
     // ── ISLAND ──────────────────────────────────────────────────────────────
 
     // Pure black in every palette: the island is the shell's identity, not a
-    // themed surface.
+    // themed surface. What changes is how much of it there is
+    // (`SettingsService.surfaceStyle`): solid, smoke over the compositor's
+    // blur, or a thinner glass with a lit edge. `island` stays opaque for
+    // what is cut out of it; the island, the capsules and the toasts are
+    // painted in `islandGround`, and what sits on them in white washes.
+    readonly property string surfaceStyle: SettingsService.surfaceStyle
+    readonly property bool solid: root.surfaceStyle !== "frosted" && root.surfaceStyle !== "glass"
+    readonly property bool glass: root.surfaceStyle === "glass"
+
     readonly property color island: "#000000"
+    readonly property color islandGround: root.groundOf(root.surfaceStyle)
+
+    // Any style's ground and rim, for a picture of one that is not chosen.
+    function groundOf(style: string): color {
+        return style === "glass" ? Qt.rgba(0, 0, 0, 0.20)
+            : style === "frosted" ? Qt.rgba(0, 0, 0, 0.34) : root.island
+    }
+
+    function rimOf(style: string): color {
+        return style === "glass" ? Qt.rgba(1, 1, 1, 0.42)
+            : style === "frosted" ? Qt.rgba(1, 1, 1, 0.20) : "#262626"
+    }
     readonly property color islandSurface: "#141414"
     readonly property color islandSurfaceHover: "#1f1f1f"
     readonly property color islandBorder: "#262626"
+
+    // The same three on the island's glass: white veils. Only the bar's and
+    // the desk's windows are glass (a `glassy` property on the window);
+    // everything else — the settings, the lock, the dock — stays black, so a
+    // part drawn in both asks by its window (`surfaceIn`).
+    readonly property color veil: root.solid ? root.islandSurface : Qt.rgba(1, 1, 1, root.glass ? 0.10 : 0.08)
+    readonly property color veilHover: root.solid ? root.islandSurfaceHover : Qt.rgba(1, 1, 1, root.glass ? 0.17 : 0.14)
+    readonly property color veilLine: root.solid ? root.islandBorder : Qt.rgba(1, 1, 1, root.glass ? 0.16 : 0.12)
+
+    function glassIn(window: var): bool {
+        return !root.solid && !!window && window.glassy === true
+    }
+
+    function surfaceIn(window: var): color {
+        return root.glassIn(window) ? root.veil : root.islandSurface
+    }
+
+    function surfaceHoverIn(window: var): color {
+        return root.glassIn(window) ? root.veilHover : root.islandSurfaceHover
+    }
+
+    function borderIn(window: var): color {
+        return root.glassIn(window) ? root.veilLine : root.islandBorder
+    }
+    // The outline of the island, the capsules and the desk's widgets: the
+    // hairline on solid, a line of light on either glass.
+    readonly property color islandRim: root.rimOf(root.surfaceStyle)
+    // A see-through ground under the pointer: the same glass, a little lit.
+    readonly property color islandGroundLit: Qt.tint(root.islandGround, Qt.rgba(1, 1, 1, 0.10))
+    // The glass style's thick edge (`GlassSheen`): light caught inside the
+    // rim, and falling from the top edge.
+    readonly property real glassEdge: 0.12
+    readonly property color glassSheen: Qt.rgba(1, 1, 1, 0.10)
 
     // ── SEMANTIC COLOURS ────────────────────────────────────────────────────
 
@@ -119,8 +172,8 @@ QtObject {
     // A square is at least `desktopCell` and grows up to `desktopCellLargest`
     // so the board's margin is the same on all four sides
     // (`DesktopService.gridFor`). At the least, a 4 × 2 widget is 398 × 190,
-    // which fits the largest island detail (380 × 172) with one gutter around
-    // it; a larger detail needs a larger cell.
+    // which fits a two-row module card with one gutter around it; a larger
+    // detail needs a larger cell.
     readonly property int desktopCell: 86
     readonly property int desktopCellLargest: 108
     readonly property int desktopGutter: 18
@@ -128,9 +181,13 @@ QtObject {
 
     // ── CONTROL CENTRE GRID ─────────────────────────────────────────────────
     //
-    // 6 × 8 cells; one cell is one toggle tile, and blocks span whole cells.
+    // Up to 6 × 8 cells (`ControlsService.columns`, `rows`); one cell is one
+    // toggle tile, and blocks span whole cells. A round button in the session
+    // and shortcut blocks, and the gap between two: six across two cells.
     readonly property int centreColumns: 6
     readonly property int centreRows: 8
+    readonly property int centreButton: 42
+    readonly property int centreButtonGap: 8
     readonly property int centreCellWidth: 140
     readonly property int centreCellHeight: 64
     readonly property int centreGutter: 12
@@ -157,6 +214,31 @@ QtObject {
     function detailSection(rows: int): int {
         return root.detailGap + root.detailTitle
             + rows * root.detailRow + Math.max(0, rows - 1) * root.detailRowGap
+    }
+
+    // ── MODULE CARDS ────────────────────────────────────────────────────────
+    //
+    // A module's detail (`ModuleCard`): the island's rim around it, its own
+    // padding, a heading on a mark, then rows of one height — a limit, a fact,
+    // a level or a choice — so every card has the same margins and one card
+    // can be sized from its count of rows before it is built.
+    readonly property int cardInset: 4
+    readonly property int cardPadding: 16
+    readonly property int cardMark: 44
+    readonly property int cardGap: 14
+    readonly property int cardRow: 22
+    readonly property int cardRowGap: 8
+    readonly property int cardLabel: 84
+    readonly property int cardWidth: 380
+    // The one figure a heading may carry on its right.
+    readonly property int cardFigure: 24
+
+    // The height of a card with `rows` rows under its heading, and `extra`
+    // pixels of anything taller than a row.
+    function cardHeight(rows: int, extra: int): int {
+        const body = rows * root.cardRow + Math.max(0, rows - 1) * root.cardRowGap + (extra ?? 0)
+        return 2 * (root.cardInset + root.cardPadding) + root.cardMark
+            + (body > 0 ? root.cardGap + body : 0)
     }
 
     // ── DOCK ────────────────────────────────────────────────────────────────

@@ -337,8 +337,8 @@ Singleton {
     //   style    optional; defaults to the desktop's
     //   opacity  optional; defaults to the desktop's
     //
-    // `normalise` migrates legacy rows: missing `key`, `bare` -> style, and
-    // the removed `ink` field.
+    // `normalise` migrates legacy rows: a missing `key`, and the removed
+    // `bare`, `style` and `ink` fields.
     function normalise(list: var): var {
         const rows = []
         const length = list && typeof list.length === "number" ? list.length : 0
@@ -349,9 +349,8 @@ Singleton {
             const row = Object.assign({}, kept)
             if (!row.key)
                 row.key = row.id
-            if (row.bare === true && !row.style)
-                row.style = "bare"
             delete row.bare
+            delete row.style
             delete row.ink
             rows.push(row)
         }
@@ -1200,24 +1199,15 @@ Singleton {
 
     // ── APPEARANCE ──────────────────────────────────────────────────────────
     //
-    // Style and opacity, like theme, default to the desktop setting unless the
-    // row overrides them. Colours always come from the active palette.
+    // Opacity, like theme, defaults to the desktop setting unless the row
+    // overrides it; it is the solid ground's (`Theme.solid`), since on glass a
+    // capsule is the island's material. Colours always come from the active
+    // palette.
 
-    readonly property var styles: [
-        { id: "capsule", label: "Capsule" },
-        { id: "accent",  label: "Accent" },
-        { id: "outline", label: "Outline" },
-        { id: "bare",    label: "No capsule" }
-    ]
-
-    function styleOf(widget: var): string {
-        // Notes draw their own paper, photos are their picture and the
-        // spectrum is its bars, so all three are always bare.
-        if (widget && (widget.id === "notes" || widget.id === "photo" || widget.id === "spectrum"))
-            return "bare"
-        const own = widget ? widget.style : ""
-        return own && root.styles.some(style => style.id === own)
-            ? own : SettingsService.desktopStyle
+    // Notes draw their own paper, photos are their picture and the spectrum
+    // is its bars: no capsule.
+    function bare(widget: var): bool {
+        return !!widget && (widget.id === "notes" || widget.id === "photo" || widget.id === "spectrum")
     }
 
     function opacityOf(widget: var): int {
@@ -1225,18 +1215,13 @@ Singleton {
         return typeof own === "number" ? own : SettingsService.desktopOpacity
     }
 
-    function setStyle(key: string, style: var): void {
-        root.update(key, { style: style || null })
-    }
-
     function setOpacity(key: string, value: var): void {
         root.update(key, { opacity: typeof value === "number" ? value : null })
     }
 
 
-    // Colours for a widget's face, resolved through its style so faces never
-    // read `Theme` directly. The ground is the island black; the accent style
-    // inverts it, with the accent as ground.
+    // Colours for a widget's face, so faces never read `Theme` directly. The
+    // ground is the island black.
     //
     //   ground      the capsule
     //   border      its edge
@@ -1251,21 +1236,10 @@ Singleton {
     // any literal in `Qt.color()`.
     function inkFor(widget: var): var {
         const ink = {
-            ground: Theme.island, border: Theme.islandBorder,
+            ground: Theme.island, border: Theme.veilLine,
             text: Theme.text, muted: Theme.textMuted,
             accent: Theme.accent, accentText: Theme.accentText,
-            raised: Theme.islandSurfaceHover, dim: Theme.indicatorDim
-        }
-        if (root.styleOf(widget) === "accent") {
-            const onAccent = ink.accentText
-            return {
-                ground: ink.accent, border: Qt.color("transparent"),
-                text: ink.accentText,
-                muted: Qt.rgba(onAccent.r, onAccent.g, onAccent.b, 0.7),
-                accent: ink.accentText, accentText: ink.accent,
-                raised: Qt.rgba(onAccent.r, onAccent.g, onAccent.b, 0.18),
-                dim: Qt.rgba(onAccent.r, onAccent.g, onAccent.b, 0.3)
-            }
+            raised: Theme.veilHover, dim: Theme.indicatorDim
         }
         return ink
     }

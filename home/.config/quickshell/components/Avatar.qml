@@ -8,6 +8,7 @@
 // ╰──────────────────────────────────────────────────────────────────────────╯
 
 import QtQuick
+import Quickshell
 import Quickshell.Widgets
 
 import "../theme"
@@ -28,7 +29,7 @@ Item {
     ClippingRectangle {
         anchors.fill: parent
         radius: width / 2
-        color: Theme.islandSurface
+        color: Theme.surfaceIn(QsWindow.window)
         border.color: root.ring
         border.width: 2
         contentUnderBorder: true

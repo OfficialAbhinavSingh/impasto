@@ -27,7 +27,7 @@ Item {
     property string day: ""
     property var ink: ({
         text: Theme.text, muted: Theme.textMuted, accent: Theme.accent,
-        accentText: Theme.accentText, raised: Theme.islandSurfaceHover,
+        accentText: Theme.accentText, raised: Theme.surfaceHoverIn(QsWindow.window),
         red: Theme.red, rule: Theme.hairline
     })
 

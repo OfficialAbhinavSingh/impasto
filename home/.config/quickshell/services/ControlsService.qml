@@ -15,13 +15,15 @@ import Quickshell
 
 import "../theme"
 
-// Control centre layout: the row of buttons along the top and the grid of
-// blocks under it. Nothing here draws; the panel and the settings page read it.
+// Control centre layout: a grid of blocks. Nothing here draws; the panel and
+// the settings page read it.
 //
-// The row has the session actions on the left (fixed) and user-chosen buttons
-// ("doors") on the right, each opening another island panel or the settings.
+// The session's actions and the shortcuts ("doors", each opening another
+// island panel or the settings) are blocks like the rest, so a centre without
+// them has no row for them either.
 //
-// The grid is `Theme.centreColumns` × `Theme.centreRows` cells. Blocks span
+// The grid is `columns` × `rows` cells, chosen in the settings up to
+// `Theme.centreColumns` × `Theme.centreRows`. Blocks span
 // whole cells, only offer sizes they have a face for, and never overlap: a
 // drop on an occupied cell moves to the nearest free fit, or is cancelled.
 // Toggles are a single block holding its own paged list of tiles.
@@ -66,6 +68,10 @@ Singleton {
     ]
 
     readonly property var defaultButtons: ["stats", "settings", "pet", "games", "notes", "board"]
+
+    // The grid when nothing is chosen, which the default layout fills.
+    readonly property int defaultColumns: 6
+    readonly property int defaultRows: 8
 
     // Not `Array.isArray`: lists read back from the settings file are wrapped
     // sequences that behave like arrays but fail that check.
@@ -225,10 +231,18 @@ Singleton {
             action: () => SettingsService.set("islandAttached", !SettingsService.islandAttached)
         },
         Toggle {
+            // All three at once; the settings set them one by one.
+            readonly property int count: [SettingsService.windowShadow,
+                SettingsService.barShadow, SettingsService.widgetShadow].filter(on => on).length
+
             key: "shadow"; icon: "󰘷"; label: "Shadows"
-            detail: SettingsService.windowShadow ? "On the windows" : "Off"
-            active: SettingsService.windowShadow
-            action: () => SettingsService.set("windowShadow", !SettingsService.windowShadow)
+            detail: count === 3 ? "On" : count === 0 ? "Off" : `${count} of 3`
+            active: count > 0
+            action: () => {
+                const on = count === 0
+                for (const key of ["windowShadow", "barShadow", "widgetShadow"])
+                    SettingsService.set(key, on)
+            }
         },
         Toggle {
             key: "screenshot"; icon: "󰹑"; label: "Capture"
@@ -361,25 +375,30 @@ Singleton {
         { id: "media",         name: "Media",         icon: "󰝚", sizes: ["2x2", "2x3", "3x2", "4x2"] },
         { id: "weather",       name: "Weather",       icon: "󰖐", sizes: ["2x1", "2x2", "2x3", "4x2"] },
         { id: "calendar",      name: "Calendar",      icon: "󰃭", sizes: ["2x3", "2x4", "3x4"] },
-        { id: "notifications", name: "Notifications", icon: "󰂚", sizes: ["2x4", "2x6", "2x8", "3x8"] },
+        { id: "notifications", name: "Notifications", icon: "󰂚", sizes: ["3x2", "3x3", "2x4", "3x4", "2x6", "2x8", "3x8"] },
         { id: "impasto",       name: "impasto",       icon: "󰏘", sizes: ["1x2", "2x2", "2x4"] },
         { id: "pet",           name: "Pet",           icon: "󰏩", sizes: ["2x2", "2x3"] },
         { id: "clock",         name: "Clock",         icon: "󰥔", sizes: ["1x2", "2x2", "2x4"] },
         { id: "games",         name: "Games",         icon: "󰊗", sizes: ["2x1", "2x2"] },
         { id: "notes",         name: "Notes",         icon: "󰎞", sizes: ["1x2", "2x2", "2x4"] },
-        { id: "tasks",         name: "Tasks",         icon: "󰄲", sizes: ["1x2", "2x2", "2x3", "2x4"] }
+        { id: "tasks",         name: "Tasks",         icon: "󰄲", sizes: ["1x2", "2x2", "2x3", "2x4"] },
+        { id: "session",       name: "Session",       icon: "󰐥", sizes: ["1x1", "2x1", "3x1", "1x2", "2x2", "4x1"] },
+        { id: "shortcuts",     name: "Shortcuts",     icon: "󰕰", sizes: ["1x1", "2x1", "3x1", "1x2", "2x2", "4x1", "6x1"] }
     ]
 
-    // Toggles, sliders and appearance on the left; media, weather and
-    // calendar in the middle; notifications on the right.
+    // Toggles, sliders, appearance and the session on the left; media,
+    // weather, calendar and the shortcuts in the middle; notifications on the
+    // right.
     readonly property var defaultBlocks: [
         { id: "toggles",       col: 0, row: 0, size: "2x3" },
         { id: "volume",        col: 0, row: 3, size: "2x1" },
         { id: "brightness",    col: 0, row: 4, size: "2x1" },
-        { id: "appearance",    col: 0, row: 5, size: "2x3" },
+        { id: "appearance",    col: 0, row: 5, size: "2x2" },
+        { id: "session",       col: 0, row: 7, size: "2x1" },
         { id: "media",         col: 2, row: 0, size: "2x2" },
-        { id: "weather",       col: 2, row: 2, size: "2x3" },
-        { id: "calendar",      col: 2, row: 5, size: "2x3" },
+        { id: "weather",       col: 2, row: 2, size: "2x2" },
+        { id: "calendar",      col: 2, row: 4, size: "2x3" },
+        { id: "shortcuts",     col: 2, row: 7, size: "2x1" },
         { id: "notifications", col: 4, row: 0, size: "2x8" }
     ]
 
@@ -420,21 +439,18 @@ Singleton {
     //
     // Computed from the grid rather than measured, so the island can size
     // itself before the panel exists.
-    readonly property int columns: Theme.centreColumns
-    readonly property int rows: Theme.centreRows
+    readonly property int columns: Math.max(2, Math.min(Theme.centreColumns,
+        SettingsService.centreColumns > 0 ? SettingsService.centreColumns : root.defaultColumns))
+    readonly property int rows: Math.max(2, Math.min(Theme.centreRows,
+        SettingsService.centreRows > 0 ? SettingsService.centreRows : root.defaultRows))
 
     readonly property int boardWidth:
         root.columns * Theme.centreCellWidth + (root.columns - 1) * Theme.centreGutter
     readonly property int boardHeight:
         root.rows * Theme.centreCellHeight + (root.rows - 1) * Theme.centreGutter
 
-    // Button row along the top, and the gap below it.
-    readonly property int rowHeight: 28
-    readonly property int rowGap: 14
-
     readonly property int panelWidth: root.boardWidth + 2 * Theme.panelPadding
-    readonly property int panelHeight:
-        root.boardHeight + root.rowHeight + root.rowGap + 2 * Theme.panelPadding
+    readonly property int panelHeight: root.boardHeight + 2 * Theme.panelPadding
 
     function offsetX(col: int): real {
         return col * Theme.centreStrideX
@@ -726,9 +742,58 @@ Singleton {
         return best
     }
 
-    // Stored as null so the shipped default applies.
+    // Stored as null so the shipped default applies, on the grid it was made
+    // for.
     function restore(): void {
+        SettingsService.set("centreColumns", 0)
+        SettingsService.set("centreRows", 0)
         SettingsService.set("centreBlocks", null)
+    }
+
+    // A new grid. Columns come and go on both sides alike, so what is placed
+    // stays in the middle of the island, which is centred; rows at the
+    // bottom. A block the new grid cuts moves to the nearest free cell, and
+    // one with nowhere to go is taken off.
+    function resize(columns: int, rows: int): void {
+        columns = Math.max(2, Math.min(Theme.centreColumns, columns))
+        rows = Math.max(2, Math.min(Theme.centreRows, rows))
+        if (columns === root.columns && rows === root.rows)
+            return
+        const shift = Math.trunc((columns - root.columns) / 2)
+        const kept = []
+        const clash = (col, row, shape) => kept.some(other => {
+            const theirs = root.parse(root.sizeOf(other))
+            return col < other.col + theirs.cols && other.col < col + shape.cols
+                && row < other.row + theirs.rows && other.row < row + shape.rows
+        })
+        const fits = (col, row, shape) => col >= 0 && row >= 0
+            && col + shape.cols <= columns && row + shape.rows <= rows && !clash(col, row, shape)
+        for (const block of root.blocks) {
+            const shape = root.parse(root.sizeOf(block))
+            let col = (block.col ?? 0) + shift
+            let row = block.row ?? 0
+            if (!fits(col, row, shape)) {
+                let best = null
+                let bestDistance = Infinity
+                for (let c = 0; c < columns; c++) {
+                    for (let r = 0; r < rows; r++) {
+                        const distance = (c - col) * (c - col) + (r - row) * (r - row)
+                        if (distance < bestDistance && fits(c, r, shape)) {
+                            bestDistance = distance
+                            best = { col: c, row: r }
+                        }
+                    }
+                }
+                if (best === null)
+                    continue
+                col = best.col
+                row = best.row
+            }
+            kept.push(Object.assign({}, block, { col: col, row: row }))
+        }
+        SettingsService.set("centreColumns", columns)
+        SettingsService.set("centreRows", rows)
+        root.write(kept)
     }
 
     // ── ARRANGING ───────────────────────────────────────────────────────────

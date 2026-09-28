@@ -378,10 +378,6 @@ QtObject {
 
             "Modern": "Modern",
             "Analogue": "Analógico",
-            "Capsule": "Cápsula",
-            "Accent": "Acento",
-            "Outline": "Contorno",
-            "No capsule": "Sin cápsula",
             "Small": "Pequeño",
             "Wide": "Ancho",
             "Large": "Grande",
@@ -405,15 +401,29 @@ QtObject {
 
             // ── CONTROL CENTRE ──────────────────────────────────────────────
             "The panel": "El panel",
-            "A six by eight grid, arranged on the panel itself.":
-                "Una cuadrícula de seis por ocho, que se coloca en el propio panel.",
-            "Edit shows the grid with a card of every block, moved by the space between them: drag a block onto the cells, pull a corner or scroll to resize, and drop one on the card to remove it. Escape leaves this mode, the right button on the panel enters or leaves it without opening settings, and a click on a toggles block chooses its switches.":
-                "Editar muestra la cuadrícula con una tarjeta de todos los bloques, que se mueve por el espacio entre ellos: arrastra un bloque a las casillas, tira de una esquina o usa la rueda para cambiar el tamaño, y suelta uno en la tarjeta para quitarlo. Esc sale del modo, con el botón derecho sobre el panel entras o sales sin abrir los ajustes, y haciendo clic en un bloque de conmutadores eliges cuáles lleva.",
+            "A grid of the size chosen here, arranged on the panel itself.":
+                "Una cuadrícula del tamaño que elijas aquí, que se coloca en el propio panel.",
+            "Columns come and go on both sides alike, so the blocks stay centred; one a smaller grid cannot hold is taken off. Edit shows the grid with a card of every block, moved by the space between them: drag a block onto the cells, pull a corner or scroll to resize, and drop one on the card to remove it. Escape leaves this mode, the right button on the panel enters or leaves it without opening settings, and a click on a toggles block chooses its switches.":
+                "Las columnas se añaden y se quitan por los dos lados a la vez, así que los bloques quedan centrados; el que no cabe en una cuadrícula más pequeña se quita. Editar muestra la cuadrícula con una tarjeta de todos los bloques, que se mueve por el espacio entre ellos: arrastra un bloque a las casillas, tira de una esquina o usa la rueda para cambiar el tamaño, y suelta uno en la tarjeta para quitarlo. Esc sale del modo, con el botón derecho sobre el panel entras o sales sin abrir los ajustes, y haciendo clic en un bloque de conmutadores eliges cuáles lleva.",
+            "Columns": "Columnas",
+            "Rows": "Filas",
+            "Ground": "Fondo",
+            "Choose the Classic ground in Appearance → Depth to change it":
+                "Elige el fondo Clásico en Apariencia → Profundidad para cambiarla",
+            "Blur and glass": "Desenfoque y cristal",
+            "What shows through a window.": "Lo que se ve a través de una ventana.",
+            "The island, the bar and the desktop's widgets, in one material.":
+                "La isla, la barra y los widgets del escritorio, en un mismo material.",
+            "Solid black": "Negro sólido",
+            "Frosted over a blur, with a rim of light": "Esmerilado sobre un desenfoque, con un borde de luz",
+            "Thin glass with a lit edge, over a blur": "Cristal fino con el borde iluminado, sobre un desenfoque",
+            "Classic": "Clásico",
+            "Frosted": "Esmerilado",
             "Arrange the control centre": "Colocar el centro de control",
             "Default layout": "Disposición inicial",
-            "The top row": "La fila de arriba",
-            "Session actions always sit on the left. These buttons, which open other panels and this window, fill the row from the right in this order.":
-                "Las acciones de sesión van siempre a la izquierda. Estos botones, que abren otros paneles y esta ventana, llenan la fila desde la derecha en este orden.",
+            "Shortcuts": "Atajos",
+            "The buttons of the shortcuts block, which open other panels and this window, in this order.":
+                "Los botones del bloque de atajos, que abren otros paneles y esta ventana, en este orden.",
 
             "System statistics": "Estadísticas del sistema",
             "Workspace overview": "Vista de espacios",
@@ -582,10 +592,11 @@ QtObject {
             "Inactive opacity": "Opacidad inactiva",
 
             "Depth": "Profundidad",
-            "What shows through a window, and what it sits on.":
-                "Qué se ve a través de una ventana, y sobre qué se apoya.",
-            "Blur shows behind anything translucent, such as the terminal. Glass (a Hyprland plugin, tuned in look.lua) frosts and refracts what is behind a window, and the shadow lifts windows and bar capsules off the wallpaper.":
-                "El desenfoque se ve tras todo lo translúcido, como el terminal. El cristal (un plugin de Hyprland, ajustado en look.lua) esmerila y refracta lo que hay detrás de una ventana, y la sombra despega del fondo las ventanas y las cápsulas de la barra.",
+            "Blur shows behind anything translucent, such as the terminal. Glass (a Hyprland plugin, tuned in look.lua) frosts and refracts what is behind a window.":
+                "El desenfoque se ve tras todo lo translúcido, como el terminal. El cristal (un plugin de Hyprland, ajustado en look.lua) esmerila y refracta lo que hay detrás de una ventana.",
+            "What is lifted off the wallpaper.": "Lo que se despega del fondo.",
+            "Bar and dock": "Barra y dock",
+            "Desktop widgets": "Widgets del escritorio",
             "size": "tamaño",
             "Glass": "Cristal",
             "Needs the glass plugin — run ./setup plugins":

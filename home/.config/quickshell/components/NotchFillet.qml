@@ -18,7 +18,7 @@ import "../theme"
 Item {
     id: root
 
-    property color color: Theme.island
+    property color color: Theme.islandGround
     // Mirrored, for the notch's left side.
     property bool mirrored: false
 

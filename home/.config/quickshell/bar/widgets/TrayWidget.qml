@@ -9,6 +9,7 @@
 
 import QtQuick
 
+import Quickshell
 import "../../theme"
 import "../../services"
 import "../../components"
@@ -44,11 +45,18 @@ Item {
     implicitHeight: Theme.capsuleHeight
 
     Rectangle {
+        id: ground
+
         anchors.fill: parent
         radius: height / 2
-        color: root.chromeless ? "transparent" : Theme.island
-        border.color: Theme.islandBorder
+        color: root.chromeless ? "transparent" : Theme.islandGround
+        border.color: Theme.islandRim
         border.width: root.chromeless ? 0 : 1
+    }
+
+    GlassSheen {
+        shape: ground
+        visible: Theme.glass && !root.chromeless
     }
 
     Row {
@@ -74,7 +82,7 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     radius: height / 2
-                    color: Theme.islandSurfaceHover
+                    color: Theme.surfaceHoverIn(QsWindow.window)
                     opacity: mouse.containsMouse || entry.open ? 1 : 0
 
                     Behavior on opacity { NumberAnimation { duration: Theme.durationFast } }
@@ -117,7 +125,7 @@ Item {
             Rectangle {
                 anchors.fill: parent
                 radius: height / 2
-                color: Theme.islandSurfaceHover
+                color: Theme.surfaceHoverIn(QsWindow.window)
                 opacity: more.containsMouse ? 1 : 0
             }
 

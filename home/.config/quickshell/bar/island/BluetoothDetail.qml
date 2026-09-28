@@ -36,7 +36,7 @@ ColumnLayout {
         ? BluetoothService.devices.concat(BluetoothService.unnamedDevices)
         : BluetoothService.devices
 
-    spacing: 12
+    spacing: Theme.cardGap
 
     Component.onCompleted: {
         if (BluetoothService.enabled)
@@ -44,9 +44,12 @@ ColumnLayout {
     }
     Component.onDestruction: BluetoothService.setDiscovering(false)
 
+    // The heading a module's card has (`ModuleCard`), with the back arrow in
+    // front of it when there is somewhere to go back to.
     RowLayout {
         Layout.fillWidth: true
-        spacing: 10
+        Layout.preferredHeight: Theme.cardMark
+        spacing: 12
 
         IconButton {
             icon: "󰅁"
@@ -55,11 +58,30 @@ ColumnLayout {
             onClicked: root.back()
         }
 
-        ColumnLayout {
-            spacing: 1
+        RingIndicator {
+            Layout.preferredWidth: Theme.cardMark
+            Layout.preferredHeight: Theme.cardMark
+            thickness: 3
+            progress: 0
+            trackColor: Theme.indicatorDim
 
             Text {
+                anchors.centerIn: parent
+                text: BluetoothService.icon
+                font.family: Theme.fontMono
+                font.pixelSize: 18
+                color: BluetoothService.enabled ? Theme.indicator : Theme.textMuted
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 2
+
+            Text {
+                Layout.fillWidth: true
                 text: "Bluetooth"
+                elide: Text.ElideRight
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSizeMedium
                 font.weight: Font.DemiBold
@@ -67,16 +89,16 @@ ColumnLayout {
             }
 
             Text {
+                Layout.fillWidth: true
                 text: BluetoothService.enabled
                     ? (BluetoothService.discovering ? "Looking for devices…" : BluetoothService.summary)
                     : "Adapter off"
+                elide: Text.ElideRight
                 font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeLabel
+                font.pixelSize: Theme.fontSizeSmall
                 color: Theme.textMuted
             }
         }
-
-        Item { Layout.fillWidth: true }
 
         ToggleSwitch {
             checked: BluetoothService.enabled
@@ -120,8 +142,8 @@ ColumnLayout {
             height: 48
             radius: Theme.radiusMedium
             color: entry.modelData.connected || entryMouse.containsMouse
-                ? Theme.islandSurfaceHover : Theme.islandSurface
-            border.color: entry.modelData.connected ? Theme.accent : Theme.islandBorder
+                ? Theme.surfaceHoverIn(QsWindow.window) : Theme.surfaceIn(QsWindow.window)
+            border.color: entry.modelData.connected ? Theme.accent : Theme.borderIn(QsWindow.window)
             border.width: 1
 
             Behavior on color { ColorAnimation { duration: Theme.durationFast } }

@@ -43,7 +43,7 @@ Card {
                 implicitWidth: Math.max(18, count.implicitWidth + 10)
                 implicitHeight: 17
                 radius: height / 2
-                color: Theme.islandSurfaceHover
+                color: Theme.surfaceHoverIn(QsWindow.window)
 
                 Text {
                     id: count
@@ -113,7 +113,7 @@ Card {
                 width: ListView.view.width
                 height: 54
                 radius: Theme.radiusSmall
-                color: entryMouse.containsMouse ? Theme.islandSurfaceHover : "transparent"
+                color: entryMouse.containsMouse ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
                 Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 
@@ -128,7 +128,7 @@ Card {
                         Layout.preferredHeight: 30
                         Layout.alignment: Qt.AlignVCenter
                         radius: width * Theme.pictureCorner
-                        color: entry.critical ? Theme.red : Theme.islandSurfaceHover
+                        color: entry.critical ? Theme.red : Theme.surfaceHoverIn(QsWindow.window)
 
                         Image {
                             id: image

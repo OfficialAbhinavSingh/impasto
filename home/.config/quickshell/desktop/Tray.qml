@@ -9,6 +9,7 @@
 
 import QtQuick
 
+import Quickshell
 import "../theme"
 import "../services"
 import "../components"
@@ -116,7 +117,7 @@ EditTray {
                 anchors.fill: parent
                 radius: Theme.desktopRadius
                 color: Theme.island
-                border.color: tile.pulled ? Theme.accent : Theme.islandBorder
+                border.color: tile.pulled ? Theme.accent : Theme.borderIn(QsWindow.window)
                 border.width: (tile.pulled ? 2 : 1) / tile.factor
             }
 

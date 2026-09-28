@@ -591,9 +591,12 @@ Item {
             ClippingRectangle {
                 anchors.fill: parent
                 radius: width * Theme.pictureCorner
-                color: root.ink.raised
+                // None behind a picture: a player may send its logo on transparency.
+                color: wideArt.visible ? "transparent" : root.ink.raised
 
                 Image {
+                    id: wideArt
+
                     anchors.fill: parent
                     source: MediaService.artUrl
                     visible: source != "" && status === Image.Ready

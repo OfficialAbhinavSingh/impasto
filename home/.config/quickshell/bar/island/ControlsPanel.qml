@@ -13,19 +13,17 @@ import Quickshell
 
 import "../../theme"
 import "../../services"
-import "../../components"
 import "./controls"
 
-// The control centre: a row of buttons over a grid of blocks
-// (`ControlsService.blocks`) that the user arranges like desktop widgets.
+// The control centre: a grid of blocks (`ControlsService.blocks`) that the
+// user arranges like desktop widgets, on a grid of the size chosen in the
+// settings.
 //
 // Right-click the background to arrange: drag blocks from the tray
 // (`ControlsTray`, hung under the island by the bar) onto a cell, pull a
 // corner or scroll to resize, and drop one back on the tray to remove it.
 // Tiles that lead to a list (Wi-Fi, Bluetooth) open it as an island panel of
 // its own, sized as a list rather than a block.
-//
-// Session actions sit at the left of the row and panel buttons at the right.
 ColumnLayout {
     id: root
 
@@ -35,8 +33,6 @@ ColumnLayout {
     signal settingsRequested()
 
     readonly property bool editing: ControlsService.editing
-
-    spacing: ControlsService.rowGap
 
     // Escape leaves arranging first; otherwise it reaches the island, which
     // closes.
@@ -55,45 +51,6 @@ ColumnLayout {
     Component.onDestruction: {
         ControlsService.edit(false)
         ControlsService.board = null
-    }
-
-    // ── TOP ROW ─────────────────────────────────────────────────────────────
-
-    RowLayout {
-        Layout.fillWidth: true
-        // A Layout nested in a Layout fills by default; without this it takes
-        // the grid's height.
-        Layout.fillHeight: false
-        Layout.preferredHeight: ControlsService.rowHeight
-        spacing: 12
-
-        PowerRow { onRan: root.closed() }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-
-        // Panel buttons, in the order settings keeps them. Settings sends its
-        // own request; the rest are panel names.
-        Repeater {
-            model: ScriptModel {
-                values: ControlsService.shownDoors
-            }
-
-            IconButton {
-                required property var modelData
-
-                icon: modelData.icon
-                iconSize: 14
-                onClicked: {
-                    if (modelData.panel === "")
-                        root.settingsRequested()
-                    else
-                        root.panelRequested(modelData.panel)
-                }
-            }
-        }
     }
 
     // ── GRID ────────────────────────────────────────────────────────────────
@@ -186,6 +143,7 @@ ColumnLayout {
             Block {
                 board: surface
                 onPanelRequested: panel => root.panelRequested(panel)
+                onSettingsRequested: root.settingsRequested()
                 onDismissed: root.closed()
             }
         }

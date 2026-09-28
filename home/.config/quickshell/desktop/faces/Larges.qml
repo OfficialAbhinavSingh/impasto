@@ -579,9 +579,12 @@ Item {
                                 parent.height - 22 - 14 - 18 - info.implicitHeight)
                 height: width
                 radius: width * Theme.pictureCorner
-                color: root.ink.raised
+                // None behind a picture: a player may send its logo on transparency.
+                color: largeArt.visible ? "transparent" : root.ink.raised
 
                 Image {
+                    id: largeArt
+
                     anchors.fill: parent
                     source: MediaService.artUrl
                     visible: source != "" && status === Image.Ready

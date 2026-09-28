@@ -68,7 +68,7 @@ ColumnLayout {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 20
                             radius: 2
-                            color: Theme.islandSurfaceHover
+                            color: Theme.surfaceHoverIn(QsWindow.window)
 
                             Rectangle {
                                 anchors.left: parent.left
@@ -117,7 +117,7 @@ ColumnLayout {
                         Layout.preferredHeight: 4
                         Layout.alignment: Qt.AlignVCenter
                         radius: 2
-                        color: Theme.islandSurfaceHover
+                        color: Theme.surfaceHoverIn(QsWindow.window)
 
                         Rectangle {
                             width: parent.width * StatsService.swapFraction
@@ -256,7 +256,7 @@ ColumnLayout {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 5
                                 radius: 2.5
-                                color: Theme.islandSurfaceHover
+                                color: Theme.surfaceHoverIn(QsWindow.window)
 
                                 Rectangle {
                                     width: parent.width * disk.fraction

@@ -9,6 +9,7 @@
 
 import QtQuick
 
+import Quickshell
 import "../../../theme"
 import "../../../services"
 import "../../../components"
@@ -56,7 +57,7 @@ Item {
         height: column.implicitHeight + 2 * root.pad
         radius: Theme.radiusLarge
         color: Theme.island
-        border.color: Theme.islandBorder
+        border.color: Theme.borderIn(QsWindow.window)
         border.width: 1
 
         Behavior on x { NumberAnimation { duration: Theme.durationMedium; easing.type: Theme.easing } }
@@ -137,7 +138,7 @@ Item {
                         width: Math.max(48, sizeTile.shape.cols * 11 + 16)
                         height: 58
                         radius: Theme.radiusSmall
-                        color: sizeTile.current ? Theme.islandSurfaceHover : "transparent"
+                        color: sizeTile.current ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
                         border.color: sizeTile.current ? Theme.accent : Theme.hairline
                         border.width: 1
 
@@ -209,7 +210,7 @@ Item {
                         width: parent.width
                         height: 24
                         radius: Theme.radiusSmall
-                        color: tickHover.hovered ? Theme.islandSurfaceHover : "transparent"
+                        color: tickHover.hovered ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
                         Row {
                             anchors.left: parent.left
@@ -290,7 +291,7 @@ Item {
                                     height: 20
                                     radius: Theme.radiusSmall
                                     color: arrowHover.hovered && arrow.usable
-                                        ? Theme.islandSurface : "transparent"
+                                        ? Theme.surfaceIn(QsWindow.window) : "transparent"
                                     opacity: arrow.usable ? 1 : 0.3
 
                                     Text {

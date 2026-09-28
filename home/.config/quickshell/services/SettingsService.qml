@@ -42,10 +42,11 @@ Singleton {
     readonly property alias chipFigure: config.chipFigure
     readonly property alias desktopWidgets: config.desktopWidgets
     readonly property alias desktopTheme: config.desktopTheme
-    readonly property alias desktopStyle: config.desktopStyle
     readonly property alias desktopOpacity: config.desktopOpacity
     readonly property alias centreButtons: config.centreButtons
     readonly property alias centreBlocks: config.centreBlocks
+    readonly property alias centreColumns: config.centreColumns
+    readonly property alias centreRows: config.centreRows
     readonly property alias centreToggles: config.centreToggles
     readonly property alias dockEnabled: config.dockEnabled
     readonly property alias dockPinned: config.dockPinned
@@ -86,7 +87,10 @@ Singleton {
     readonly property alias motionCurve: config.motionCurve
     readonly property alias animationPreset: config.animationPreset
     readonly property alias windowShadow: config.windowShadow
+    readonly property alias barShadow: config.barShadow
+    readonly property alias widgetShadow: config.widgetShadow
     readonly property alias windowGlass: config.windowGlass
+    readonly property alias surfaceStyle: config.surfaceStyle
     readonly property alias wallpaperTransition: config.wallpaperTransition
     readonly property alias greeting: config.greeting
     readonly property alias fontFamily: config.fontFamily
@@ -465,11 +469,20 @@ Singleton {
         // surface is on every screen either way: this is whether it paints.
         property bool barEverywhere: true
 
+        // Three shadows, one per layer: Hyprland's under the windows, the
+        // shell's under the bar and the dock, and under the desk's widgets.
         property bool windowShadow: false
+        property bool barShadow: false
+        property bool widgetShadow: false
 
         // hyprglass. Dimmed in the settings when the plugin is not built;
         // `CompositorService` pushes it at login and after every reload.
         property bool windowGlass: false
+
+        // The island's and the bar's ground: "classic" solid black,
+        // "frosted" smoke over the compositor's blur, "glass" thinner with a
+        // lit edge (`Theme.islandGround`).
+        property string surfaceStyle: "classic"
 
         // Row id from `WallpaperService.transitions`; `random` picks anew on
         // each change.
@@ -650,11 +663,10 @@ Singleton {
         //   takesNew true on the one deck new notes land on
         property var desktopWidgets: []
 
-        // Defaults for widgets without their own: a theme from
-        // `DesktopService.themes` and a style from `DesktopService.styles`.
-        // Colours always come from the palette.
+        // The theme for widgets without their own, from
+        // `DesktopService.themes`. Colours always come from the palette, and
+        // the capsule's ground is the island's (`surfaceStyle`).
         property string desktopTheme: "modern"
-        property string desktopStyle: "capsule"
 
         // Capsule opacity in percent; below 100 the desktop layer's blur
         // rule (`windowrules.lua`) shows through. Widgets may override it.
@@ -662,10 +674,15 @@ Singleton {
 
         // ── CONTROL CENTRE ──────────────────────────────────────────────
         //
-        // Top-row buttons, ids from `ControlsService.doors`. Null means the
-        // service default, so buttons added later still appear; [] means
-        // none.
+        // The shortcuts block's buttons, ids from `ControlsService.doors`.
+        // Null means the service default, so buttons added later still
+        // appear; [] means none.
         property var centreButtons: null
+
+        // The grid's columns and rows; 0 is the default the default layout
+        // fills.
+        property int centreColumns: 0
+        property int centreRows: 0
 
         // The blocks on the control centre's grid, one row each:
         //

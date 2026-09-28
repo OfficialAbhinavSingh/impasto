@@ -253,7 +253,7 @@ ColumnLayout {
                         border.width: cell.selected || dropTarget.containsDrag ? 2 : 1
                         border.color: cell.selected || cell.focused
                                         || dropTarget.containsDrag
-                            ? Theme.accent : Theme.islandBorder
+                            ? Theme.accent : Theme.borderIn(QsWindow.window)
 
                         Behavior on border.color {
                             ColorAnimation { duration: Theme.durationFast }
@@ -349,7 +349,7 @@ ColumnLayout {
                                     // rescale the thumbnail by a pixel.
                                     border.width: 2
                                     border.color: windowHover.containsMouse
-                                        ? Theme.blue : Theme.islandBorder
+                                        ? Theme.blue : Theme.borderIn(QsWindow.window)
 
                                     Behavior on border.color {
                                         ColorAnimation { duration: Theme.durationFast }

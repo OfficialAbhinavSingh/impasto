@@ -13,6 +13,7 @@ import Quickshell
 
 import "../../theme"
 import "../../services"
+import "../../components"
 
 // One side of the bar: the layout's ids drawn as capsules. The workspaces and
 // the tray get a capsule of their own; everything else shares one until a
@@ -108,34 +109,67 @@ Row {
         height: Theme.capsuleHeight
 
         // Per-capsule shadow. In the one-capsule style the bar casts a single
-        // flattened one instead (`Bar.qml`).
+        // flattened one instead (`Bar.qml`). Under a ground that lets the
+        // screen through, the capsule's own shape is cut out of it, so it
+        // falls outside and does not show through.
         Item {
-            id: shadow
+            id: cast
 
-            readonly property int reach: Theme.shadowBarRange + 4
-            readonly property int spread: Theme.shadowBarSpread
-
-            visible: SettingsService.windowShadow && !group.chromeless
+            visible: SettingsService.barShadow && !group.chromeless
             x: -shadow.reach
             y: -shadow.reach
             width: group.width + 2 * shadow.reach
             height: group.height + 2 * shadow.reach
-            opacity: Theme.shadowOpacity
 
-            layer.enabled: shadow.visible
+            layer.enabled: cast.visible && !Theme.solid
             layer.effect: MultiEffect {
-                blurEnabled: true
-                blur: 1
-                blurMax: Theme.shadowBarRange - Theme.shadowBarSpread
+                maskEnabled: true
+                maskInverted: true
+                maskSource: cutout
+                maskThresholdMin: 0.5
+                maskSpreadAtMin: 1
             }
 
-            Rectangle {
-                x: shadow.reach - shadow.spread
-                y: shadow.reach - shadow.spread
-                width: group.width + 2 * shadow.spread
-                height: group.height + 2 * shadow.spread
-                radius: group.height / 2 + shadow.spread
-                color: Theme.shadowColor
+            Item {
+                id: shadow
+
+                readonly property int reach: Theme.shadowBarRange + 4
+                readonly property int spread: Theme.shadowBarSpread
+
+                anchors.fill: parent
+                opacity: Theme.shadowOpacity
+
+                layer.enabled: cast.visible
+                layer.effect: MultiEffect {
+                    blurEnabled: true
+                    blur: 1
+                    blurMax: Theme.shadowBarRange - Theme.shadowBarSpread
+                }
+
+                Rectangle {
+                    x: shadow.reach - shadow.spread
+                    y: shadow.reach - shadow.spread
+                    width: group.width + 2 * shadow.spread
+                    height: group.height + 2 * shadow.spread
+                    radius: group.height / 2 + shadow.spread
+                    color: Theme.shadowColor
+                }
+            }
+
+            Item {
+                id: cutout
+
+                anchors.fill: parent
+                visible: false
+                layer.enabled: !Theme.solid
+
+                Rectangle {
+                    x: shadow.reach
+                    y: shadow.reach
+                    width: group.width
+                    height: group.height
+                    radius: group.height / 2
+                }
             }
         }
 
@@ -160,9 +194,14 @@ Row {
             anchors.fill: parent
             visible: !group.own
             radius: height / 2
-            color: group.chromeless ? "transparent" : Theme.island
-            border.color: Theme.islandBorder
+            color: group.chromeless ? "transparent" : Theme.islandGround
+            border.color: Theme.islandRim
             border.width: group.chromeless || group.bare ? 0 : 1
+
+            GlassSheen {
+                shape: parent
+                visible: Theme.glass && !group.chromeless && !group.bare
+            }
 
             Row {
                 id: chips

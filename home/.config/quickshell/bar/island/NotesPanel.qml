@@ -167,8 +167,8 @@ FocusScope {
                         width: root.cardWidth
                         height: root.cardHeight
                         radius: Theme.paperRadius
-                        color: freshMouse.containsMouse ? Theme.islandSurfaceHover : Theme.islandSurface
-                        border.color: slot.current ? Theme.accent : Theme.islandBorder
+                        color: freshMouse.containsMouse ? Theme.surfaceHoverIn(QsWindow.window) : Theme.surfaceIn(QsWindow.window)
+                        border.color: slot.current ? Theme.accent : Theme.borderIn(QsWindow.window)
                         border.width: slot.current ? 2 : 1
 
                         Behavior on color { ColorAnimation { duration: Theme.durationFast } }

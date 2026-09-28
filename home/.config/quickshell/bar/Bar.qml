@@ -44,6 +44,12 @@ import "../components"
 PanelWindow {
     id: root
 
+    // Named for the blur behind it (`windowrules.lua`), which shows only
+    // through a ground that is not solid.
+    WlrLayershell.namespace: "impasto-bar"
+    // What is drawn here takes the island's glass (`Theme.surfaceIn`).
+    readonly property bool glassy: true
+
     readonly property alias island: island
 
     // Whether this is the screen being worked on (`shell.qml`). Everything
@@ -334,10 +340,10 @@ PanelWindow {
 
         // ── SHADOW ──────────────────────────────────────────────────────────────
         //
-        // Same numbers and setting as the window shadow. The band, the island and
-        // the notch fillets touch, so they share one flattened layer; separate
-        // shadows would draw a seam where they overlap. The side capsules cast
-        // their own (`BarZone`).
+        // The window shadow's numbers, on its own setting (`barShadow`). The
+        // band, the island and the notch fillets touch, so they share one
+        // flattened layer; separate shadows would draw a seam where they
+        // overlap. The side capsules cast their own (`BarZone`).
         //
         // Cast from a copy of the shapes: layering the real bar would re-blur the
         // full-screen surface every time the clock or the spectrum repaints.
@@ -348,108 +354,175 @@ PanelWindow {
         // does not work inside a Repeater.
         Loader {
             anchors.fill: parent
-            active: SettingsService.windowShadow
+            active: SettingsService.barShadow
             sourceComponent: shadowBody
         }
 
         Component {
             id: shadowBody
 
+            // Under a ground that lets the screen through, the shapes are cut
+            // out of their shadow, so it falls outside them and does not show
+            // through.
             Item {
-                id: caster
-
-                // Attached, the layer runs above the screen by the blur's reach and
-                // the shapes run up into it, so the blur reads the notch as going on
-                // past the edge and the shadow keeps its weight up to the top.
-                anchors.fill: parent
-                anchors.topMargin: -caster.pad
-                opacity: Theme.shadowOpacity
-
-                layer.enabled: true
+                layer.enabled: !Theme.solid
                 layer.effect: MultiEffect {
-                    blurEnabled: true
-                    blur: 1
-                    blurMax: Theme.shadowBarRange - Theme.shadowBarSpread
+                    maskEnabled: true
+                    maskInverted: true
+                    maskSource: cutout
+                    maskThresholdMin: 0.5
+                    maskSpreadAtMin: 1
                 }
 
-                readonly property int spread: Theme.shadowBarSpread
-                readonly property int pad: SettingsService.islandAttached ? Theme.shadowBarRange : 0
+                Item {
+                    id: cutout
 
-                Rectangle {
-                    x: band.x - caster.spread
-                    y: band.y - caster.spread
-                    width: band.width + 2 * caster.spread
-                    height: band.height + 2 * caster.spread + caster.pad
-                    radius: band.radius + caster.spread
-                    topLeftRadius: band.topLeftRadius > 0 ? band.topLeftRadius + caster.spread : 0
-                    topRightRadius: band.topRightRadius > 0 ? band.topRightRadius + caster.spread : 0
-                    visible: body.visible
-                    color: Theme.shadowColor
-                }
+                    anchors.fill: parent
+                    visible: false
+                    layer.enabled: !Theme.solid
 
-                Rectangle {
-                    x: root.islandLeft - caster.spread
-                    y: island.y - caster.spread
-                    width: island.width + 2 * caster.spread
-                    height: island.height + 2 * caster.spread + caster.pad
-                    radius: island.radius + caster.spread
-                    topLeftRadius: island.topLeftRadius > 0 ? island.topLeftRadius + caster.spread : 0
-                    topRightRadius: island.topRightRadius > 0 ? island.topRightRadius + caster.spread : 0
-                    color: Theme.shadowColor
-                }
+                    Rectangle {
+                        x: band.x
+                        y: SettingsService.islandAttached ? 0 : band.y
+                        width: band.width
+                        height: band.y + band.height - y
+                        radius: band.radius
+                        topLeftRadius: band.topLeftRadius
+                        topRightRadius: band.topRightRadius
+                        // Not `visible`: inside the hidden source it reads false
+                        // and the band is left out of the mask.
+                        opacity: root.unified ? 1 : 0
+                    }
 
-                // The fillets grown by the spread as the rectangles are: the same
-                // centre, a radius short by the spread, and a strip for the top
-                // edge moved up by it. Past the tip the strip runs on along the
-                // edge and fades out, or the shadow down the curve stops square
-                // where the curve meets the edge.
-                Repeater {
-                    model: [notchLeft, notchRight]
+                    // Attached, the shadow runs up to the screen's edge, so the
+                    // cut does too while the island slides up into the notch.
+                    Rectangle {
+                        x: root.islandLeft
+                        y: SettingsService.islandAttached ? 0 : island.y
+                        width: island.width
+                        height: island.y + island.height - y
+                        radius: island.radius
+                        topLeftRadius: SettingsService.islandAttached ? 0 : island.topLeftRadius
+                        topRightRadius: SettingsService.islandAttached ? 0 : island.topRightRadius
+                    }
 
-                    Item {
-                        required property var modelData
-
-                        x: modelData.x
-                        y: caster.pad + modelData.y
-                        width: modelData.width
-                        height: modelData.height
-                        visible: modelData.visible
-                        opacity: modelData.opacity
-
-                        Rectangle {
-                            y: -caster.pad
-                            width: parent.width
-                            height: caster.pad + caster.spread
-                            color: Theme.shadowColor
-                        }
-
-                        Rectangle {
-                            id: tail
-
-                            readonly property bool mirrored: parent.modelData.mirrored
-
-                            x: mirrored ? -width : parent.width
-                            y: -caster.pad
-                            width: parent.width * 2
-                            height: caster.pad + caster.spread
-                            gradient: Gradient {
-                                orientation: Gradient.Horizontal
-                                GradientStop { position: 0; color: tail.mirrored ? "transparent" : Theme.shadowColor }
-                                GradientStop { position: 1; color: tail.mirrored ? Theme.shadowColor : "transparent" }
-                            }
-                        }
+                    Repeater {
+                        model: [notchLeft, notchRight]
 
                         NotchFillet {
-                            x: parent.modelData.mirrored ? 0 : caster.spread
-                            y: caster.spread
-                            width: Math.max(0, parent.width - caster.spread)
-                            height: Math.max(0, parent.height - caster.spread)
-                            mirrored: parent.modelData.mirrored
-                            color: Theme.shadowColor
+                            required property var modelData
+
+                            x: modelData.x
+                            y: modelData.y
+                            width: modelData.width
+                            height: modelData.height
+                            opacity: modelData.visible ? 1 : 0
+                            mirrored: modelData.mirrored
+                            color: "black"
                         }
                     }
                 }
 
+                Item {
+                    id: caster
+
+                    // Attached, the layer runs above the screen by the blur's reach and
+                    // the shapes run up into it, so the blur reads the notch as going on
+                    // past the edge and the shadow keeps its weight up to the top.
+                    anchors.fill: parent
+                    anchors.topMargin: -caster.pad
+                    opacity: Theme.shadowOpacity
+
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        blurEnabled: true
+                        blur: 1
+                        blurMax: Theme.shadowBarRange - Theme.shadowBarSpread
+                    }
+
+                    readonly property int spread: Theme.shadowBarSpread
+                    readonly property int pad: SettingsService.islandAttached ? Theme.shadowBarRange : 0
+
+                    Rectangle {
+                        x: band.x - caster.spread
+                        y: band.y - caster.spread
+                        width: band.width + 2 * caster.spread
+                        height: band.height + 2 * caster.spread + caster.pad
+                        radius: band.radius + caster.spread
+                        topLeftRadius: band.topLeftRadius > 0 ? band.topLeftRadius + caster.spread : 0
+                        topRightRadius: band.topRightRadius > 0 ? band.topRightRadius + caster.spread : 0
+                        visible: body.visible
+                        color: Theme.shadowColor
+                    }
+
+                    Rectangle {
+                        x: root.islandLeft - caster.spread
+                        y: island.y - caster.spread
+                        width: island.width + 2 * caster.spread
+                        height: island.height + 2 * caster.spread + caster.pad
+                        radius: island.radius + caster.spread
+                        topLeftRadius: island.topLeftRadius > 0 ? island.topLeftRadius + caster.spread : 0
+                        topRightRadius: island.topRightRadius > 0 ? island.topRightRadius + caster.spread : 0
+                        color: Theme.shadowColor
+                    }
+
+                    // The fillets grown by the spread as the rectangles are: the same
+                    // centre, a radius short by the spread, and a strip for the top
+                    // edge moved up by it. Past the tip the strip runs on along the
+                    // edge and fades out, or the shadow down the curve stops square
+                    // where the curve meets the edge.
+                    Repeater {
+                        model: [notchLeft, notchRight]
+
+                        Item {
+                            required property var modelData
+
+                            x: modelData.x
+                            y: caster.pad + modelData.y
+                            width: modelData.width
+                            height: modelData.height
+                            visible: modelData.visible
+                            opacity: modelData.opacity
+
+                            // Solid only: along the edge of the screen a
+                            // see-through notch would show it as a stain.
+                            Rectangle {
+                                y: -caster.pad
+                                visible: Theme.solid
+                                width: parent.width
+                                height: caster.pad + caster.spread
+                                color: Theme.shadowColor
+                            }
+
+                            Rectangle {
+                                id: tail
+
+                                readonly property bool mirrored: parent.modelData.mirrored
+
+                                x: mirrored ? -width : parent.width
+                                y: -caster.pad
+                                visible: Theme.solid
+                                width: parent.width * 2
+                                height: caster.pad + caster.spread
+                                gradient: Gradient {
+                                    orientation: Gradient.Horizontal
+                                    GradientStop { position: 0; color: tail.mirrored ? "transparent" : Theme.shadowColor }
+                                    GradientStop { position: 1; color: tail.mirrored ? Theme.shadowColor : "transparent" }
+                                }
+                            }
+
+                            NotchFillet {
+                                x: parent.modelData.mirrored ? 0 : caster.spread
+                                y: caster.spread
+                                width: Math.max(0, parent.width - caster.spread)
+                                height: Math.max(0, parent.height - caster.spread)
+                                mirrored: parent.modelData.mirrored
+                                color: Theme.shadowColor
+                            }
+                        }
+                    }
+
+                }
             }
         }
 
@@ -477,6 +550,12 @@ PanelWindow {
                 color: island.surfaceColor
 
                 Behavior on color { ColorAnimation { duration: Theme.durationFast } }
+
+                // The band is the ground here, so it carries the glass.
+                GlassSheen {
+                    shape: band
+                    visible: Theme.glass && !island.paper
+                }
 
                 // Clicking the band opens the island. The sides sit above it and
                 // take their own clicks.
@@ -520,7 +599,7 @@ PanelWindow {
             visible: root.unified && !island.paper && !SettingsService.islandAttached
             color: "transparent"
             border.width: 1
-            border.color: root.islandTaken ? Theme.islandBorder : "transparent"
+            border.color: root.islandTaken ? Theme.islandRim : "transparent"
 
             Behavior on border.color { ColorAnimation { duration: Theme.durationMedium } }
         }
@@ -575,7 +654,7 @@ PanelWindow {
             shapeRight: root.shapeRight
             shapeHeight: root.unified ? band.height : island.height
             radius: island.radius
-            color: !root.unified || root.islandTaken ? Theme.islandBorder : "transparent"
+            color: !root.unified || root.islandTaken ? Theme.islandRim : "transparent"
 
             Behavior on color { ColorAnimation { duration: Theme.durationMedium } }
         }

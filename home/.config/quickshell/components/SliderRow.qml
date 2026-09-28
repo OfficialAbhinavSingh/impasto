@@ -8,6 +8,7 @@
 // ╰──────────────────────────────────────────────────────────────────────────╯
 
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import QtQuick.Controls
 
@@ -41,8 +42,8 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: height / 2
-        color: Theme.islandSurface
-        border.color: slider.hovered ? Theme.islandBorder : "transparent"
+        color: Theme.surfaceIn(QsWindow.window)
+        border.color: slider.hovered ? Theme.borderIn(QsWindow.window) : "transparent"
         border.width: 1
         opacity: root.available ? 1 : 0.45
 
@@ -55,7 +56,7 @@ Item {
             anchors.bottom: parent.bottom
             width: Math.max(parent.height, parent.width * slider.position)
             radius: parent.radius
-            color: root.dimmed ? Theme.islandSurfaceHover : Theme.accent
+            color: root.dimmed ? Theme.surfaceHoverIn(QsWindow.window) : Theme.accent
             opacity: root.dimmed ? 1 : 0.9
 
             Behavior on width {

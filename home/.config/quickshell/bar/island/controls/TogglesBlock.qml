@@ -251,7 +251,7 @@ Item {
                     height: 6
                     radius: 3
                     color: dot.index === pager.currentIndex ? Theme.text
-                        : (spot.containsMouse ? Theme.textMuted : Theme.islandBorder)
+                        : (spot.containsMouse ? Theme.textMuted : Theme.borderIn(QsWindow.window))
 
                     Behavior on color { ColorAnimation { duration: Theme.durationFast } }
                 }

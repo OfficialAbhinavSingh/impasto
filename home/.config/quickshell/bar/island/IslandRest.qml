@@ -8,6 +8,7 @@
 // ╰──────────────────────────────────────────────────────────────────────────╯
 
 import QtQuick
+import Quickshell
 import Quickshell.Widgets
 
 import "../../theme"
@@ -241,7 +242,8 @@ Item {
                 width: 20
                 height: 20
                 radius: width * Theme.pictureCorner
-                color: Theme.islandSurfaceHover
+                // None behind a picture: a player may send its logo on transparency.
+                color: art.visible ? "transparent" : Theme.surfaceHoverIn(QsWindow.window)
 
                 Component.onCompleted: MediaService.subscribe()
                 Component.onDestruction: MediaService.release()

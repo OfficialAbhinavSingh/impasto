@@ -72,13 +72,7 @@ Item {
 
     // The widget's own overrides, empty when following the desktop.
     readonly property string ownTheme: root.row && root.row.theme ? root.row.theme : ""
-    readonly property string ownStyle: root.row && root.row.style ? root.row.style : ""
     readonly property bool ownOpacity: root.row && typeof root.row.opacity === "number"
-
-    // Colours for painting each style tile.
-    function inkIn(style: string): var {
-        return DesktopService.inkFor({ id: root.moduleId, style: style })
-    }
 
     Rectangle {
         id: card
@@ -109,7 +103,7 @@ Item {
         height: column.implicitHeight + 2 * root.pad
         radius: Theme.radiusLarge
         color: Theme.island
-        border.color: Theme.islandBorder
+        border.color: Theme.borderIn(QsWindow.window)
         border.width: 1
 
         Behavior on x { NumberAnimation { duration: Theme.durationMedium; easing.type: Theme.easing } }
@@ -194,7 +188,7 @@ Item {
                         width: shapeTile.shape.cols * 9 + 12
                         height: 48
                         radius: Theme.radiusSmall
-                        color: shapeTile.current ? Theme.islandSurfaceHover : "transparent"
+                        color: shapeTile.current ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
                         border.color: shapeTile.current ? Theme.accent : Theme.hairline
                         border.width: 1
 
@@ -265,7 +259,7 @@ Item {
                         width: 64
                         height: 48
                         radius: Theme.radiusSmall
-                        color: whereTile.current ? Theme.islandSurfaceHover : "transparent"
+                        color: whereTile.current ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
                         border.color: whereTile.current ? Theme.accent : Theme.hairline
                         border.width: 1
 
@@ -453,7 +447,7 @@ Item {
                         width: 138
                         height: 34
                         radius: Theme.radiusSmall
-                        color: lowsTile.current ? Theme.islandSurfaceHover : "transparent"
+                        color: lowsTile.current ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
                         border.color: lowsTile.current ? Theme.accent : Theme.hairline
                         border.width: 1
 
@@ -541,7 +535,7 @@ Item {
                         width: 64
                         height: 30
                         radius: Theme.radiusSmall
-                        color: alongTile.current ? Theme.islandSurfaceHover : "transparent"
+                        color: alongTile.current ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
                         border.color: alongTile.current ? Theme.accent : Theme.hairline
                         border.width: 1
 
@@ -622,7 +616,7 @@ Item {
                         width: parent.width
                         height: 26
                         radius: Theme.radiusSmall
-                        color: tickHover.hovered ? Theme.islandSurfaceHover : "transparent"
+                        color: tickHover.hovered ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
                         Row {
                             anchors.left: parent.left
@@ -730,7 +724,7 @@ Item {
                         width: Math.min(tileLine.implicitWidth + 24 + (noteTile.noteKey === "" ? 0 : 12), 140)
                         height: 26
                         radius: Theme.radiusPill
-                        color: noteTile.current ? Theme.islandSurfaceHover : "transparent"
+                        color: noteTile.current ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
                         border.color: noteTile.current ? Theme.accent : Theme.hairline
                         border.width: 1
 
@@ -797,7 +791,7 @@ Item {
                     width: 48
                     height: 48
                     radius: width * Theme.pictureCorner
-                    color: Theme.islandSurface
+                    color: Theme.surfaceIn(QsWindow.window)
 
                     Image {
                         id: thumbnail
@@ -855,8 +849,8 @@ Item {
                 width: parent.width
                 height: 34
                 radius: Theme.radiusSmall
-                color: Theme.islandSurface
-                border.color: caption.activeFocus ? Theme.accent : Theme.islandBorder
+                color: Theme.surfaceIn(QsWindow.window)
+                border.color: caption.activeFocus ? Theme.accent : Theme.borderIn(QsWindow.window)
                 border.width: 1
 
                 Behavior on border.color { ColorAnimation { duration: Theme.durationFast } }
@@ -960,89 +954,15 @@ Item {
                 }
             }
 
-            // ── STYLE ───────────────────────────────────────────────────────
-            //
-            // The default first, then the four styles, each tile painted as the
-            // widget would be.
-
-            // Not for notes or photos (`styled`).
-            Text {
-                visible: root.styled
-                text: Tr.t("Style")
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeLabel
-                font.weight: Font.DemiBold
-                color: Theme.textMuted
-            }
-
-            Row {
-                visible: root.styled
-                spacing: 8
-
-                Repeater {
-                    model: [{ id: "", label: "Default" }].concat(DesktopService.styles)
-
-                    Rectangle {
-                        id: styleTile
-
-                        required property var modelData
-
-                        readonly property string styleId: styleTile.modelData.id
-                        // The style this tile shows; for the default tile, the
-                        // desktop's style.
-                        readonly property string shown:
-                            styleTile.styleId !== "" ? styleTile.styleId : SettingsService.desktopStyle
-                        readonly property var ink: root.inkIn(styleTile.shown)
-                        readonly property bool current: root.ownStyle === styleTile.styleId
-
-                        width: 50
-                        height: 48
-                        radius: Theme.radiusSmall
-                        color: "transparent"
-                        border.color: styleTile.current ? Theme.accent : Theme.hairline
-                        border.width: 1
-
-                        StyleSwatch {
-                            anchors.centerIn: parent
-                            style: styleTile.shown
-                            ink: styleTile.ink
-                        }
-
-                        // A dot marks the default tile as "follow" rather than
-                        // a fifth style.
-                        Rectangle {
-                            anchors.right: parent.right
-                            anchors.top: parent.top
-                            anchors.margins: 4
-                            visible: styleTile.styleId === ""
-                            width: 6
-                            height: 6
-                            radius: 3
-                            color: Theme.textMuted
-                        }
-
-                        HoverHandler { cursorShape: Qt.PointingHandCursor }
-
-                        TapHandler {
-                            gesturePolicy: TapHandler.ReleaseWithinBounds
-                            onTapped: DesktopService.setStyle(root.key, styleTile.styleId)
-                        }
-                    }
-                }
-            }
-
+            // Which theme, and whether it is the desktop's.
             Text {
                 visible: root.styled
                 width: parent.width
                 text: {
                     const theme = DesktopService.themes.find(
                         entry => entry.id === DesktopService.themeOf(root.row))
-                    const style = DesktopService.styles.find(
-                        entry => entry.id === DesktopService.styleOf(root.row))
-                    const parts = [theme ? Tr.t(theme.label) : "", style ? Tr.t(style.label) : ""]
-                    const own = root.ownTheme !== "" || root.ownStyle !== ""
-                    return parts.filter(part => part !== "").join(" · ")
-                        + (own ? "" : ` · ${Tr.t("default")}`)
+                    return (theme ? Tr.t(theme.label) : "")
+                        + (root.ownTheme !== "" ? "" : ` · ${Tr.t("default")}`)
                 }
                 elide: Text.ElideRight
                 font.family: Theme.fontFamily
@@ -1051,9 +971,11 @@ Item {
             }
 
             // ── OPACITY ─────────────────────────────────────────────────────
+            //
+            // Solid ground only: on glass the capsule is the island's.
 
             Item {
-                visible: root.styled
+                visible: root.styled && Theme.solid
                 width: parent.width
                 height: 40
 
@@ -1108,7 +1030,7 @@ Item {
         width: 50
         height: 44
         radius: Theme.radiusSmall
-        color: tile.current ? Theme.islandSurfaceHover : "transparent"
+        color: tile.current ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
         border.color: tile.current ? Theme.accent : Theme.hairline
         border.width: 1
 

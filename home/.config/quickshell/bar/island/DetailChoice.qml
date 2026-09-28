@@ -9,6 +9,7 @@
 
 import QtQuick
 
+import Quickshell
 import "../../theme"
 
 // A row with a name, lit and checked when it is the one in use; its name lines
@@ -24,7 +25,7 @@ Rectangle {
     width: parent ? parent.width : 0
     height: Theme.detailRow
     radius: Theme.radiusSmall
-    color: root.chosen || pick.containsMouse ? Theme.islandSurfaceHover : "transparent"
+    color: root.chosen || pick.containsMouse ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
     Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 

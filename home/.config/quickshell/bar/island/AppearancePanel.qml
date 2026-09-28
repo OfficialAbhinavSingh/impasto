@@ -8,6 +8,7 @@
 // ╰──────────────────────────────────────────────────────────────────────────╯
 
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import Quickshell.Widgets
 
@@ -179,8 +180,8 @@ FocusScope {
                         anchors.fill: parent
                         contentUnderBorder: true
                         radius: Theme.radiusMedium
-                        color: Theme.islandSurface
-                        border.color: tile.centred ? Theme.accent : Theme.islandBorder
+                        color: Theme.surfaceIn(QsWindow.window)
+                        border.color: tile.centred ? Theme.accent : Theme.borderIn(QsWindow.window)
                         border.width: tile.centred ? 2 : 1
 
                         Behavior on border.color { ColorAnimation { duration: Theme.durationFast } }
@@ -233,8 +234,8 @@ FocusScope {
                         anchors.fill: parent
                         contentUnderBorder: true
                         radius: Theme.radiusMedium
-                        color: Theme.islandSurface
-                        border.color: clip.centred ? Theme.accent : Theme.islandBorder
+                        color: Theme.surfaceIn(QsWindow.window)
+                        border.color: clip.centred ? Theme.accent : Theme.borderIn(QsWindow.window)
                         border.width: clip.centred ? 2 : 1
 
                         Behavior on border.color { ColorAnimation { duration: Theme.durationFast } }
@@ -295,8 +296,8 @@ FocusScope {
                     Rectangle {
                         anchors.fill: parent
                         radius: Theme.radiusMedium
-                        color: card.hovered ? Theme.islandSurfaceHover : Theme.islandSurface
-                        border.color: card.centred ? Theme.accent : Theme.islandBorder
+                        color: card.hovered ? Theme.surfaceHoverIn(QsWindow.window) : Theme.surfaceIn(QsWindow.window)
+                        border.color: card.centred ? Theme.accent : Theme.borderIn(QsWindow.window)
                         border.width: card.centred ? 2 : 1
 
                         Behavior on color { ColorAnimation { duration: Theme.durationFast } }

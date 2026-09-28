@@ -38,7 +38,7 @@ Item {
         anchors.fill: parent
         radius: Theme.radiusMedium
         color: Theme.island
-        border.color: Theme.islandBorder
+        border.color: Theme.borderIn(QsWindow.window)
         border.width: 1
     }
 
@@ -62,7 +62,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Theme.dockMenuRow
                 radius: Theme.radiusSmall
-                color: rowMouse.containsMouse ? Theme.islandSurfaceHover : "transparent"
+                color: rowMouse.containsMouse ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
                 Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 

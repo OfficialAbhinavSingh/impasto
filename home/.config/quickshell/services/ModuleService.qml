@@ -38,24 +38,25 @@ Singleton {
     // The chip look is global (`SettingsService.chipShape`, `chipFigure`);
     // desktop faces are listed per theme in `DesktopService.faces`.
     readonly property var catalogue: [
-        { id: "media",         name: "Media",         bar: true,  width: 380, height: 150 },
-        { id: "timer",         name: "Timer",         bar: true,  width: 348, height: 116 },
-        { id: "claude",        name: "Claude",        bar: true,  width: 356, height: 150 },
-        { id: "battery",       name: "Battery",       bar: true,  width: 320, height: 132 },
-        { id: "volume",        name: "Volume",        bar: true,  width: 340, height: 116 },
-        { id: "brightness",    name: "Brightness",    bar: true,  width: 340, height: 100 },
-        { id: "network",       name: "Network",       bar: true,  width: 356, height: 132 },
-        { id: "bluetooth",     name: "Bluetooth",     bar: true,  width: 356, height: 132 },
-        { id: "notifications", name: "Notifications", bar: true,  desk: false, width: 380, height: 340 },
-        { id: "weather",       name: "Weather",       bar: true,  width: 380, height: 150 },
-        { id: "github",        name: "GitHub",        bar: false, width: 380, height: 158 },
-        { id: "stats",         name: "System",        bar: true,  width: 380, height: 148 },
-        { id: "updates",       name: "Updates",       bar: true,  width: 356, height: 132 },
-        { id: "pet",           name: "Pet",           bar: true,  width: 380, height: 172 },
-        { id: "games",         name: "Games",         bar: false, width: 380, height: 150 },
+        { id: "media",         name: "Media",         bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(1, Theme.cardRowGap + 34) },
+        { id: "timer",         name: "Timer",         bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(2, 0) },
+        { id: "claude",        name: "Claude",        bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(3, 0) },
+        { id: "codex",         name: "Codex",         bar: true,  desk: false, width: Theme.cardWidth, height: Theme.cardHeight(2, 0) },
+        { id: "battery",       name: "Battery",       bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(3, 0) },
+        { id: "volume",        name: "Volume",        bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(2, 0) },
+        { id: "brightness",    name: "Brightness",    bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(1, 0) },
+        { id: "network",       name: "Network",       bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(2, 0) },
+        { id: "bluetooth",     name: "Bluetooth",     bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(3, 0) },
+        { id: "notifications", name: "Notifications", bar: true,  desk: false, width: Theme.cardWidth, height: Theme.cardHeight(7, 0) },
+        { id: "weather",       name: "Weather",       bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(0, 50) },
+        { id: "github",        name: "GitHub",        bar: false, width: Theme.cardWidth, height: Theme.cardHeight(0, GithubService.cardGrid) },
+        { id: "stats",         name: "System",        bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(2, Theme.cardRowGap + 36) },
+        { id: "updates",       name: "Updates",       bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(4, 0) },
+        { id: "pet",           name: "Pet",           bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(2, Theme.cardRowGap + 32) },
+        { id: "games",         name: "Games",         bar: false, width: Theme.cardWidth, height: Theme.cardHeight(4, 0) },
         { id: "calendar",      name: "Calendar",      bar: true,  width: 340, height: 330 },
-        { id: "notes",         name: "Notes",         bar: false, width: 356, height: 150 },
-        { id: "tasks",         name: "Tasks",         bar: false, width: 356, height: 150 },
+        { id: "notes",         name: "Notes",         bar: false, width: Theme.cardWidth, height: Theme.cardHeight(4, 0) },
+        { id: "tasks",         name: "Tasks",         bar: false, width: Theme.cardWidth, height: Theme.cardHeight(4, 0) },
         { id: "photo",         name: "Photo",         bar: false, width: 356, height: 150 },
         { id: "spectrum",      name: "Spectrum",      bar: false, width: 0,   height: 0 },
         { id: "clock",         name: "Clock",         bar: false,
@@ -151,7 +152,7 @@ Singleton {
     // Modules with a ring face: those whose reading fills from empty to full.
     // A state or a count (the network, the bell, the date, the pending
     // updates) has nothing to fill, so it keeps its symbol in either shape.
-    readonly property var ringed: ["media", "timer", "claude", "battery", "volume",
+    readonly property var ringed: ["media", "timer", "claude", "codex", "battery", "volume",
         "brightness", "stats", "pet"]
 
     // A piece's own shape when it has one, the bar's when it does not.
@@ -195,6 +196,8 @@ Singleton {
             return "󰍛"
         case "calendar":
             return "󰃭"
+        case "codex":
+            return "\uf489"
         }
         return ""
     }
@@ -224,6 +227,8 @@ Singleton {
             if (ClaudeService.measured)
                 return `${Math.round(ClaudeService.sessionFraction * 100)}%`
             return ClaudeService.blockTokens > 0 ? ClaudeService.compact(ClaudeService.blockTokens) : "0%"
+        case "codex":
+            return CodexService.measured ? `${Math.round(CodexService.gauge * 100)}%` : "—"
         case "stats":
             return `${StatsService.cpu.toFixed(0)}%`
         case "pet":
@@ -278,6 +283,8 @@ Singleton {
             return TimerService.running ? TimerService.tint : Theme.text
         case "claude":
             return ClaudeService.measured ? ClaudeService.tint : Theme.indicator
+        case "codex":
+            return CodexService.tint
         }
         return Theme.text
     }
@@ -384,16 +391,36 @@ Singleton {
 
     // The catalogue size, except network and Bluetooth, which open the
     // control centre's lists, an empty notification list, which is short,
-    // and brightness, which grows a row for every other screen it can dim.
+    // and the cards whose rows come and go, sized from their count.
     function openSize(id: string): var {
         if (id === "network" || id === "bluetooth")
             return { width: 420, height: 500 }
         const item = root.entry(id)
-        if (id === "notifications" && NotificationService.history.length === 0)
-            return { width: item.width, height: 124 }
+        if (id === "notifications")
+            return { width: item.width,
+                     height: Theme.cardHeight(Math.min(6, NotificationService.history.length) + 1, 0) }
+        if (id === "updates")
+            return { width: item.width, height: Theme.cardHeight(Math.min(3, UpdatesService.updates.length) + 1, 0) }
+        if (id === "games")
+            return { width: item.width, height: Theme.cardHeight(Math.min(3, GamesService.ranked.length) + 1, 0) }
+        if (id === "notes")
+            return { width: item.width, height: Theme.cardHeight(Math.min(3, NotesService.live.length) + 1, 0) }
+        if (id === "tasks")
+            return { width: item.width, height: Theme.cardHeight(Math.min(3, TasksService.queue.length) + 1, 0) }
+        if (id === "claude")
+            return { width: item.width, height: Theme.cardHeight(ClaudeService.rows, 0) }
+        if (id === "battery")
+            return { width: item.width, height: Theme.cardHeight(BatteryService.healthKnown ? 3 : 2, 0) }
+        if (id === "volume")
+            return { width: item.width, height: Theme.cardHeight(AudioService.cardRows, 0) }
+        if (id === "codex")
+            return { width: item.width, height: Theme.cardHeight(Math.max(1, CodexService.limits.length), 0) }
         if (id === "brightness")
             return { width: item.width,
-                     height: item.height + Math.max(0, BrightnessService.dimmable.length - 1) * 62 }
+                     height: Theme.cardHeight(Math.max(1, BrightnessService.dimmable.length), 0) }
+        if (id === "media")
+            return { width: item.width, height: MediaService.seekable
+                ? Theme.cardHeight(1, Theme.cardRowGap + 34) : Theme.cardHeight(0, 34) }
         return { width: item.width, height: item.height }
     }
 
@@ -444,6 +471,9 @@ Singleton {
             // Reading this constructs the lazy singleton, which runs its
             // first query; it turns true a moment later.
             return ClaudeService.available
+        case "codex":
+            // Only where Codex has written a log with its limits.
+            return CodexService.available
         case "battery":
             return BatteryService.available
         case "volume":

@@ -100,8 +100,28 @@ SettingsSection {
 
     SettingGroup {
         title: Tr.t("The panel")
-        note: Tr.t("A six by eight grid, arranged on the panel itself.")
-        hint: Tr.t("Edit shows the grid with a card of every block, moved by the space between them: drag a block onto the cells, pull a corner or scroll to resize, and drop one on the card to remove it. Escape leaves this mode, the right button on the panel enters or leaves it without opening settings, and a click on a toggles block chooses its switches.")
+        note: Tr.t("A grid of the size chosen here, arranged on the panel itself.")
+        hint: Tr.t("Columns come and go on both sides alike, so the blocks stay centred; one a smaller grid cannot hold is taken off. Edit shows the grid with a card of every block, moved by the space between them: drag a block onto the cells, pull a corner or scroll to resize, and drop one on the card to remove it. Escape leaves this mode, the right button on the panel enters or leaves it without opening settings, and a click on a toggles block chooses its switches.")
+
+        SettingRow {
+            label: Tr.t("Columns")
+
+            SegmentedControl {
+                options: [2, 3, 4, 5, 6].map(count => ({ id: `${count}`, label: `${count}` }))
+                current: `${ControlsService.columns}`
+                onSelected: id => ControlsService.resize(parseInt(id), ControlsService.rows)
+            }
+        }
+
+        SettingRow {
+            label: Tr.t("Rows")
+
+            SegmentedControl {
+                options: [2, 3, 4, 5, 6, 7, 8].map(count => ({ id: `${count}`, label: `${count}` }))
+                current: `${ControlsService.rows}`
+                onSelected: id => ControlsService.resize(ControlsService.columns, parseInt(id))
+            }
+        }
 
         SettingRow {
             label: Tr.t("Arrange the control centre")
@@ -127,11 +147,11 @@ SettingsSection {
         }
     }
 
-    // ── THE TOP ROW ─────────────────────────────────────────────────────────
+    // ── SHORTCUTS ───────────────────────────────────────────────────────────
 
     SettingGroup {
-        title: Tr.t("The top row")
-        note: Tr.t("Session actions always sit on the left. These buttons, which open other panels and this window, fill the row from the right in this order.")
+        title: Tr.t("Shortcuts")
+        note: Tr.t("The buttons of the shortcuts block, which open other panels and this window, in this order.")
 
         Repeater {
             model: ControlsService.doorRows

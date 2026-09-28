@@ -249,7 +249,7 @@ Item {
                             width: parent.width
                             height: 18
                             radius: Theme.radiusSmall - 2
-                            color: rowMouse.containsMouse ? Theme.islandSurfaceHover : "transparent"
+                            color: rowMouse.containsMouse ? Theme.surfaceHoverIn(QsWindow.window) : "transparent"
 
                             Row {
                                 anchors.left: parent.left

@@ -142,6 +142,13 @@ Singleton {
             root.source.audio.volume = Math.max(0, Math.min(100, percent)) / 100
     }
 
+    // The rows of the bar's sound card (`VolumeModule`): the two levels, the
+    // applications under a heading, and the outputs under one when there is
+    // more than one to choose.
+    readonly property int cardRows: 2
+        + (root.streams.length > 0 ? 1 + root.streams.length : 0)
+        + (root.outputs.length > 1 ? 1 + root.outputs.length : 0)
+
     // ── THE SOUND PANEL'S SIZE ──────────────────────────────────────────────
     //
     // Declared, since the island takes its size before the panel exists: a

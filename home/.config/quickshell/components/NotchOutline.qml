@@ -8,6 +8,7 @@
 // ╰──────────────────────────────────────────────────────────────────────────╯
 
 import QtQuick
+import Quickshell
 import QtQuick.Shapes
 
 import "../theme"
@@ -24,7 +25,7 @@ Item {
     property real shapeHeight: 0
     // The shape's lower corners.
     property real radius: 0
-    property color color: Theme.islandBorder
+    property color color: Theme.borderIn(QsWindow.window)
 
     // The fillet's radius: NotchFillet's square is its diameter wide.
     readonly property real fillet: Theme.radiusNotch * 2

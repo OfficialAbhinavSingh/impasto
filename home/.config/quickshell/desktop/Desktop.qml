@@ -76,6 +76,8 @@ PanelWindow {
     // Namespace for layer rules, e.g. `layerrule = blur, impasto-desktop`. Not
     // set by default.
     WlrLayershell.namespace: "impasto-desktop"
+    // The widgets take the island's glass (`Theme.surfaceIn`).
+    readonly property bool glassy: true
 
     // Raised above the windows while arranging, and only then.
     WlrLayershell.layer: root.editing ? WlrLayer.Top : WlrLayer.Bottom

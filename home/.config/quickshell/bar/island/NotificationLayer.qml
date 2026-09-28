@@ -85,7 +85,7 @@ Item {
             ClippingRectangle {
                 anchors.fill: parent
                 radius: width / 2
-                color: Theme.islandSurfaceHover
+                color: Theme.surfaceHoverIn(QsWindow.window)
                 border.color: Theme.indicatorBad
                 border.width: root.critical ? 2 : 0
                 contentUnderBorder: true
@@ -230,7 +230,7 @@ Item {
                     radius: height / 2
                     color: button.first
                         ? (press.containsMouse ? Theme.accentHover : Theme.accent)
-                        : (press.containsMouse ? Theme.islandBorder : Theme.islandSurfaceHover)
+                        : (press.containsMouse ? Theme.borderIn(QsWindow.window) : Theme.surfaceHoverIn(QsWindow.window))
 
                     Behavior on color { ColorAnimation { duration: Theme.durationFast } }
 
@@ -272,7 +272,7 @@ Item {
             width: parent.width
             height: 1
             y: 6
-            color: Theme.islandBorder
+            color: Theme.borderIn(QsWindow.window)
         }
 
         Row {
@@ -297,7 +297,7 @@ Item {
                         width: 1
                         height: parent.height - 12
                         anchors.verticalCenter: parent.verticalCenter
-                        color: Theme.islandBorder
+                        color: Theme.borderIn(QsWindow.window)
                     }
 
                     Text {

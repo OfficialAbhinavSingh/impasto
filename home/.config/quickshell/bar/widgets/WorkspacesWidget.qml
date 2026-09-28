@@ -14,6 +14,7 @@ import Quickshell
 
 import "../../theme"
 import "../../services"
+import "../../components"
 
 // Three states, by shape and weight alone:
 //
@@ -94,9 +95,14 @@ Rectangle {
         + (root.chromeless ? 0 : (root.written ? 12 : 20))
     radius: Theme.radiusPill
 
-    color: root.chromeless ? "transparent" : Theme.island
-    border.color: Theme.islandBorder
+    color: root.chromeless ? "transparent" : Theme.islandGround
+    border.color: Theme.islandRim
     border.width: root.chromeless ? 0 : 1
+
+    GlassSheen {
+        shape: root
+        visible: Theme.glass && !root.chromeless
+    }
 
     // The written styles' focus: one pill that slides to the focused number
     // and takes its width.

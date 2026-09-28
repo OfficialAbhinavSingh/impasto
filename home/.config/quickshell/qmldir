@@ -31,6 +31,7 @@ singleton CavaService        1.0 services/CavaService.qml
 singleton CompositorService  1.0 services/CompositorService.qml
 singleton BluetoothService   1.0 services/BluetoothService.qml
 singleton ClaudeService      1.0 services/ClaudeService.qml
+singleton CodexService       1.0 services/CodexService.qml
 singleton UpdatesService     1.0 services/UpdatesService.qml
 singleton PetService         1.0 services/PetService.qml
 singleton ModuleService      1.0 services/ModuleService.qml
@@ -77,6 +78,13 @@ PetFamily        1.0 components/PetFamily.qml
 PetShelf         1.0 components/PetShelf.qml
 UsageBar         1.0 components/UsageBar.qml
 Figure           1.0 components/Figure.qml
+ModuleCard       1.0 components/ModuleCard.qml
+GlassSheen       1.0 components/GlassSheen.qml
+CardLimit        1.0 components/CardLimit.qml
+CardFact         1.0 components/CardFact.qml
+CardLevel        1.0 components/CardLevel.qml
+CardChoice       1.0 components/CardChoice.qml
+CardHeading      1.0 components/CardHeading.qml
 Stepper          1.0 components/Stepper.qml
 StatCard         1.0 components/StatCard.qml
 SliderRow        1.0 components/SliderRow.qml
@@ -96,7 +104,7 @@ TabStrip         1.0 components/TabStrip.qml
 LidPreview       1.0 components/LidPreview.qml
 MotionPreview    1.0 components/MotionPreview.qml
 IslandMotionPreview 1.0 components/IslandMotionPreview.qml
-StyleSwatch      1.0 components/StyleSwatch.qml
+GroundSwatch     1.0 components/GroundSwatch.qml
 EditTray         1.0 components/EditTray.qml
 Sticky           1.0 components/Sticky.qml
 PopMenu          1.0 components/PopMenu.qml
@@ -128,6 +136,7 @@ ClockModule      1.0 bar/modules/ClockModule.qml
 MediaModule      1.0 bar/modules/MediaModule.qml
 TimerModule      1.0 bar/modules/TimerModule.qml
 ClaudeModule     1.0 bar/modules/ClaudeModule.qml
+CodexModule      1.0 bar/modules/CodexModule.qml
 BatteryModule    1.0 bar/modules/BatteryModule.qml
 VolumeModule     1.0 bar/modules/VolumeModule.qml
 BrightnessModule 1.0 bar/modules/BrightnessModule.qml
@@ -177,7 +186,7 @@ GameBoard        1.0 bar/island/games/GameBoard.qml
 NotificationList 1.0 bar/island/controls/NotificationList.qml
 AppearanceCard   1.0 bar/island/controls/AppearanceCard.qml
 WeatherCard      1.0 bar/island/controls/WeatherCard.qml
-PowerRow         1.0 bar/island/controls/PowerRow.qml
+ButtonsBlock     1.0 bar/island/controls/ButtonsBlock.qml
 Block            1.0 bar/island/controls/Block.qml
 BlockFace        1.0 bar/island/controls/BlockFace.qml
 TogglesBlock     1.0 bar/island/controls/TogglesBlock.qml

@@ -8,10 +8,12 @@
 // ╰──────────────────────────────────────────────────────────────────────────╯
 
 import QtQuick
+import Quickshell
 import QtQuick.Effects
 
 import "../theme"
 import "../services"
+import "../components"
 
 // One module on the desktop grid, in one of the four families.
 //
@@ -41,13 +43,12 @@ Item {
 
     readonly property string moduleId: root.row ? root.row.id : ""
     readonly property string family: DesktopService.familyOf(root.row)
-    readonly property string style: DesktopService.styleOf(root.row)
     readonly property var ink: DesktopService.inkFor(root.row)
     readonly property real solidity: DesktopService.opacityOf(root.row) / 100
 
-    // Two of the four styles draw a capsule; the other two draw on the
+    // Notes, photos and the spectrum have no capsule and draw on the
     // wallpaper with a shadow.
-    readonly property bool onPicture: root.style === "bare" || root.style === "outline"
+    readonly property bool onPicture: DesktopService.bare(root.row)
 
     readonly property var box: DesktopService.geometry(
         root.row ?? ({}), root.board.width, root.board.height)
@@ -103,32 +104,95 @@ Item {
     // badge is not hidden by a neighbour.
     z: root.held ? 2 : (root.selected ? 1 : 0)
 
+    // ── SHADOW ──────────────────────────────────────────────────────────────
+    //
+    // At the windows' numbers, since a widget sits on the desk as a window
+    // does; on its own setting (`widgetShadow`). Under a capsule that lets
+    // the wallpaper through — glass, or solid below full opacity — the
+    // capsule's own shape is cut out of it, so it falls outside and does not
+    // show through.
+    Item {
+        id: cast
+
+        readonly property int reach: Theme.shadowRange + 4
+        readonly property bool cut: !Theme.solid || root.solidity < 1
+
+        visible: SettingsService.widgetShadow && !root.onPicture
+        x: -cast.reach
+        y: -cast.reach
+        width: root.width + 2 * cast.reach
+        height: root.height + 2 * cast.reach
+
+        layer.enabled: cast.visible && cast.cut
+        layer.effect: MultiEffect {
+            maskEnabled: true
+            maskInverted: true
+            maskSource: cutout
+            maskThresholdMin: 0.5
+            maskSpreadAtMin: 1
+        }
+
+        Item {
+            anchors.fill: parent
+            opacity: Theme.shadowOpacity
+
+            layer.enabled: cast.visible
+            layer.effect: MultiEffect {
+                blurEnabled: true
+                blur: 1
+                blurMax: Theme.shadowRange - Theme.shadowSpread
+            }
+
+            Rectangle {
+                x: cast.reach - Theme.shadowSpread
+                y: cast.reach - Theme.shadowSpread
+                width: root.width + 2 * Theme.shadowSpread
+                height: root.height + 2 * Theme.shadowSpread
+                radius: Theme.desktopRadius + Theme.shadowSpread
+                color: Theme.shadowColor
+            }
+        }
+
+        Item {
+            id: cutout
+
+            anchors.fill: parent
+            visible: false
+            layer.enabled: cast.cut
+
+            Rectangle {
+                x: cast.reach
+                y: cast.reach
+                width: root.width
+                height: root.height
+                radius: Theme.desktopRadius
+            }
+        }
+    }
+
     // ── CAPSULE ─────────────────────────────────────────────────────────────
     //
-    // The island's black unless the desktop or the row sets another ink; the
-    // accent style paints it in the accent. The border keeps its own alpha, so
-    // a translucent capsule still has an edge.
+    // The island's material (`SettingsService.surfaceStyle`): solid black at
+    // the widget's opacity, or the island's glass, rim and edge. The border
+    // keeps its own alpha, so a translucent capsule still has an edge.
     Rectangle {
+        id: capsule
+
         anchors.fill: parent
         visible: !root.onPicture
         radius: Theme.desktopRadius
-        color: Qt.rgba(root.ink.ground.r, root.ink.ground.g, root.ink.ground.b,
-                       root.solidity)
-        border.color: root.ink.border
-        border.width: root.style === "accent" ? 0 : 1
+        color: Theme.solid
+            ? Qt.rgba(root.ink.ground.r, root.ink.ground.g, root.ink.ground.b, root.solidity)
+            : Theme.islandGround
+        border.color: Theme.solid ? root.ink.border : Theme.islandRim
+        border.width: 1
 
         Behavior on color { ColorAnimation { duration: Theme.durationMedium } }
     }
 
-    // Outline style: the edge only, in the text colour so it reads on the
-    // wallpaper.
-    Rectangle {
-        anchors.fill: parent
-        visible: root.style === "outline"
-        radius: Theme.desktopRadius
-        color: "transparent"
-        border.color: Qt.rgba(root.ink.text.r, root.ink.text.g, root.ink.text.b, 0.55)
-        border.width: 1.5
+    GlassSheen {
+        shape: capsule
+        visible: Theme.glass && !root.onPicture
     }
 
     // Disabled while arranging so dragging does not press buttons. `enabled`
@@ -345,7 +409,7 @@ Item {
         height: 24
         radius: 12
         color: Theme.island
-        border.color: Theme.islandBorder
+        border.color: Theme.borderIn(QsWindow.window)
         border.width: 1
         visible: opacity > 0
         opacity: root.dressed ? 1 : 0
@@ -384,7 +448,7 @@ Item {
         height: 24
         radius: 12
         color: Theme.island
-        border.color: resize.active ? Theme.accent : Theme.islandBorder
+        border.color: resize.active ? Theme.accent : Theme.borderIn(QsWindow.window)
         border.width: resize.active ? 2 : 1
         visible: opacity > 0
         opacity: root.dressed || resize.active ? 1 : 0
