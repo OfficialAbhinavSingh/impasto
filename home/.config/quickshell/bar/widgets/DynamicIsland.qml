@@ -481,12 +481,17 @@ Rectangle {
     }
 
     // Swallows clicks on the panel background so they do not reach the
-    // dismiss area covering the rest of the bar.
+    // dismiss area covering the rest of the bar. On the control centre's
+    // margin the right button arranges it, as it does between its blocks.
     MouseArea {
         anchors.fill: parent
         enabled: islandState.expanded
         acceptedButtons: Qt.AllButtons
         z: -1
+        onClicked: mouse => {
+            if (mouse.button === Qt.RightButton && islandState.openPanel === "controls")
+                ControlsService.edit(!ControlsService.editing)
+        }
     }
 
     // ── LAYERS ──────────────────────────────────────────────────────────────

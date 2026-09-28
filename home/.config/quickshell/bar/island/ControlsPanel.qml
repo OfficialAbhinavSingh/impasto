@@ -58,36 +58,73 @@ ColumnLayout {
 
     // ── TOP ROW ─────────────────────────────────────────────────────────────
     //
-    // Two sides, arranged in the settings or while arranging
-    // (`ControlsService.topSides`); with both empty it is not laid out, and
-    // the panel is that much shorter.
+    // Two sides (`ControlsService.topSides`), arranged in the settings, or
+    // while arranging by choosing the row as a block is chosen. With both
+    // sides empty it is laid out only while arranging.
 
-    RowLayout {
-        visible: ControlsService.hasTop
+    Item {
+        visible: ControlsService.topShown
         Layout.fillWidth: true
         // A Layout nested in a Layout fills by default; without this it takes
         // the grid's height.
         Layout.fillHeight: false
         Layout.preferredHeight: ControlsService.rowHeight
-        spacing: 12
 
-        TopButtons {
-            entries: ControlsService.topLeft
-            onRan: root.closed()
-            onPanelRequested: panel => root.panelRequested(panel)
-            onSettingsRequested: root.settingsRequested()
+        readonly property bool chosen: ControlsService.selected === "top"
+
+        RowLayout {
+            anchors.fill: parent
+            spacing: 12
+            // Disabled while arranging, as a block's face is, so a click
+            // chooses the row instead of pressing a button.
+            enabled: !root.editing
+
+            TopButtons {
+                entries: ControlsService.topLeft
+                onRan: root.closed()
+                onPanelRequested: panel => root.panelRequested(panel)
+                onSettingsRequested: root.settingsRequested()
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
+
+            TopButtons {
+                entries: ControlsService.topRight
+                onRan: root.closed()
+                onPanelRequested: panel => root.panelRequested(panel)
+                onSettingsRequested: root.settingsRequested()
+            }
         }
 
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        // Empty, it is there only while arranging: a place to click and fill.
+        Text {
+            anchors.centerIn: parent
+            visible: root.editing && !ControlsService.hasTop
+            text: Tr.t("The top row: click to choose its buttons")
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.fontSizeSmall
+            color: Theme.textMuted
         }
 
-        TopButtons {
-            entries: ControlsService.topRight
-            onRan: root.closed()
-            onPanelRequested: panel => root.panelRequested(panel)
-            onSettingsRequested: root.settingsRequested()
+        // Outlined and chosen like a block while arranging.
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: -3
+            visible: root.editing
+            radius: Theme.radiusMedium + 3
+            color: "transparent"
+            border.color: parent.chosen ? Theme.accent : Theme.hairline
+            border.width: parent.chosen ? 2 : 1
+        }
+
+        TapHandler {
+            enabled: root.editing
+            acceptedButtons: Qt.LeftButton
+            gesturePolicy: TapHandler.ReleaseWithinBounds
+            onTapped: ControlsService.selected = parent.chosen ? "" : "top"
         }
     }
 
@@ -111,9 +148,11 @@ ColumnLayout {
 
         // Right-click on the background toggles arranging. Declared first,
         // beneath everything: blocks take the left button and the right one
-        // falls through.
+        // falls through. Exclusive from the press, or the island's catch-all
+        // under the panel takes it; that one answers the panel's margin.
         TapHandler {
             acceptedButtons: Qt.RightButton
+            gesturePolicy: TapHandler.ReleaseWithinBounds
             onTapped: ControlsService.edit(!ControlsService.editing)
         }
 
@@ -191,7 +230,17 @@ ColumnLayout {
             anchors.fill: parent
             z: 5
             active: root.editing && ControlsService.selected !== ""
+                && ControlsService.selected !== "top"
             sourceComponent: BlockInspector { board: surface }
+        }
+
+        // The top row's, under it at the right.
+        Loader {
+            anchors.right: parent.right
+            y: 0
+            z: 5
+            active: root.editing && ControlsService.selected === "top"
+            sourceComponent: TopRowInspector { limit: surface.height }
         }
     }
 

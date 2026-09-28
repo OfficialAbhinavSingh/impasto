@@ -423,6 +423,7 @@ QtObject {
             "Frosted": "Esmerilado",
             "Arrange the control centre": "Colocar el centro de control",
             "The top row": "La fila de arriba",
+            "The top row: click to choose its buttons": "La fila de arriba: haz clic para elegir sus botones",
             "Small buttons over the grid, on either side. With none, there is no row.":
                 "Botones pequeños sobre la cuadrícula, a cualquiera de los dos lados. Sin ninguno, no hay fila.",
             "Drag a button onto either side; drag it back here to take it off.":

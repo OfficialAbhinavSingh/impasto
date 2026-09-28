@@ -121,10 +121,48 @@ Singleton {
     readonly property var topLeft: root.topSides.left.map(id => root.topEntry(id))
     readonly property var topRight: root.topSides.right.map(id => root.topEntry(id))
     readonly property bool hasTop: root.topLeft.length + root.topRight.length > 0
+    // While arranging the row is there even empty, as something to click and
+    // fill (`TopRowInspector`); `selected` is "top" while it is chosen.
+    readonly property bool topShown: root.hasTop || root.editing
 
     // Those on neither side, for the editor's tray.
     readonly property var topSpare: root.topCatalogue.filter(entry =>
         root.topSides.left.indexOf(entry.id) < 0 && root.topSides.right.indexOf(entry.id) < 0)
+
+    function sideOf(id: string): string {
+        return root.topSides.left.indexOf(id) >= 0 ? "left"
+            : root.topSides.right.indexOf(id) >= 0 ? "right" : ""
+    }
+
+    // On or off the row: a session action lands at the left's end, a door at
+    // the right's, as the row has always had them.
+    function toggleTop(id: string): void {
+        if (root.sideOf(id) !== "") {
+            root.placeTop(id, "", -1)
+            return
+        }
+        const entry = root.topEntry(id)
+        const side = entry && entry.session ? "left" : "right"
+        root.placeTop(id, side, (side === "left" ? root.topSides.left : root.topSides.right).length)
+    }
+
+    // Along its own side.
+    function nudgeTop(id: string, delta: int): void {
+        const side = root.sideOf(id)
+        if (side === "")
+            return
+        const list = side === "left" ? root.topSides.left : root.topSides.right
+        root.placeTop(id, side, list.indexOf(id) + delta)
+    }
+
+    // To the other side, at its end.
+    function flipTop(id: string): void {
+        const side = root.sideOf(id)
+        if (side === "")
+            return
+        const other = side === "left" ? "right" : "left"
+        root.placeTop(id, other, (other === "left" ? root.topSides.left : root.topSides.right).length)
+    }
 
     // Takes `id` off wherever it is and puts it on `side` ("left", "right",
     // or "" for off the row) at `index`.
@@ -514,7 +552,7 @@ Singleton {
 
     readonly property int panelWidth: root.boardWidth + 2 * Theme.panelPadding
     readonly property int panelHeight: root.boardHeight + 2 * Theme.panelPadding
-        + (root.hasTop ? root.rowHeight + root.rowGap : 0)
+        + (root.topShown ? root.rowHeight + root.rowGap : 0)
 
     function offsetX(col: int): real {
         return col * Theme.centreStrideX
