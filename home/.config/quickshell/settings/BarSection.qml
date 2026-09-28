@@ -132,6 +132,25 @@ SettingsSection {
                 }
             }
 
+            // Locked in one capsule, where the sides sit on its band.
+            SettingRow {
+                label: Tr.t("Sides")
+                reading: SettingsService.barSides === "bare"
+                    ? Tr.t("The icons on the wallpaper")
+                    : Tr.t("Each group in a capsule")
+                locked: SettingsService.barStyle === "island"
+                reason: Tr.t("In one island the sides sit on its band")
+
+                SegmentedControl {
+                    options: [
+                        { id: "capsule", label: Tr.t("In capsules") },
+                        { id: "bare", label: Tr.t("On the wallpaper") }
+                    ]
+                    current: SettingsService.barSides
+                    onSelected: id => SettingsService.set("barSides", id)
+                }
+            }
+
             // Only the single-capsule style has a band that can span the
             // screen; locked in the other two.
             SettingRow {

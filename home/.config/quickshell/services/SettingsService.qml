@@ -93,6 +93,7 @@ Singleton {
     readonly property alias windowGlass: config.windowGlass
     readonly property alias surfaceStyle: config.surfaceStyle
     readonly property alias desktopGround: config.desktopGround
+    readonly property alias barSides: config.barSides
     readonly property alias wallpaperTransition: config.wallpaperTransition
     readonly property alias greeting: config.greeting
     readonly property alias fontFamily: config.fontFamily
@@ -490,6 +491,10 @@ Singleton {
 
         // The desktop widgets' ground, as above, or "" for the bar's.
         property string desktopGround: ""
+
+        // The bar's sides: "capsule", each group in a capsule, or "bare",
+        // the icons on the wallpaper. The one-capsule style has its band.
+        property string barSides: "capsule"
 
         // Row id from `WallpaperService.transitions`; `random` picks anew on
         // each change.

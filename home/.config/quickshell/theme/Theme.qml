@@ -98,6 +98,8 @@ QtObject {
     readonly property color islandRim: root.rimOf(root.surfaceStyle)
     // A see-through ground under the pointer: the same glass, a little lit.
     readonly property color islandGroundLit: Qt.tint(root.islandGround, Qt.rgba(1, 1, 1, 0.10))
+    // Under the bar's icons when its sides are on the wallpaper.
+    readonly property color barShadow: Qt.rgba(0, 0, 0, 0.7)
     // The glass style's thick edge (`GlassSheen`): light caught inside the
     // rim, and falling from the top edge.
     readonly property real glassEdge: 0.12

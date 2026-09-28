@@ -76,6 +76,9 @@ PanelWindow {
     readonly property string style: SettingsService.barStyle
     readonly property bool spread: root.style === "spread"
     readonly property bool unified: root.style === "island"
+    // The sides on the wallpaper, without capsules; not in one capsule, whose
+    // band is the sides' ground.
+    readonly property bool bare: !root.unified && SettingsService.barSides === "bare"
     readonly property bool grouped: !root.spread && !root.unified
 
     // Stretch the band across the screen instead of fitting its contents.
@@ -693,7 +696,17 @@ PanelWindow {
                 id: leftZone
 
                 entries: SettingsService.barItems("left")
-                chromeless: root.unified
+                chromeless: root.unified || root.bare
+
+                // On the wallpaper, lifted off it by a soft shadow.
+                layer.enabled: root.bare
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowBlur: 0.4
+                    shadowVerticalOffset: 1
+                    shadowHorizontalOffset: 0
+                    shadowColor: Theme.barShadow
+                }
                 x: (root.unified ? root.bodyX + root.hostedInset
                     : root.spread ? root.edgeMargin
                     : root.islandLeft - Theme.capsuleSpacing - leftZone.width) - sides.x
@@ -713,7 +726,17 @@ PanelWindow {
                 id: rightZone
 
                 entries: SettingsService.barItems("right")
-                chromeless: root.unified
+                chromeless: root.unified || root.bare
+
+                // On the wallpaper, lifted off it by a soft shadow.
+                layer.enabled: root.bare
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowBlur: 0.4
+                    shadowVerticalOffset: 1
+                    shadowHorizontalOffset: 0
+                    shadowColor: Theme.barShadow
+                }
                 x: (root.unified ? root.bodyX + root.bodyWidth - root.hostedInset - rightZone.width
                     : root.spread ? root.width - root.edgeMargin - rightZone.width
                     : root.islandRight + Theme.capsuleSpacing) - sides.x

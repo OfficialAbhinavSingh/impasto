@@ -413,6 +413,12 @@ QtObject {
             "Choose the Classic ground above to change it":
                 "Elige el fondo Clásico de arriba para cambiarla",
             "As the bar": "Como la barra",
+            "Sides": "Laterales",
+            "The icons on the wallpaper": "Los iconos sobre el fondo",
+            "Each group in a capsule": "Cada grupo en una cápsula",
+            "In one island the sides sit on its band": "En una isla los laterales van sobre su banda",
+            "In capsules": "En cápsulas",
+            "On the wallpaper": "Sobre el fondo",
             "Bar and island": "Barra e isla",
             "Blur and glass": "Desenfoque y cristal",
             "What shows through a window.": "Lo que se ve a través de una ventana.",
