@@ -118,8 +118,16 @@ ColumnLayout {
         root.closed()
     }
 
-    function activateSelected(): void {
-        root.run(root.results[root.view.currentIndex])
+    // Shift or Ctrl with Enter opens a copied image in imv instead of copying
+    // it; on any other row it is a plain Enter.
+    function confirm(entry: var, modifiers: int): void {
+        if (entry && entry.kind === "clip" && entry.file
+                && (modifiers & (Qt.ShiftModifier | Qt.ControlModifier))) {
+            Quickshell.execDetached(["imv", entry.file])
+            root.closed()
+            return
+        }
+        root.run(entry)
     }
 
     // Only clipboard entries can be forgotten: they are recorded without being
@@ -166,8 +174,8 @@ ColumnLayout {
             selectedTextColor: Theme.accentText
 
             onTextEdited: LauncherService.query = text
-            Keys.onReturnPressed: root.activateSelected()
-            Keys.onEnterPressed: root.activateSelected()
+            Keys.onReturnPressed: event => root.confirm(root.results[root.view.currentIndex], event.modifiers)
+            Keys.onEnterPressed: event => root.confirm(root.results[root.view.currentIndex], event.modifiers)
             Keys.onUpPressed: root.move(root.grid ? -LauncherService.emojiColumns : -1)
             Keys.onDownPressed: root.move(root.grid ? LauncherService.emojiColumns : 1)
             // In the grid the arrows move along a line; the field is a search
@@ -559,7 +567,7 @@ ColumnLayout {
                 // On movement, not hover: a row appearing under a resting
                 // pointer would otherwise steal the selection on open.
                 onPositionChanged: row.ListView.view.currentIndex = row.index
-                onClicked: root.run(row.modelData)
+                onClicked: mouse => root.confirm(row.modelData, mouse.modifiers)
             }
         }
     }

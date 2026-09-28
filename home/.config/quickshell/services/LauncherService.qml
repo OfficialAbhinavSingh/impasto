@@ -362,8 +362,10 @@ QtObject {
                 kind: "clip", id: entry.key, icon: "󰅍",
                 name: ClipboardService.title(entry),
                 subtitle: ClipboardService.describe(entry),
-                // Images show a thumbnail instead of a glyph.
-                picture: entry.kind === "image" ? `file://${entry.file}` : ""
+                // Images show a thumbnail instead of a glyph, and can be
+                // opened in imv.
+                picture: entry.kind === "image" ? `file://${entry.file}` : "",
+                file: entry.kind === "image" ? entry.file : ""
             })
         }
         return found
