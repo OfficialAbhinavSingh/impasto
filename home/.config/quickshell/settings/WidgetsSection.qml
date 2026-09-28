@@ -192,7 +192,7 @@ SettingsSection {
         SettingGroup {
             title: Tr.t("Look")
             note: Tr.t("Every widget follows these unless it was given a look of its own.")
-            hint: Tr.t("While arranging, click a widget to override these for it alone. Modern shows a figure with a caption and Analogue draws an object such as a dial or a gauge; the style and background set what sits behind it.")
+            hint: Tr.t("While arranging, click a widget to override these for it alone. Modern shows a figure with a caption, Analogue draws an object such as a dial or a gauge, and Sticker cuts it out as coloured stickers on the wallpaper; the style and background set what sits behind the first two.")
 
             SettingTiles {
                 label: Tr.t("Face")

@@ -375,11 +375,12 @@ QtObject {
             "Look": "Aspecto",
             "Every widget follows these unless it was given a look of its own.":
                 "Todos los widgets siguen esto salvo que se les haya dado un aspecto propio.",
-            "While arranging, click a widget to override these for it alone. Modern shows a figure with a caption and Analogue draws an object such as a dial or a gauge; the style and background set what sits behind it.":
-                "Mientras colocas, haz clic en un widget para cambiar esto solo para él. Modern muestra una cifra con un pie y Analógico dibuja un objeto, como una esfera o un indicador; el estilo y el fondo fijan lo que lleva detrás.",
+            "While arranging, click a widget to override these for it alone. Modern shows a figure with a caption, Analogue draws an object such as a dial or a gauge, and Sticker cuts it out as coloured stickers on the wallpaper; the style and background set what sits behind the first two.":
+                "Mientras colocas, haz clic en un widget para cambiar esto solo para él. Modern muestra una cifra con un pie, Analógico dibuja un objeto, como una esfera o un indicador, y Pegatina lo recorta en pegatinas de colores sobre el fondo; el estilo y el fondo fijan lo que llevan detrás los dos primeros.",
 
             "Modern": "Modern",
             "Analogue": "Analógico",
+            "Sticker": "Pegatina",
             "Small": "Pequeño",
             "Wide": "Ancho",
             "Large": "Grande",

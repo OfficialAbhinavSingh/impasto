@@ -46,7 +46,7 @@ Item {
     readonly property var looks: DesktopService.spectrumOf(root.onSpectrum ? root.row : null)
 
     // Notes, photos and the spectrum have no capsule to style and no capsule
-    // opacity to set.
+    // opacity to set; neither has a sticker (`DesktopService.bare`).
     readonly property bool styled: !root.onNote && !root.onPhoto && !root.onSpectrum
 
     // Only a print has a chin to write in.
@@ -975,7 +975,7 @@ Item {
             // Solid ground only: on glass the capsule is the island's.
 
             Item {
-                visible: root.styled && Theme.deskSolid
+                visible: root.styled && Theme.deskSolid && !DesktopService.bare(root.row)
                 width: parent.width
                 height: 40
 

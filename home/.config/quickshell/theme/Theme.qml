@@ -152,6 +152,16 @@ QtObject {
     readonly property color paperLine: "#261c1c1e"
     readonly property int paperRadius: 10
 
+    // Sticker widgets: a die-cut edge of vinyl white, fixed like the island's
+    // black, around a palette hue washed towards it; what is printed on one
+    // is the same hue darkened. The edge is a share of the sticker's short
+    // side, the lean a sticker's largest tilt in degrees.
+    readonly property color stickerPaper: "#fbf7ee"
+    readonly property real stickerWash: 0.45
+    readonly property real stickerDeep: 0.62
+    readonly property real stickerEdge: 0.028
+    readonly property real stickerLean: 5
+
     // Contribution graph, empty to busiest. GitHub's dark ramp, fixed across
     // palettes; the empty step is lifted off black so it reads as a cell.
     readonly property var githubLevels: [

@@ -658,7 +658,8 @@ Singleton {
         //   screen   the monitor's description; absent means the main screen
         //   col, row the square its top left corner is on
         //   family   "2x2", "4x2", "4x4" or "8x2" — which face it wears
-        //   theme    "modern" or "analogue"; absent means the desktop's
+        //   theme    "modern", "analogue" or "sticker"; absent means the
+        //            desktop's
         //   style    how its capsule is drawn; absent means the desktop's
         //   opacity  how solid it is; absent means the desktop's
         //   note     for a notes widget, which note; absent means the

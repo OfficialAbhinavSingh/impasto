@@ -100,8 +100,10 @@ holds every module, a corner is pulled for another shape, and a click
 opens that widget's own look — for a photo widget, the picture of your own it
 holds.
 
-**Two themes on the same modules**: *Modern* is a figure with a caption,
-*Analogue* draws each one as an object, and either is a choice per widget. A
+**Three themes on the same modules**: *Modern* is a figure with a caption,
+*Analogue* draws each one as an object, *Sticker* cuts it out as coloured
+stickers that sit on the wallpaper without filling their squares, and any of
+them is a choice per widget. A
 spectrum of whatever is playing sits on the grid as bare bars, or runs along a
 whole edge under the windows.
 

@@ -74,11 +74,14 @@ Singleton {
     // ── THEMES ──────────────────────────────────────────────────────────────
     //
     // Modern (`faces/WidgetFace`) shows figures and labels; Analogue
-    // (`faces/analogue/`) draws dials, gauges and similar objects. A row's
-    // `theme` overrides the desktop setting.
+    // (`faces/analogue/`) draws dials, gauges and similar objects; Sticker
+    // (`faces/sticker/`) cuts each widget out as coloured stickers that sit
+    // on its squares without filling them. A row's `theme` overrides the
+    // desktop setting.
     readonly property var themes: [
         { id: "modern",   label: "Modern" },
-        { id: "analogue", label: "Analogue" }
+        { id: "analogue", label: "Analogue" },
+        { id: "sticker",  label: "Sticker" }
     ]
 
     function themeOf(widget: var): string {
@@ -114,6 +117,19 @@ Singleton {
             volume: ["2x2", "4x2"],                 brightness: ["2x2", "4x2"],
             network: ["2x2", "4x2"],                bluetooth: ["2x2", "4x2"],
             weather: ["2x2", "4x2", "4x4", "8x2"],  stats: ["2x2", "4x2", "4x4"],
+            github: ["2x2", "4x2", "8x2"],
+            updates: ["2x2", "4x2"],                pet: ["2x2", "4x2"],
+            games: ["2x2", "4x2"],                  calendar: ["2x2", "4x2", "4x4"],
+            notes: ["2x2", "4x2", "4x4", "8x2"],    tasks: ["2x2", "4x2", "4x4"],
+            clock: ["2x2", "4x2", "4x4", "8x2"],    photo: ["2x2", "4x2", "4x4", "8x2"],
+            spectrum: ["4x2", "8x2", "4x4"]
+        },
+        sticker: {
+            media: ["2x2", "4x2", "4x4"],           timer: ["2x2", "4x2"],
+            claude: ["2x2", "4x2"],                 battery: ["2x2", "4x2"],
+            volume: ["2x2", "4x2"],                 brightness: ["2x2", "4x2"],
+            network: ["2x2", "4x2"],                bluetooth: ["2x2", "4x2"],
+            weather: ["2x2", "4x2", "8x2"],         stats: ["2x2", "4x2"],
             github: ["2x2", "4x2", "8x2"],
             updates: ["2x2", "4x2"],                pet: ["2x2", "4x2"],
             games: ["2x2", "4x2"],                  calendar: ["2x2", "4x2", "4x4"],
@@ -1204,10 +1220,11 @@ Singleton {
     // capsule is the island's material. Colours always come from the active
     // palette.
 
-    // Notes draw their own paper, photos are their picture and the spectrum
-    // is its bars: no capsule.
+    // Notes draw their own paper, photos are their picture, the spectrum is
+    // its bars and a sticker is cut out of nothing: no capsule.
     function bare(widget: var): bool {
-        return !!widget && (widget.id === "notes" || widget.id === "photo" || widget.id === "spectrum")
+        return !!widget && (widget.id === "notes" || widget.id === "photo" || widget.id === "spectrum"
+            || root.themeOf(widget) === "sticker")
     }
 
     function opacityOf(widget: var): int {
@@ -1231,6 +1248,9 @@ Singleton {
     //   accentText  content on the accent
     //   raised      tracks, placeholders
     //   dim         a ring's empty track
+    //   red, green, yellow, blue
+    //               the palette's other hues, which a sticker is cut from
+    //   paper       a sticker's die-cut edge
     //
     // All values are `color`, not strings, because faces read `.r` etc. Wrap
     // any literal in `Qt.color()`.
@@ -1239,7 +1259,9 @@ Singleton {
             ground: Theme.island, border: Theme.veilLineOf(Theme.deskStyle),
             text: Theme.text, muted: Theme.textMuted,
             accent: Theme.accent, accentText: Theme.accentText,
-            raised: Theme.veilHoverOf(Theme.deskStyle), dim: Theme.indicatorDim
+            raised: Theme.veilHoverOf(Theme.deskStyle), dim: Theme.indicatorDim,
+            red: Theme.red, green: Theme.green, yellow: Theme.yellow, blue: Theme.blue,
+            paper: Theme.stickerPaper
         }
         return ink
     }
