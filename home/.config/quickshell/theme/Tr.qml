@@ -77,6 +77,8 @@ QtObject {
             "Tray": "Bandeja",
             "Privacy": "Privacidad",
             "Sound": "Sonido",
+            "%1 screens": "%1 pantallas",
+            "Screens": "Pantallas",
             "Warmth": "Calidez",
             "Presets": "Rápidos",
             "Candle": "Vela",

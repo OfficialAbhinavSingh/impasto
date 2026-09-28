@@ -100,7 +100,10 @@ Item {
                 value: BrightnessService.percent
                 from: 1
                 available: BrightnessService.available
+                // A page only when there is more than one screen to set.
+                expandable: BrightnessService.several
                 onMoved: value => BrightnessService.setPercent(value)
+                onExpandClicked: root.panelRequested("brightness")
             }
         }
     }

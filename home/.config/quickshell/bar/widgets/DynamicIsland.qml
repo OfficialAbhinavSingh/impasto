@@ -85,6 +85,7 @@ Rectangle {
         sound:      { width: AudioService.panelWidth, height: AudioService.panelHeight },
         microphone: { width: AudioService.panelWidth, height: AudioService.microphoneHeight },
         nightlight: { width: SunsetService.panelWidth, height: SunsetService.panelHeight },
+        brightness: { width: BrightnessService.panelWidth, height: BrightnessService.panelHeight },
         bluetooth:  { width: 420,  height: 500 },
         session:    { width: 720,  height: 180 },
         // A row per creature, plus one for the next egg.
@@ -159,6 +160,7 @@ Rectangle {
         sound: soundDetail,
         microphone: microphoneDetail,
         nightlight: nightLightDetail,
+        brightness: brightnessDetail,
         bluetooth: bluetoothDetail,
         stats: statsPanel,
         overview: overviewPanel,
@@ -555,6 +557,11 @@ Rectangle {
     Component {
         id: microphoneDetail
         MicrophoneDetail { onBack: root.open("controls") }
+    }
+
+    Component {
+        id: brightnessDetail
+        BrightnessDetail { onBack: root.open("controls") }
     }
 
     Component {
