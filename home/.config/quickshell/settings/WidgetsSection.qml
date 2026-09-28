@@ -223,14 +223,12 @@ SettingsSection {
             SettingTiles {
                 label: Tr.t("Ground")
                 reading: SettingsService.desktopGround === "" ? Tr.t("As the bar")
-                    : Theme.deskGlass ? Tr.t("Thin glass with a lit edge, over a blur")
-                    : Theme.deskSolid ? Tr.t("Solid black") : Tr.t("Frosted over a blur, with a rim of light")
+                    : Theme.deskGlass ? Tr.t("The terminal's glass, over a blur") : Tr.t("Solid black")
 
                 Repeater {
                     model: [
                         { id: "", label: "As the bar" },
                         { id: "classic", label: "Classic" },
-                        { id: "frosted", label: "Frosted" },
                         { id: "glass", label: "Glass" }
                     ]
 

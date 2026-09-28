@@ -104,13 +104,11 @@ SettingsSection {
 
             SettingTiles {
                 label: Tr.t("Ground")
-                reading: Tr.t(Theme.glass ? "Thin glass with a lit edge, over a blur"
-                    : Theme.solid ? "Solid black" : "Frosted over a blur, with a rim of light")
+                reading: Tr.t(Theme.glass ? "The terminal's glass, over a blur" : "Solid black")
 
                 Repeater {
                     model: [
                         { id: "classic", label: "Classic" },
-                        { id: "frosted", label: "Frosted" },
                         { id: "glass", label: "Glass" }
                     ]
 

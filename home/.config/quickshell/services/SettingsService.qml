@@ -425,7 +425,13 @@ Singleton {
         // one turn reads back a stale `var` value and loses the second
         // change. Coalescing also means one write per turn (`adopt()`).
         onAdapterUpdated: saver.restart()
-        onLoaded: root.arrived = true
+        onLoaded: {
+            root.arrived = true
+            // A ground named "frosted" is read as glass.
+            for (const key of ["surfaceStyle", "desktopGround"])
+                if (config[key] === "frosted")
+                    config[key] = "glass"
+        }
         // First run: write the defaults, which then count as read.
         onLoadFailed: error => {
             if (error === FileViewError.FileNotFound) {
@@ -484,9 +490,9 @@ Singleton {
         // `CompositorService` pushes it at login and after every reload.
         property bool windowGlass: false
 
-        // The island's and the bar's ground: "classic" solid black,
-        // "frosted" smoke over the compositor's blur, "glass" thinner with a
-        // lit edge (`Theme.islandGround`).
+        // The island's and the bar's ground: "classic" solid black, or
+        // "glass", the terminal's ground over the compositor's blur
+        // (`Theme.islandGround`).
         property string surfaceStyle: "classic"
 
         // The desktop widgets' ground, as above, or "" for the bar's.

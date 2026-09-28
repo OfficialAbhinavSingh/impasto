@@ -27,26 +27,31 @@ QtObject {
 
     // Pure black in every palette: the island is the shell's identity, not a
     // themed surface. What changes is how much of it there is
-    // (`SettingsService.surfaceStyle`): solid, smoke over the compositor's
-    // blur, or a thinner glass with a lit edge. `island` stays opaque for
-    // what is cut out of it; the island, the capsules and the toasts are
-    // painted in `islandGround`, and what sits on them in white washes.
+    // (`SettingsService.surfaceStyle`): solid, or glass — the terminal's own
+    // ground, the accent scaled towards black at kitty's opacity, over the
+    // compositor's blur, with a lit edge. `island` stays opaque for what is
+    // cut out of it; the island, the capsules and the toasts are painted in
+    // `islandGround`, and what sits on them in white washes.
     readonly property string surfaceStyle: SettingsService.surfaceStyle
-    readonly property bool solid: root.surfaceStyle !== "frosted" && root.surfaceStyle !== "glass"
+    readonly property bool solid: root.surfaceStyle !== "glass"
     readonly property bool glass: root.surfaceStyle === "glass"
 
     readonly property color island: "#000000"
     readonly property color islandGround: root.groundOf(root.surfaceStyle)
 
+    // The terminal's ground: `TERMINAL_TINT` and kitty's `background_opacity`.
+    readonly property real terminalTint: 0.22
+    readonly property real terminalOpacity: 0.90
+    readonly property color terminalGround: Qt.rgba(root.accent.r * root.terminalTint,
+        root.accent.g * root.terminalTint, root.accent.b * root.terminalTint, root.terminalOpacity)
+
     // Any style's ground and rim, for a picture of one that is not chosen.
     function groundOf(style: string): color {
-        return style === "glass" ? Qt.rgba(0, 0, 0, 0.20)
-            : style === "frosted" ? Qt.rgba(0, 0, 0, 0.34) : root.island
+        return style === "glass" ? root.terminalGround : root.island
     }
 
     function rimOf(style: string): color {
-        return style === "glass" ? Qt.rgba(1, 1, 1, 0.42)
-            : style === "frosted" ? Qt.rgba(1, 1, 1, 0.20) : "#262626"
+        return style === "glass" ? Qt.rgba(1, 1, 1, 0.20) : "#262626"
     }
     readonly property color islandSurface: "#141414"
     readonly property color islandSurfaceHover: "#1f1f1f"
@@ -55,7 +60,7 @@ QtObject {
     // The desk's widgets have a ground of their own, or the bar's
     // (`SettingsService.desktopGround`, empty to follow).
     readonly property string deskStyle: SettingsService.desktopGround || root.surfaceStyle
-    readonly property bool deskSolid: root.deskStyle !== "frosted" && root.deskStyle !== "glass"
+    readonly property bool deskSolid: root.deskStyle !== "glass"
     readonly property bool deskGlass: root.deskStyle === "glass"
 
     // The same three on glass: white veils, by style. Only the bar's and the
@@ -64,18 +69,15 @@ QtObject {
     // dock — stays black, so a part drawn in both asks by its window
     // (`surfaceIn`).
     function veilOf(style: string): color {
-        return style === "glass" ? Qt.rgba(1, 1, 1, 0.10)
-            : style === "frosted" ? Qt.rgba(1, 1, 1, 0.08) : root.islandSurface
+        return style === "glass" ? Qt.rgba(1, 1, 1, 0.08) : root.islandSurface
     }
 
     function veilHoverOf(style: string): color {
-        return style === "glass" ? Qt.rgba(1, 1, 1, 0.17)
-            : style === "frosted" ? Qt.rgba(1, 1, 1, 0.14) : root.islandSurfaceHover
+        return style === "glass" ? Qt.rgba(1, 1, 1, 0.14) : root.islandSurfaceHover
     }
 
     function veilLineOf(style: string): color {
-        return style === "glass" ? Qt.rgba(1, 1, 1, 0.16)
-            : style === "frosted" ? Qt.rgba(1, 1, 1, 0.12) : root.islandBorder
+        return style === "glass" ? Qt.rgba(1, 1, 1, 0.12) : root.islandBorder
     }
 
     function styleIn(window: var): string {
@@ -94,7 +96,7 @@ QtObject {
         return root.veilLineOf(root.styleIn(window))
     }
     // The outline of the island, the capsules and the desk's widgets: the
-    // hairline on solid, a line of light on either glass.
+    // hairline on solid, a line of light on glass.
     readonly property color islandRim: root.rimOf(root.surfaceStyle)
     // A see-through ground under the pointer: the same glass, a little lit.
     readonly property color islandGroundLit: Qt.tint(root.islandGround, Qt.rgba(1, 1, 1, 0.10))

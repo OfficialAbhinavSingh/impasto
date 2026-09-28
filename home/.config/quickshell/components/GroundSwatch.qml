@@ -1,7 +1,7 @@
 // ╭──────────────────────────────────────────────────────────────────────────╮
 // │                                                                          │
 // │   G R O U N D   S W A T C H                                              │
-// │   one ground on the wallpaper · classic, frosted or glass                │
+// │   one ground on the wallpaper · classic or glass                         │
 // │                                                                          │
 // │   github.com/andreumassanet/impasto                                      │
 // │                                                                          │

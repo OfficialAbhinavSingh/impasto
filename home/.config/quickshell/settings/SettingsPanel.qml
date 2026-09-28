@@ -50,14 +50,14 @@ Item {
                  { id: "modules", label: Tr.t("The bar") },
                  { id: "workspaces", label: Tr.t("Workspaces") },
                  { id: "notifications", label: Tr.t("Notifications") }],
-          keywords: "bar island notch height margin width full span workspaces unified layout island bar band notification toast do not disturb silence timeout clock time date seconds format beside running modules layout left right split drag catalogue chip icon ring figure hover shape media claude battery timer volume brightness network wifi bluetooth weather stats cpu updates pet capture record screenshot buttons every screen monitors ground glass frosted classic blur transparent translucent codex",
+          keywords: "bar island notch height margin width full span workspaces unified layout island bar band notification toast do not disturb silence timeout clock time date seconds format beside running modules layout left right split drag catalogue chip icon ring figure hover shape media claude battery timer volume brightness network wifi bluetooth weather stats cpu updates pet capture record screenshot buttons every screen monitors ground glass classic blur transparent translucent codex",
           page: barPage },
 
         { id: "widgets", category: "shell", icon: "󰕮", label: Tr.t("Desktop"),
           blurb: Tr.t("What sits on the wallpaper, under the windows."),
           tabs: [{ id: "modules", label: Tr.t("Module settings") },
                  { id: "widgets", label: Tr.t("The widgets") }],
-          keywords: "widgets desktop wallpaper widget place drag size shape capsule ground glass frosted classic blur palette ink tray edit arrange clock calendar notes note sticky theme analogue modern opacity weather location place city github contributions username handwriting edges deck pet creature plush paper pixel egg species style spectrum cava visualiser visualizer bars audio music",
+          keywords: "widgets desktop wallpaper widget place drag size shape capsule ground glass classic blur palette ink tray edit arrange clock calendar notes note sticky theme analogue modern opacity weather location place city github contributions username handwriting edges deck pet creature plush paper pixel egg species style spectrum cava visualiser visualizer bars audio music",
           page: widgetsPage },
 
         { id: "controls", category: "shell", icon: "󰕰", label: Tr.t("Control Centre"),
@@ -87,7 +87,7 @@ Item {
                  { id: "depth", label: Tr.t("Depth") },
                  { id: "type", label: Tr.t("Type") },
                  { id: "motion", label: Tr.t("Motion") }],
-          keywords: "appearance theme colour color wallpaper transition fade wipe wave circle random greeting fastfetch fa terminal scene lava lamp critters koi invaders shadow shadows depth ground glass frosted classic rounding blur gaps border opacity glass rules font family sans mono nerd icons typeface animation speed curve easing preset motion",
+          keywords: "appearance theme colour color wallpaper transition fade wipe wave circle random greeting fastfetch fa terminal scene lava lamp critters koi invaders shadow shadows depth ground glass classic rounding blur gaps border opacity glass rules font family sans mono nerd icons typeface animation speed curve easing preset motion",
           page: appearancePage },
 
         { id: "monitors", category: "desk", icon: "󰍹", label: Tr.t("Displays"),
