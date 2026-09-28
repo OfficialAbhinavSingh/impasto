@@ -105,10 +105,17 @@ QtObject {
                                root.maxResults))
         : Math.max(1, Math.min(root.results.length, root.maxResults))
 
+    function listHeight(rows: int): int {
+        return rows * root.rowHeight + (rows - 1) * root.rowSpacing
+    }
+
+    // A full grid stops where a full list does, strip included, so the two
+    // modes open to one height; the grid scrolls under its last partial line.
     function heightFor(rows: int): int {
         const list = root.showsStrip
-            ? rows * root.emojiCell
-            : rows * root.rowHeight + (rows - 1) * root.rowSpacing
+            ? Math.min(rows * root.emojiCell,
+                       root.listHeight(root.maxResults) - root.stripHeight - root.gap)
+            : root.listHeight(rows)
         return root.chromeHeight + list + 2 * Theme.panelPadding
     }
 
