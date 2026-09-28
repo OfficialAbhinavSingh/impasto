@@ -16,13 +16,15 @@ import "../../../services"
 // Round buttons on the black, as many as the block's cells hold, centred in
 // them. `session` is `SessionService.actions`: one that ends the session arms
 // on the first click (red) and runs on the second. `shortcuts` is the doors
-// chosen in the settings (`ControlsService.shownDoors`), each opening its
-// panel.
+// chosen for this block in its inspector (`ControlsService.doorsOf`), each
+// opening its panel.
 Item {
     id: root
 
     // "session" or "shortcuts"
     property string kind: "session"
+    // The grid row this face draws, for a shortcuts block's own doors.
+    property string blockKey: ""
 
     signal panelRequested(string panel)
     signal settingsRequested()
@@ -31,7 +33,7 @@ Item {
 
     readonly property var entries: root.kind === "session"
         ? SessionService.actions
-        : ControlsService.shownDoors
+        : ControlsService.doorsOf(root.blockKey)
 
     readonly property int button: Theme.centreButton
     readonly property int gap: Theme.centreButtonGap

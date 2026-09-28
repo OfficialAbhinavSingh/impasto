@@ -403,10 +403,10 @@ QtObject {
 
             // ── CONTROL CENTRE ──────────────────────────────────────────────
             "The panel": "El panel",
+            "Edit shows the grid, its columns and rows under the island, and a card of every block under them. Drag a block onto the cells, pull a corner or scroll to resize it, and drop it on the card to remove it; a click on a toggles or shortcuts block chooses what it carries. Columns come and go on both sides alike, so the blocks stay centred. Escape leaves, and the right button on the panel enters or leaves without opening settings.":
+                "Editar muestra la cuadrícula, sus columnas y filas bajo la isla, y debajo una tarjeta con todos los bloques. Arrastra un bloque a las casillas, tira de una esquina o usa la rueda para cambiar su tamaño, y suéltalo en la tarjeta para quitarlo; haciendo clic en un bloque de conmutadores o de atajos eliges qué lleva. Las columnas se añaden y se quitan por los dos lados a la vez, así que los bloques quedan centrados. Esc sale, y con el botón derecho sobre el panel entras o sales sin abrir los ajustes.",
             "A grid of the size chosen here, arranged on the panel itself.":
                 "Una cuadrícula del tamaño que elijas aquí, que se coloca en el propio panel.",
-            "Columns come and go on both sides alike, so the blocks stay centred; one a smaller grid cannot hold is taken off. Edit shows the grid with a card of every block, moved by the space between them: drag a block onto the cells, pull a corner or scroll to resize, and drop one on the card to remove it. Escape leaves this mode, the right button on the panel enters or leaves it without opening settings, and a click on a toggles block chooses its switches.":
-                "Las columnas se añaden y se quitan por los dos lados a la vez, así que los bloques quedan centrados; el que no cabe en una cuadrícula más pequeña se quita. Editar muestra la cuadrícula con una tarjeta de todos los bloques, que se mueve por el espacio entre ellos: arrastra un bloque a las casillas, tira de una esquina o usa la rueda para cambiar el tamaño, y suelta uno en la tarjeta para quitarlo. Esc sale del modo, con el botón derecho sobre el panel entras o sales sin abrir los ajustes, y haciendo clic en un bloque de conmutadores eliges cuáles lleva.",
             "Columns": "Columnas",
             "Rows": "Filas",
             "Ground": "Fondo",
@@ -424,8 +424,6 @@ QtObject {
             "Arrange the control centre": "Colocar el centro de control",
             "Default layout": "Disposición inicial",
             "Shortcuts": "Atajos",
-            "The buttons of the shortcuts block, which open other panels and this window, in this order.":
-                "Los botones del bloque de atajos, que abren otros paneles y esta ventana, en este orden.",
 
             "System statistics": "Estadísticas del sistema",
             "Workspace overview": "Vista de espacios",

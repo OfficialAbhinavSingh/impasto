@@ -613,12 +613,23 @@ PanelWindow {
             anchors.fill: parent
             z: 3
 
+            // The grid's size first, right under the island, then the card.
+            Loader {
+                id: gridSize
+
+                x: (parent.width - width) / 2
+                y: root.islandTopMargin + island.height + Theme.desktopGutter
+                active: root.live && ControlsService.editing
+                sourceComponent: GridSize {}
+            }
+
             Loader {
                 anchors.fill: parent
                 active: root.live && ControlsService.editing
                 sourceComponent: ControlsTray {
                     host: overlay
-                    homeTop: root.islandTopMargin + island.height + Theme.desktopGutter
+                    homeTop: gridSize.y + (gridSize.item ? gridSize.item.height : 0)
+                        + Theme.desktopGutter
                 }
             }
         }

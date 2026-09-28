@@ -33,6 +33,9 @@ Item {
         ? ControlsService.geometry(root.block) : ({ x: 0, y: 0, width: 0, height: 0 })
 
     readonly property bool onToggles: root.blockId === "toggles"
+    readonly property bool onShortcuts: root.blockId === "shortcuts"
+    // The two blocks that carry a list chosen here.
+    readonly property bool listed: root.onToggles || root.onShortcuts
 
     readonly property int cardWidth: 268
     readonly property int pad: 14
@@ -176,13 +179,13 @@ Item {
 
             // ── TILES ───────────────────────────────────────────────────────
             //
-            // Toggles block only: every switch in the catalogue, ticked when it
-            // is on this block. A newly ticked tile goes to the end; the arrows
-            // reorder.
+            // The toggles block's switches, or the shortcuts block's buttons:
+            // every one there is, ticked when it is on this block. A newly
+            // ticked one goes to the end; the arrows reorder.
 
             Text {
-                visible: root.onToggles
-                text: Tr.t("Toggles")
+                visible: root.listed
+                text: root.onShortcuts ? Tr.t("Shortcuts") : Tr.t("Toggles")
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSizeLabel
                 font.weight: Font.DemiBold
@@ -190,21 +193,20 @@ Item {
             }
 
             Column {
-                visible: root.onToggles
+                visible: root.listed
                 width: parent.width
                 spacing: 2
 
                 Repeater {
-                    model: root.onToggles ? ControlsService.tileRowsOf(root.key) : []
+                    model: root.listed ? ControlsService.listRowsOf(root.key) : []
 
                     Rectangle {
                         id: tickRow
 
                         required property var modelData
 
-                        readonly property bool on:
-                            ControlsService.showsTileIn(root.key, tickRow.modelData.key)
-                        readonly property var order: ControlsService.toggleKeysOf(root.key)
+                        readonly property var order: ControlsService.listKeysOf(root.key)
+                        readonly property bool on: tickRow.order.indexOf(tickRow.modelData.key) >= 0
                         readonly property int at: tickRow.order.indexOf(tickRow.modelData.key)
 
                         width: parent.width
@@ -264,7 +266,7 @@ Item {
 
                         TapHandler {
                             gesturePolicy: TapHandler.ReleaseWithinBounds
-                            onTapped: ControlsService.toggleTileIn(root.key, tickRow.modelData.key)
+                            onTapped: ControlsService.toggleIn(root.key, tickRow.modelData.key)
                         }
 
                         // Declared after the row's tap so a press on an arrow
@@ -311,7 +313,7 @@ Item {
                                         gesturePolicy: TapHandler.ReleaseWithinBounds
                                         onTapped: {
                                             if (arrow.usable)
-                                                ControlsService.moveTileIn(root.key,
+                                                ControlsService.moveIn(root.key,
                                                     tickRow.modelData.key, arrow.modelData.delta)
                                         }
                                     }

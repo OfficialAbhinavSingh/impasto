@@ -79,7 +79,7 @@ Singleton {
         return value !== null && value !== undefined && typeof value.length === "number"
     }
 
-    // Door ids on the row, left to right. Unknown ids are skipped.
+    // The default doors of a shortcuts block. Unknown ids are skipped.
     readonly property var buttons: {
         const kept = SettingsService.centreButtons
         const list = root.stored(kept) ? kept : root.defaultButtons
@@ -90,25 +90,17 @@ Singleton {
         return root.doors.find(entry => entry.id === id) ?? null
     }
 
-    readonly property var shownDoors: root.buttons.map(id => root.door(id))
-
-    // Settings page model: shown doors in row order, then the rest.
-    readonly property var doorRows: root.shownDoors.concat(
-        root.doors.filter(entry => root.buttons.indexOf(entry.id) < 0))
-
-    function showsDoor(id: string): bool {
-        return root.buttons.indexOf(id) >= 0
+    // Doors for one shortcuts block, from its own `doors` field (set in the
+    // inspector), else the legacy `centreButtons`, else the defaults.
+    function doorKeysOf(key: string): var {
+        const block = root.entryOf(key)
+        const own = block ? block.doors : undefined
+        const list = root.stored(own) ? Array.from(own) : root.buttons
+        return list.filter(id => root.door(id) !== null)
     }
 
-    function setDoor(id: string, on: bool): void {
-        const list = root.buttons.filter(entry => entry !== id)
-        if (on)
-            list.push(id)
-        SettingsService.set("centreButtons", list)
-    }
-
-    function moveDoor(id: string, delta: int): void {
-        SettingsService.set("centreButtons", root.moved(root.buttons, id, delta))
+    function doorsOf(key: string): var {
+        return root.doorKeysOf(key).map(id => root.door(id))
     }
 
     // Returns a copy of `list` with `id` moved by `delta` places.
@@ -342,21 +334,41 @@ Singleton {
             root.toggleCatalogue.filter(tile => keys.indexOf(tile.key) < 0))
     }
 
-    function showsTileIn(key: string, tile: string): bool {
-        return root.toggleKeysOf(key).indexOf(tile) >= 0
+    // ── A BLOCK'S LIST ──────────────────────────────────────────────────────
+    //
+    // The inspector's one list, for the toggles block's switches and the
+    // shortcuts block's doors: `{ key, icon, label }` rows, carried ones in
+    // order first.
+    function listRowsOf(key: string): var {
+        const block = root.entryOf(key)
+        if (block && block.id === "shortcuts") {
+            const keys = root.doorKeysOf(key)
+            return keys.map(id => root.door(id)).concat(
+                root.doors.filter(door => keys.indexOf(door.id) < 0))
+                .map(door => ({ key: door.id, icon: door.icon, label: door.label }))
+        }
+        return root.tileRowsOf(key)
     }
 
-    // Adds the tile at the end, or removes it.
-    function toggleTileIn(key: string, tile: string): void {
-        const list = root.toggleKeysOf(key)
-        const next = list.filter(entry => entry !== tile)
+    function listKeysOf(key: string): var {
+        const block = root.entryOf(key)
+        return block && block.id === "shortcuts" ? root.doorKeysOf(key) : root.toggleKeysOf(key)
+    }
+
+    // Adds the entry at the end, or removes it.
+    function toggleIn(key: string, entry: string): void {
+        const block = root.entryOf(key)
+        const list = root.listKeysOf(key)
+        const next = list.filter(other => other !== entry)
         if (next.length === list.length)
-            next.push(tile)
-        root.update(key, { toggles: next })
+            next.push(entry)
+        root.update(key, block && block.id === "shortcuts" ? { doors: next } : { toggles: next })
     }
 
-    function moveTileIn(key: string, tile: string, delta: int): void {
-        root.update(key, { toggles: root.moved(root.toggleKeysOf(key), tile, delta) })
+    function moveIn(key: string, entry: string, delta: int): void {
+        const block = root.entryOf(key)
+        const next = root.moved(root.listKeysOf(key), entry, delta)
+        root.update(key, block && block.id === "shortcuts" ? { doors: next } : { toggles: next })
     }
 
     // ── BLOCKS ──────────────────────────────────────────────────────────────

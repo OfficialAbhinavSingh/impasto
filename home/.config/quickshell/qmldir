@@ -187,6 +187,7 @@ NotificationList 1.0 bar/island/controls/NotificationList.qml
 AppearanceCard   1.0 bar/island/controls/AppearanceCard.qml
 WeatherCard      1.0 bar/island/controls/WeatherCard.qml
 ButtonsBlock     1.0 bar/island/controls/ButtonsBlock.qml
+GridSize         1.0 bar/island/controls/GridSize.qml
 Block            1.0 bar/island/controls/Block.qml
 BlockFace        1.0 bar/island/controls/BlockFace.qml
 TogglesBlock     1.0 bar/island/controls/TogglesBlock.qml

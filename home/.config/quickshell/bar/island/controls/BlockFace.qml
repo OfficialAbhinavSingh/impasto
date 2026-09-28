@@ -123,6 +123,7 @@ Item {
         id: shortcutsBlock
         ButtonsBlock {
             kind: "shortcuts"
+            blockKey: root.blockKey
             onPanelRequested: panel => root.panelRequested(panel)
             onSettingsRequested: root.settingsRequested()
         }
