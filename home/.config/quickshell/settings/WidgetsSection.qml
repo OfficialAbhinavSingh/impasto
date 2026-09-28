@@ -224,6 +224,8 @@ SettingsSection {
                 label: Tr.t("Ground")
                 reading: SettingsService.desktopGround === "" ? Tr.t("As the bar")
                     : Theme.deskGlass ? Tr.t("The terminal's glass, over a blur") : Tr.t("Solid black")
+                locked: !DesktopService.capsuled
+                reason: Tr.t("No widget on the desk has a capsule")
 
                 Repeater {
                     model: [
@@ -259,8 +261,9 @@ SettingsSection {
                 stepSize: 5
                 unit: "%"
                 // A see-through ground sets it: the capsules are the island's glass.
-                locked: !Theme.deskSolid
-                reason: Tr.t("Choose the Classic ground above to change it")
+                locked: !DesktopService.capsuled || !Theme.deskSolid
+                reason: !DesktopService.capsuled ? Tr.t("No widget on the desk has a capsule")
+                    : Tr.t("Choose the Classic ground above to change it")
                 onMoved: value => SettingsService.set("desktopOpacity", Math.round(value))
             }
         }

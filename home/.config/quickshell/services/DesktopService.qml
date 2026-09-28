@@ -1227,6 +1227,10 @@ Singleton {
             || root.themeOf(widget) === "sticker")
     }
 
+    // Whether any widget on the desk draws a capsule, and so has a use for
+    // the ground and the opacity.
+    readonly property bool capsuled: root.widgets.some(widget => !root.bare(widget))
+
     function opacityOf(widget: var): int {
         const own = widget ? widget.opacity : undefined
         return typeof own === "number" ? own : SettingsService.desktopOpacity

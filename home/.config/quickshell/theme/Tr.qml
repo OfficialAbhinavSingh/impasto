@@ -411,6 +411,7 @@ QtObject {
             "Columns": "Columnas",
             "Rows": "Filas",
             "Ground": "Fondo",
+            "No widget on the desk has a capsule": "Ningún widget del escritorio tiene cápsula",
             "Choose the Classic ground above to change it":
                 "Elige el fondo Clásico de arriba para cambiarla",
             "As the bar": "Como la barra",
