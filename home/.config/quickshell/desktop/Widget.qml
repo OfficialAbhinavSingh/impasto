@@ -208,16 +208,23 @@ Item {
     }
 
     // Without a capsule the contents get a drop shadow to stay readable on the
-    // wallpaper. `layer.enabled` rather than a MultiEffect `source`: a
-    // Repeater's delegate never renders into another item's source. Not the
-    // spectrum, which is drawn as it is on an edge, and whose layer would be
-    // drawn again on every one of cava's frames.
-    layer.enabled: root.onPicture && root.moduleId !== "spectrum"
+    // wallpaper. A sticker brings its own ground, so its shadow is the
+    // widgets' shadow setting instead: the die-cut shape lifted off the
+    // desk, at the windows' numbers. `layer.enabled` rather than a
+    // MultiEffect `source`: a Repeater's delegate never renders into another
+    // item's source. Not the spectrum, which is drawn as it is on an edge,
+    // and whose layer would be drawn again on every one of cava's frames.
+    readonly property bool sticker: DesktopService.themeOf(root.row) === "sticker"
+        && root.moduleId !== "notes" && root.moduleId !== "spectrum"
+
+    layer.enabled: root.sticker ? SettingsService.widgetShadow
+        : root.onPicture && root.moduleId !== "spectrum"
     layer.effect: MultiEffect {
         shadowEnabled: true
         shadowBlur: 1
-        shadowOpacity: 0.6
-        shadowVerticalOffset: 2
+        blurMax: root.sticker ? Theme.shadowRange : 32
+        shadowOpacity: root.sticker ? Theme.shadowOpacity : 0.6
+        shadowVerticalOffset: root.sticker ? Theme.shadowSpread : 2
         shadowColor: Theme.island
     }
 
