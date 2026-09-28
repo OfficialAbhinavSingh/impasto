@@ -217,6 +217,12 @@ LIMITS_BODY = json.dumps({
 LIMITS_TIMEOUT = 12
 
 ACCOUNT = HOME / ".claude.json"
+
+# The last answer from the usage endpoint, which rate-limits a client that
+# asks often: reused as it is for a few minutes, and for the week per model
+# while the endpoint refuses.
+LIMITS_CACHE = STATE / "claude-limits.json"
+LIMITS_FRESH = 300
 PLANS = {
     "default_claude_pro": "Pro",
     "default_claude_max_5x": "Max 5×",
@@ -353,7 +359,29 @@ def limits():
     except (OSError, ValueError, KeyError, TypeError):
         fail(f"No Claude Code credentials at {CREDENTIALS}")
 
-    report = from_usage(token) or from_headers(token)
+    try:
+        kept = json.loads(LIMITS_CACHE.read_text())
+    except (OSError, ValueError):
+        kept = None
+    now = time.time()
+    if kept and now - kept.get("at", 0) < LIMITS_FRESH:
+        print(json.dumps({"available": True, "plan": plan(), **kept["report"]}))
+        return
+
+    report = from_usage(token)
+    if report is not None:
+        try:
+            STATE.mkdir(parents=True, exist_ok=True)
+            LIMITS_CACHE.write_text(json.dumps({"at": now, "report": report}))
+        except OSError as error:
+            print(f"Cannot keep the limits: {error}", file=sys.stderr)
+    else:
+        report = from_headers(token)
+        # The headers carry no week per model; the last known one stands
+        # until it renews.
+        if report is not None and kept:
+            report["models"] = [model for model in kept["report"].get("models", [])
+                                if model.get("resets", 0) > now]
     if report is None:
         # A 401, a 429 before any figure, or an API that stopped sending them.
         fail("no usage figures from the API")

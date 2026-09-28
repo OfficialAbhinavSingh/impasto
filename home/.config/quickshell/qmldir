@@ -72,6 +72,7 @@ Spectrum         1.0 components/Spectrum.qml
 NotchFillet      1.0 components/NotchFillet.qml
 NotchOutline     1.0 components/NotchOutline.qml
 ClaudeMark       1.0 components/ClaudeMark.qml
+CodexMark        1.0 components/CodexMark.qml
 PaletteBoard     1.0 components/PaletteBoard.qml
 PetFace          1.0 components/PetFace.qml
 PetFamily        1.0 components/PetFamily.qml

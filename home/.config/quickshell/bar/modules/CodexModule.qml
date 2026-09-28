@@ -47,11 +47,10 @@ Item {
                 trackColor: Theme.indicatorDim
                 fillColor: CodexService.tint
 
-                Text {
+                CodexMark {
                     anchors.centerIn: parent
-                    text: ModuleService.glyphOf("codex")
-                    font.family: Theme.fontMono
-                    font.pixelSize: Math.round(Theme.capsuleHeight * 0.44)
+                    width: Math.round(Theme.capsuleHeight * 0.53)
+                    height: Math.round(Theme.capsuleHeight * 0.53)
                     color: Theme.indicator
                 }
             }
@@ -72,11 +71,10 @@ Item {
                 trackColor: Theme.indicatorDim
                 fillColor: CodexService.tint
 
-                Text {
+                CodexMark {
                     anchors.centerIn: parent
-                    text: ModuleService.glyphOf("codex")
-                    font.family: Theme.fontMono
-                    font.pixelSize: 20
+                    width: 24
+                    height: 24
                     color: Theme.indicator
                 }
             }
