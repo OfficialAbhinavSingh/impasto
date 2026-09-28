@@ -7,6 +7,10 @@
 // │                                                                          │
 // ╰──────────────────────────────────────────────────────────────────────────╯
 
+// Greyscale text: subpixel edges assume an opaque ground and fringe on a
+// transparent surface.
+//@ pragma Env QSG_DISTANCEFIELD_ANTIALIASING=gray
+
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
