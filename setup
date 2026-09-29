@@ -38,6 +38,8 @@ SKIP_PLUGINS=0
 SKIP_EXTRAS=0
 SUDO=
 SOFT=
+# Whether the desk was up when this run began: an install can take it down.
+SHELL_WAS_UP=0
 
 
 # ── OUTPUT ──────────────────────────────────────────────────────────────────
@@ -230,7 +232,7 @@ say() {
         word=${line%%' '*}
         rest=${line#"$word"}
         case $word in
-            ok|new|updated|replaced|removed|seeded|enabled|loaded|cloned|built|restored|reloaded|version)
+            ok|new|updated|replaced|removed|seeded|enabled|loaded|cloned|built|restored|reloaded|started|reboot|version)
                 line="$ACCENT$word$OFF$rest" ;;
             kept|left|skipped*|missing*|nothing*|all|watching|would|not)
                 line="$MUTED$word$OFF$rest" ;;
@@ -502,6 +504,44 @@ reload_shell() {
         say 'reloaded the shell'
         return 0
     done
+}
+
+# The installed shell, running or not. A probe runs the repository's own copy
+# and answers a different path, so it is not the desk.
+shell_up() {
+    command -v qs >/dev/null || return 1
+    qs list 2>/dev/null | grep -qF "Config path: $HOME/.config/quickshell/shell.qml"
+}
+
+note_shell() {
+    if (( ! SHELL_WAS_UP )) && shell_up; then SHELL_WAS_UP=1; fi
+}
+
+# An install upgrades packages first, which replaces the libraries under a
+# running shell, and the shell dies on the reload the copy asks for. Nothing
+# else starts it again before the next session. Only a desk this run took
+# down is put back, and it is started through Hyprland the way autostart
+# does, so it takes the session's environment rather than this terminal's.
+restore_shell() {
+    if (( DRY )) || (( ! SHELL_WAS_UP )) || shell_up; then return 0; fi
+    [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]] && command -v hyprctl >/dev/null || return 0
+    # The dispatcher is read as Lua, the language the configuration is in.
+    act hyprctl dispatch 'hl.dsp.exec_cmd("qs -d")' >/dev/null
+    say 'started  the shell'
+}
+
+# What starting anything again does not fix: a kernel whose modules are no
+# longer on disk, and a session running on libraries that have been replaced.
+reboot_notice() {
+    local hypr
+    if [[ ! -d /usr/lib/modules/$(uname -r) ]]; then
+        say 'reboot when you can: the running kernel is no longer on disk'
+        return 0
+    fi
+    hypr=$(pgrep -x Hyprland | head -1) || return 0
+    if [[ -n $hypr ]] && grep -qE '\.so[^ ]* \(deleted\)' "/proc/$hypr/maps" 2>/dev/null; then
+        say 'reboot when you can: this session runs on libraries that have been replaced'
+    fi
 }
 
 
@@ -846,6 +886,7 @@ verb_plugins() {
 
 verb_install() {
     SECONDS=0
+    note_shell
     if (( ! SKIP_PACKAGES )); then verb_packages; fi
     folders
     omz
@@ -854,7 +895,11 @@ verb_install() {
     if (( ! SKIP_PLUGINS )); then verb_plugins; fi
     if (( ! SKIP_EXTRAS )); then extras; fi
     section done "$(elapsed)"
-    say 'log out and in again: the desk starts with the next Hyprland session'
+    restore_shell
+    if ! shell_up; then
+        say 'log out and in again: the desk starts with the next Hyprland session'
+    fi
+    reboot_notice
 }
 
 verb_update() {
