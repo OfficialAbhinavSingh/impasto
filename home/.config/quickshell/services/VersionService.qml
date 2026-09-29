@@ -59,6 +59,10 @@ Singleton {
     // Commits of your own the remote has not: what stops a fast-forward.
     property int ahead: 0
     property string upstream: ""
+    // The branch the checkout is on, which is what the counts are against.
+    // Not the one the version file records: a checkout moved to another
+    // branch offers from there.
+    property string checkoutBranch: ""
     // What the version would read after the update, `git describe`'s shape.
     property string target: ""
     // `{ hash, subject }`, newest first, the first few of `behind`.
@@ -105,11 +109,13 @@ Singleton {
                     root.ahead = 0
                     root.target = ""
                     root.commits = []
+                    root.checkoutBranch = ""
                     // `checkedAt` stays where it was, so opening the page
                     // asks again: a checkout that comes back is found.
                     return
                 }
                 root.upstream = report.upstream ?? ""
+                root.checkoutBranch = report.branch ?? ""
                 root.behind = report.behind ?? 0
                 root.ahead = report.ahead ?? 0
                 root.target = report.target ?? ""

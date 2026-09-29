@@ -45,10 +45,16 @@ SettingsSection {
                      .filter(bit => bit !== "").join(" · ") }
     }
 
-    // Where the update would leave that figure, written the same way.
+    // Where the update would leave that figure, written the same way. The
+    // checkout's branch joins it when it is not the one the desk came from,
+    // because the offer is then from somewhere else than the line above.
     readonly property string destination: {
         const found = root.describe(VersionService.target)
-        return [found.name].concat(found.note).filter(bit => bit !== "").join(" · ")
+        const bits = [found.name].concat(found.note)
+        if (VersionService.checkoutBranch !== "" && VersionService.branch !== ""
+                && VersionService.checkoutBranch !== VersionService.branch)
+            bits.push(VersionService.checkoutBranch)
+        return bits.filter(bit => bit !== "").join(" · ")
     }
 
     // Whether there is a checkout to ask about at all: none recorded, or one
