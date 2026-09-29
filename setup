@@ -553,6 +553,17 @@ version() {
     git -C "$REPO" describe --tags --always --dirty 2>/dev/null || echo unknown
 }
 
+# The tree of the checkout as a sync copies it, edits included: what a later
+# commit of those same edits is recognised by, so it is not offered again.
+synced_tree() {
+    local index
+    index=$(mktemp) || return 0
+    cp "$(git -C "$REPO" rev-parse --path-format=absolute --git-path index)" "$index" 2>/dev/null
+    GIT_INDEX_FILE=$index git -C "$REPO" add -A 2>/dev/null \
+        && GIT_INDEX_FILE=$index git -C "$REPO" write-tree 2>/dev/null
+    rm -f "$index"
+}
+
 # ── YOUR CHANGES ────────────────────────────────────────────────────────────
 #
 # What Settings → System shows and acts on, for the files under $HOME: the
@@ -652,13 +663,14 @@ verb_sync() {
     deploy home "$HOME" "$STATE/home.manifest" '~/'
     reload_shell
     seed
-    # What Settings → System shows: the version, the branch, and the checkout
-    # this copy came from — which is what its Update pulls and runs again.
+    # What Settings → System shows: the version, the branch, the checkout
+    # this copy came from — which is what its Update pulls and runs again —
+    # and the tree that was copied.
     if (( ! DRY )); then
         mkdir -p "$STATE"
-        printf '%s\n%s\n%s\n' "$(version)" \
+        printf '%s\n%s\n%s\n%s\n' "$(version)" \
             "$(git -C "$REPO" rev-parse --abbrev-ref HEAD 2>/dev/null)" "$REPO" \
-            > "$STATE/version"
+            "$(synced_tree)" > "$STATE/version"
     fi
 }
 

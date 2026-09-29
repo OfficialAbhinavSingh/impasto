@@ -27,9 +27,9 @@ Singleton {
 
     // ── WHAT IS INSTALLED ───────────────────────────────────────────────────
     //
-    // The version, the branch it came from, and the checkout it was copied
-    // out of, a line each. Missing until the first sync; the third line only
-    // where the installer records it.
+    // The version, the branch it came from, the checkout it was copied out
+    // of, and the tree copied, a line each. Missing until the first sync; the
+    // last two only where the installer records them.
 
     readonly property FileView file: FileView {
         path: `${Quickshell.env("XDG_STATE_HOME") || Quickshell.env("HOME") + "/.local/state"}/impasto/version`
@@ -43,6 +43,8 @@ Singleton {
     readonly property string version: (root.lines[0] ?? "").trim()
     readonly property string branch: (root.lines[1] ?? "").trim()
     readonly property string repo: (root.lines[2] ?? "").trim()
+    // The tree that sync copied, edits included.
+    readonly property string tree: (root.lines[3] ?? "").trim()
 
     // ── WHAT IS WAITING ─────────────────────────────────────────────────────
 
@@ -79,7 +81,7 @@ Singleton {
         root.checking = true
         root.checkedFor = root.version
         root.query.command = [Quickshell.shellPath("scripts/version.py"),
-                              "check", root.repo, root.version]
+                              "check", root.repo, root.version, root.tree]
         root.query.running = true
     }
 
