@@ -23,7 +23,9 @@ import "../theme"
 // has to finish before the lock surface is mapped. It goes to the runtime
 // directory (tmpfs, user-only) and is deleted on unlock.
 //
-// The password is handed straight to PAM's `respond` and never stored. A face
+// The password is handed straight to PAM's `respond` and never stored past
+// the field it is typed in, which every screen shares and which empties on
+// sending, on rest and on unlock. A face
 // is a second PAM conversation beside it, where `./setup face` has put howdy.
 Singleton {
     id: root
@@ -47,6 +49,10 @@ Singleton {
     // Escape or a while untouched puts it back.
     property bool awake: false
 
+    // What is typed, one field for every screen: each surface shows it and
+    // writes to it, so the dots are the same wherever the keyboard is.
+    property string typed: ""
+
     // How long an awake screen waits untouched before going back to its
     // clock.
     readonly property int awakeFor: 30000
@@ -63,6 +69,7 @@ Singleton {
     function rest(): void {
         root.drowse.stop()
         root.awake = false
+        root.typed = ""
         if (root.face.active)
             root.face.abort()
         root.faceScanning = false
@@ -190,6 +197,7 @@ Singleton {
     }
 
     function forget(): void {
+        root.typed = ""
         root.shotReady = false
         root.eraser.running = true
     }

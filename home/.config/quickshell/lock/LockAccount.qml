@@ -188,13 +188,23 @@ Item {
                     NumberAnimation { duration: Theme.durationFast; easing.type: Theme.easing }
                 }
 
+                Connections {
+                    target: LockService
+                    function onTypedChanged(): void {
+                        if (field.text !== LockService.typed)
+                            field.text = LockService.typed
+                    }
+                }
+
                 onAccepted: {
                     root.submitted(field.text)
                     field.clear()
                 }
 
-                // Typing clears the error.
+                // Typing clears the error, and reaches every screen.
                 onTextChanged: {
+                    if (field.text !== LockService.typed)
+                        LockService.typed = field.text
                     if (LockService.failed && field.text !== "")
                         LockService.failed = false
                 }
