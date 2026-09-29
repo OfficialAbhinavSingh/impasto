@@ -78,15 +78,23 @@ Singleton {
 
     readonly property string shotDirectory:
         `${Quickshell.env("XDG_RUNTIME_DIR") || "/tmp"}/quickshell`
-    readonly property string shotPath: `${root.shotDirectory}/lock.jpg`
+
+    // One picture per screen, named by its output, so each surface shows
+    // its own screen rather than all of them squeezed into one.
+    function shotPath(output: string): string {
+        return `${root.shotDirectory}/lock-${output}.jpg`
+    }
 
     // Bumped per capture so the Image source changes and Qt does not serve
     // the previous lock's cached frame.
     property int shotSerial: 0
     property bool shotReady: false
 
-    readonly property string shotSource:
-        root.shotReady ? `file://${root.shotPath}?v=${root.shotSerial}` : ""
+    // Empty when that screen's capture failed, and the surface stays black.
+    function shotSource(output: string): string {
+        return root.shotReady && output
+            ? `file://${root.shotPath(output)}?v=${root.shotSerial}` : ""
+    }
 
     signal unlocked()
 
@@ -152,7 +160,17 @@ Singleton {
         root.pendingCapture = false
         root.settleFrame.stop()
         root.quietGiveUp.stop()
+        root.capture.command = ["sh", "-c", root.captureScript()]
         root.capture.running = true
+    }
+
+    // Every screen at once, each into its own file, and the lock waits for
+    // the slowest.
+    function captureScript(): string {
+        const shots = Quickshell.screens
+            .filter(screen => /^[A-Za-z0-9_.-]+$/.test(screen.name))
+            .map(screen => `timeout 2 grim -t jpeg -q 90 -o '${screen.name}' '${root.shotPath(screen.name)}' &`)
+        return `mkdir -p '${root.shotDirectory}' && rm -f '${root.shotDirectory}'/lock-*.jpg; ${shots.join(" ")} wait`
     }
 
     // grim hangs instead of failing when the output is already powered off,
@@ -160,9 +178,6 @@ Singleton {
     // the picture is shown blurred and PNG takes seconds over a painting on a
     // large or doubled screen.
     readonly property Process capture: Process {
-        command: ["sh", "-c",
-            `mkdir -p '${root.shotDirectory}' && timeout 2 grim -t jpeg -q 90 '${root.shotPath}'`]
-
         // Lock whether or not the screenshot worked.
         onExited: (code, status) => {
             root.shotSerial += 1
@@ -180,7 +195,7 @@ Singleton {
     }
 
     readonly property Process eraser: Process {
-        command: ["rm", "-f", root.shotPath]
+        command: ["sh", "-c", `rm -f '${root.shotDirectory}'/lock-*.jpg`]
     }
 
     // ── AUTHENTICATING ──────────────────────────────────────────────────────
