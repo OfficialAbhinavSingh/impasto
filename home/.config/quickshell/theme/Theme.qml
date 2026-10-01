@@ -288,16 +288,16 @@ QtObject {
     //
     // Everything scales off the icon size. The margin matches `gaps_out`.
     readonly property int dockIcon: SettingsService.dockIconSize
-    readonly property int dockPadding: 8
+    readonly property int dockPadding: 11
     readonly property int dockGap: root.capsuleSpacing
     readonly property int dockMargin: root.desktopGutter
 
-    // Depth is the icon plus a lane for the running dots, so icons sit off
-    // centre, away from the screen edge.
-    readonly property int dockDot: 5
-    readonly property int dockDotLane: 9
-    readonly property int dockDepth: root.dockIcon + root.dockDotLane
-    readonly property int dockThickness: root.dockDepth + 2 * root.dockPadding
+    // The icons are centred across the dock; the running dot sits in the
+    // padding on the screen-edge side. An icon is drawn `dockInset` inside its
+    // square, so the dot clears both it and the rim.
+    readonly property int dockDot: 4
+    readonly property int dockInset: 2
+    readonly property int dockThickness: root.dockIcon + 2 * root.dockPadding
 
     // Screen-edge strip a hidden dock still listens on.
     readonly property int dockReveal: 4

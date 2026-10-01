@@ -283,7 +283,7 @@ PanelWindow {
                 anchors.centerIn: parent
                 text: "󰀻"
                 font.family: Theme.fontMono
-                font.pixelSize: Math.round(Theme.dockIcon * 0.58)
+                font.pixelSize: Math.round((Theme.dockIcon - 2 * Theme.dockInset) * 0.58)
                 color: Theme.text
             }
 
