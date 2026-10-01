@@ -43,15 +43,22 @@ Item {
     }
 
     Rectangle {
+        id: sheen
+
         anchors.fill: parent
         radius: root.shape.radius
         topLeftRadius: root.shape.topLeftRadius
         topRightRadius: root.shape.topRightRadius
         bottomLeftRadius: root.shape.bottomLeftRadius
         bottomRightRadius: root.shape.bottomRightRadius
+        readonly property real span: Theme.glassSheenDepth / Math.max(1, height)
+
         gradient: Gradient {
             GradientStop { position: 0; color: Theme.glassSheen }
-            GradientStop { position: Theme.glassSheenReach; color: "transparent" }
+            GradientStop {
+                position: Math.min(1, sheen.span)
+                color: Qt.rgba(1, 1, 1, Theme.glassSheen.a * Math.max(0, 1 - 1 / sheen.span))
+            }
         }
     }
 

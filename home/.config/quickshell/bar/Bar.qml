@@ -167,8 +167,7 @@ PanelWindow {
 
     // How far the glass's light from the top reaches down the notch
     // (`GlassSheen`), for the fillets that carry it on.
-    readonly property real notchSheen: Theme.glass && !island.paper
-        ? Theme.glassSheenReach * (root.unified ? band.height : island.height) : 0
+    readonly property real notchSheen: Theme.glass && !island.paper ? Theme.glassSheenDepth : 0
 
     // The line everything on the bar is centred on. Attached, the island
     // reaches the screen edge, so its centre is half a margin higher and the
