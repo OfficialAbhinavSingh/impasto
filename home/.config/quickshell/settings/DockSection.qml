@@ -201,7 +201,7 @@ SettingsSection {
     SettingGroup {
         title: Tr.t("Behaviour")
         note: Tr.t("What else the dock shows, and which screens it is on.")
-        hint: Tr.t("The launcher button opens the island's launcher, and open applications appear after a divider while they run. Windows always pass under the dock; the desktop keeps its widgets clear of it.")
+        hint: Tr.t("The launcher button opens the island's launcher, and open applications appear after a divider while they run. Windows and widgets pass under the dock, so moving or hiding it moves nothing else.")
 
         SettingRow {
             label: Tr.t("Launcher button")

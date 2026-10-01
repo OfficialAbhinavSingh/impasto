@@ -398,6 +398,18 @@ ShellRoot {
     }
 
     GlobalShortcut {
+        name: "zen"
+        description: "Hide or show the bar"
+        onPressed: SettingsService.set("barHidden", !SettingsService.barHidden)
+    }
+
+    GlobalShortcut {
+        name: "widgets"
+        description: "Hide or show the desktop widgets"
+        onPressed: SettingsService.set("desktopHidden", !SettingsService.desktopHidden)
+    }
+
+    GlobalShortcut {
         name: "packages"
         description: "Open the packages"
         onPressed: root.island?.toggle("packages")
@@ -541,6 +553,23 @@ ShellRoot {
     // shell starts on its own when a file changes can begin before the last
     // one is written, and then never sees it:
     //   qs ipc call shell reload
+    // The same two switches as the keys, for anything else to bind.
+    IpcHandler {
+        target: "bar"
+
+        function toggle(): void {
+            SettingsService.set("barHidden", !SettingsService.barHidden)
+        }
+    }
+
+    IpcHandler {
+        target: "widgets"
+
+        function toggle(): void {
+            SettingsService.set("desktopHidden", !SettingsService.desktopHidden)
+        }
+    }
+
     IpcHandler {
         target: "shell"
 

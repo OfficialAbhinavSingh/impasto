@@ -211,7 +211,15 @@ PanelWindow {
     // No input at all while desktop widgets are being arranged: dragging one
     // over the bar would move the pointer to this surface, and the desktop
     // would drop the widget. None either where nothing is painted.
-    readonly property bool inert: DesktopService.editing || !root.painted
+    readonly property bool inert: DesktopService.editing || !root.painted || root.away
+
+    // Zen (`barHidden`): the bar waits above the screen and the island comes
+    // down only for what it has to show — a panel, a notification, a
+    // transient — with the sides left up there.
+    readonly property bool zen: SettingsService.barHidden
+    readonly property bool called: island.state.layer !== island.state.layerModules
+        && island.state.layer !== island.state.layerSummary
+    readonly property bool away: root.zen && !root.called
 
     mask: Region {
         width: root.inert ? 0 : root.width
@@ -338,12 +346,18 @@ PanelWindow {
     Item {
         id: face
 
-        anchors.fill: parent
+        width: parent.width
+        height: parent.height
+        y: root.away ? -2 * root.collapsedHeight : 0
         visible: root.painted || face.opacity > 0
         opacity: root.painted ? 1 : 0
 
         Behavior on opacity {
             NumberAnimation { duration: Theme.durationFast; easing.type: Theme.easing }
+        }
+
+        Behavior on y {
+            NumberAnimation { duration: Theme.durationMedium; easing.type: Theme.easing }
         }
 
         // ── SHADOW ──────────────────────────────────────────────────────────────
@@ -725,6 +739,12 @@ PanelWindow {
             width: sides.cropped ? band.width : root.width
             height: root.height
             clip: sides.cropped
+            opacity: root.zen ? 0 : 1
+            visible: opacity > 0
+
+            Behavior on opacity {
+                NumberAnimation { duration: Theme.durationFast; easing.type: Theme.easing }
+            }
 
             // On the wallpaper, the sides are cast twice: the shadow's own
             // shadow is what makes a thin dark edge dense enough to hold white

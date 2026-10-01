@@ -180,6 +180,18 @@ SettingsSection {
             }
 
             SettingRow {
+                label: Tr.t("Zen")
+                reading: SettingsService.barHidden
+                    ? Tr.t("The bar is away; the island still comes down to show something")
+                    : Tr.t("Hides the bar and gives its band to the windows")
+
+                ToggleSwitch {
+                    checked: SettingsService.barHidden
+                    onToggled: checked => SettingsService.set("barHidden", checked)
+                }
+            }
+
+            SettingRow {
                 label: Tr.t("A glance on hover")
                 reading: SettingsService.islandSummary
                     ? Tr.t("Resting the pointer on the island opens it")

@@ -34,6 +34,7 @@ Singleton {
     readonly property alias barSideMargin: config.barSideMargin
     readonly property alias barStyle: config.barStyle
     readonly property alias barEverywhere: config.barEverywhere
+    readonly property alias barHidden: config.barHidden
     readonly property alias barLeft: config.barLeft
     readonly property alias barRight: config.barRight
     readonly property alias islandSummary: config.islandSummary
@@ -43,6 +44,7 @@ Singleton {
     readonly property alias desktopWidgets: config.desktopWidgets
     readonly property alias desktopTheme: config.desktopTheme
     readonly property alias desktopOpacity: config.desktopOpacity
+    readonly property alias desktopHidden: config.desktopHidden
     readonly property alias centreButtons: config.centreButtons
     readonly property alias centreTop: config.centreTop
     readonly property alias centreBlocks: config.centreBlocks
@@ -306,7 +308,7 @@ Singleton {
         "displays", "lidPolicy",
         "userName", "userAvatar", "language", "keyboard", "weatherPlace", "githubUser",
         "emojiTone",
-        "doNotDisturb", "nightLight", "nightTemperature",
+        "doNotDisturb", "nightLight", "nightTemperature", "barHidden", "desktopHidden",
         "recorderAudio", "captureShape", "captureKind"
     ]
 
@@ -480,6 +482,10 @@ Singleton {
         // A bar on every screen, or only on the one being worked on. The
         // surface is on every screen either way: this is whether it paints.
         property bool barEverywhere: true
+
+        // Zen: the bar off the screen and its band given to the windows; the
+        // island still comes down for what it has to show.
+        property bool barHidden: false
 
         // Three shadows, one per layer: Hyprland's under the windows, the
         // shell's under the bar and the dock, and under the desk's widgets.
@@ -691,6 +697,9 @@ Singleton {
         // Capsule opacity in percent; below 100 the desktop layer's blur
         // rule (`windowrules.lua`) shows through. Widgets may override it.
         property int desktopOpacity: 100
+
+        // Every widget off the picture for a while; arranging shows them.
+        property bool desktopHidden: false
 
         // ── CONTROL CENTRE ──────────────────────────────────────────────
         //

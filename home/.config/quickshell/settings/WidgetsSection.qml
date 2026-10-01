@@ -187,6 +187,18 @@ SettingsSection {
                     }
                 }
             }
+
+            SettingRow {
+                label: Tr.t("Hide the widgets")
+                reading: SettingsService.desktopHidden
+                    ? Tr.t("Off the wallpaper until you show them again")
+                    : Tr.t("On the wallpaper")
+
+                ToggleSwitch {
+                    checked: SettingsService.desktopHidden
+                    onToggled: checked => SettingsService.set("desktopHidden", checked)
+                }
+            }
         }
 
         SettingGroup {

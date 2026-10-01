@@ -48,6 +48,8 @@ Singleton {
         { name: "notes",          label: "Notes",                description: "Shell · Open the notes" },
         { name: "board",          label: "Task board",           description: "Shell · Open the task board" },
         { name: "keys",           label: "Keys",                 description: "Shell · Show every key" },
+        { name: "zen",            label: "Zen",                  description: "Shell · Hide or show the bar" },
+        { name: "widgets",        label: "Hide the widgets",     description: "Shell · Hide or show the desktop widgets" },
         { name: "packages",       label: "Packages",             description: "Shell · Open the packages" },
         { name: "clipboard",      label: "Clipboard history",    description: "Shell · Open the clipboard history" },
         { name: "emoji",          label: "Emoji",                description: "Shell · Pick an emoji" },

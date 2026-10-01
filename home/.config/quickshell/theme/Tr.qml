@@ -377,6 +377,8 @@ QtObject {
             "Arrange widgets": "Colocar widgets",
             "on the wallpaper": "en el fondo",
             "Nothing on the wallpaper yet": "Nada en el fondo todavía",
+            "Hide the widgets": "Ocultar los widgets",
+            "Off the wallpaper until you show them again": "Fuera del fondo hasta que los vuelvas a mostrar",
             "Look": "Aspecto",
             "Every widget follows these unless it was given a look of its own.":
                 "Todos los widgets siguen esto salvo que se les haya dado un aspecto propio.",
@@ -484,11 +486,16 @@ QtObject {
             "Behaviour": "Comportamiento",
             "What else the dock shows, and which screens it is on.":
                 "Qué más muestra el dock, y en qué pantallas está.",
-            "The launcher button opens the island's launcher, and open applications appear after a divider while they run. Windows always pass under the dock; the desktop keeps its widgets clear of it.":
-                "El botón del lanzador abre el lanzador de la isla, y las aplicaciones abiertas aparecen tras un separador mientras están en marcha. Las ventanas siempre pasan por debajo del dock; el escritorio mantiene sus widgets fuera de él.",
+            "The launcher button opens the island's launcher, and open applications appear after a divider while they run. Windows and widgets pass under the dock, so moving or hiding it moves nothing else.":
+                "El botón del lanzador abre el lanzador de la isla, y las aplicaciones abiertas aparecen tras un separador mientras están en marcha. Las ventanas y los widgets pasan por debajo del dock, así que moverlo u ocultarlo no mueve nada más.",
             "Launcher button": "Botón del lanzador",
             "Open applications": "Aplicaciones abiertas",
             "On every screen": "En todas las pantallas",
+            "Zen": "Zen",
+            "The bar is away; the island still comes down to show something":
+                "La barra no está; la isla sigue bajando para enseñar algo",
+            "Hides the bar and gives its band to the windows":
+                "Oculta la barra y deja su franja a las ventanas",
             "One on each, all showing the same": "Uno en cada una, todos iguales",
             "Only on the screen you are on": "Solo en la pantalla en la que estás",
             "One on each, and the one you are on is the live one":

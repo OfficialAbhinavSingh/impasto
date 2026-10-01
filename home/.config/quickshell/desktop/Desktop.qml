@@ -254,6 +254,7 @@ PanelWindow {
             EdgeSpectrum {
                 board: surface
                 screenName: root.screenName
+                visible: !DesktopService.hidden
             }
         }
 
@@ -269,6 +270,7 @@ PanelWindow {
             x: -DesktopService.insets.left
             width: surface.width + DesktopService.insets.left + DesktopService.insets.right
             height: surface.height + DesktopService.insets.bottom
+            visible: !DesktopService.hidden
 
             Repeater {
                 model: ScriptModel {
