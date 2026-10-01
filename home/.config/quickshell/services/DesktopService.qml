@@ -305,6 +305,14 @@ Singleton {
         return grid
     }
 
+    // The screen edge a point on the board is against, measured from the
+    // screen's own edge: the grid runs on under a dock's band, so a square
+    // there is not an edge.
+    function edgeAt(x: real, y: real, width: real, height: real): string {
+        return DeckService.edgeAt(x + root.insets.left, y,
+            width + root.insets.left + root.insets.right, height + root.insets.bottom)
+    }
+
     // In zen the bar's band is free, and the grid is laid out over the whole
     // screen, its squares resized so the margins stay even on all four sides.
     readonly property real zenBand: SettingsService.barHidden ? root.insets.top : 0

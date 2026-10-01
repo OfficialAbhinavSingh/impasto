@@ -137,9 +137,11 @@ PanelWindow {
 
     // The island is showing more than the clock: a panel, a detail, the
     // glance or a notification. An OSD fits in the band and does not count.
+    // In zen too, where the sides are away and the band is only the island.
     readonly property bool islandTaken: island.expanded
         || island.state.layer === island.state.layerSummary
         || island.state.layer === island.state.layerNotification
+        || root.zen
     readonly property real bodyX: root.fullWidth
         ? root.edgeMargin : (root.width - root.bodyWidth) / 2
 
@@ -223,8 +225,10 @@ PanelWindow {
 
     mask: Region {
         width: root.inert ? 0 : root.width
+        // In zen the band is empty, and only the island's shape takes input.
         height: root.inert ? 0
-            : root.wholeScreen ? root.height : root.collapsedHeight
+            : root.wholeScreen ? root.height
+            : root.zen ? 0 : root.collapsedHeight
 
         Region {
             x: root.shapeLeft

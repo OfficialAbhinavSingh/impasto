@@ -124,9 +124,17 @@ Singleton {
             // settings loading just after startup leave the watcher off.
             root.started = 0
         }
-        if (root.wanted.length === 0)
+        // A start not yet run takes the latest arguments, or is called off.
+        if (root.launched) {
+            if (root.wanted.length === 0) {
+                root.watcher.running = false
+                root.launched = false
+            } else if (!same) {
+                root.watcher.command = root.wanted
+            }
             return
-        if (root.launched && same)
+        }
+        if (root.wanted.length === 0)
             return
         // A watcher that dies within 5 s is a broken command (e.g. wl-paste
         // missing), not a crash; don't respawn it in a tight loop.

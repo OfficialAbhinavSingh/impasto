@@ -195,7 +195,7 @@ EditTray {
         // bars along it if it has none yet; anywhere else, a square.
         const edged = root.pulling === "notes" || root.pulling === "spectrum"
         const edge = edged
-            ? DeckService.edgeAt(pointer.x, pointer.y, root.board.width, root.board.height) : ""
+            ? DesktopService.edgeAt(pointer.x, pointer.y, root.board.width, root.board.height) : ""
         DeckService.receivingScreen = name
         DeckService.receiving = root.pulling !== "spectrum" || DesktopService.spectrumTakes(name, edge)
             ? edge : ""
