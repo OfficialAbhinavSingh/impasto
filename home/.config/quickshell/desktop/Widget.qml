@@ -42,6 +42,27 @@ Item {
     readonly property var row: DesktopService.entryOf(root.key)
 
     readonly property string moduleId: root.row ? root.row.id : ""
+
+    // A reading that polls keeps polling while a widget shows it, as a piece
+    // on the bar does. Held by the id watched, since the row goes before the
+    // delegate does.
+    property string watching: ""
+
+    function rewatch(): void {
+        if (root.moduleId === "" || root.moduleId === root.watching)
+            return
+        if (root.watching !== "")
+            ModuleService.watch(root.watching, false)
+        root.watching = root.moduleId
+        ModuleService.watch(root.watching, true)
+    }
+
+    onModuleIdChanged: root.rewatch()
+    Component.onCompleted: root.rewatch()
+    Component.onDestruction: {
+        if (root.watching !== "")
+            ModuleService.watch(root.watching, false)
+    }
     readonly property string family: DesktopService.familyOf(root.row)
     readonly property var ink: DesktopService.inkFor(root.row)
     readonly property real solidity: DesktopService.opacityOf(root.row) / 100

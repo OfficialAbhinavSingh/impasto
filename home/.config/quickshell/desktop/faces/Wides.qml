@@ -43,6 +43,7 @@ Item {
         github: githubWide,
         stats: statsWide,
         claude: claudeWide,
+        codex: codexWide,
         timer: timerWide,
         pet: petWide,
         media: mediaWide,
@@ -261,6 +262,55 @@ Item {
                     Text {
                         width: parent.width
                         text: ClaudeService.resetsIn
+                        horizontalAlignment: Text.AlignRight
+                        elide: Text.ElideRight
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
+                        color: root.ink.muted
+                    }
+                }
+            ]
+        }
+    }
+
+    Component {
+        id: codexWide
+
+        WidgetFace {
+
+            ink: root.ink
+            label: "Codex"
+            reading: CodexService.figure
+            note: !CodexService.available ? "no usage found"
+                : CodexService.fullest ? `of the ${CodexService.fullestName}`
+                : "until Codex runs again"
+            extraShare: 0.42
+
+            CodexMark {
+                anchors.centerIn: parent
+                width: 32
+                height: 32
+                color: CodexService.tint
+            }
+
+            extra: [
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width
+                    spacing: 8
+                    visible: CodexService.measured
+
+                    UsageBar {
+
+                        trackColor: root.ink.raised
+                        width: parent.width
+                        progress: CodexService.gauge
+                        fillColor: CodexService.tint
+                    }
+
+                    Text {
+                        width: parent.width
+                        text: CodexService.windowLine(CodexService.fullest)
                         horizontalAlignment: Text.AlignRight
                         elide: Text.ElideRight
                         font.family: Theme.fontFamily

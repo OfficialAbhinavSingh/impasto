@@ -42,6 +42,7 @@ Item {
         github: githubSquare,
         stats: statsSquare,
         claude: claudeSquare,
+        codex: codexSquare,
         timer: timerSquare,
         pet: petSquare,
         games: gamesSquare,
@@ -251,6 +252,27 @@ Item {
                 : (ClaudeService.sessionMeasured ? "of this block" : "this block")
 
             ClaudeMark {
+                anchors.centerIn: parent
+                width: 32
+                height: 32
+                color: root.ink.text
+            }
+        }
+    }
+
+    Component {
+        id: codexSquare
+
+        WidgetFace {
+
+            ink: root.ink
+            label: "Codex"
+            reading: CodexService.figure
+            note: !CodexService.available ? "no usage found"
+                : CodexService.fullest ? `of the ${CodexService.fullestName}`
+                : "until Codex runs again"
+
+            CodexMark {
                 anchors.centerIn: parent
                 width: 32
                 height: 32

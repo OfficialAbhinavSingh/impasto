@@ -41,7 +41,7 @@ Singleton {
         { id: "media",         name: "Media",         bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(1, Theme.cardRowGap + 34) },
         { id: "timer",         name: "Timer",         bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(2, 0) },
         { id: "claude",        name: "Claude",        bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(3, 0) },
-        { id: "codex",         name: "Codex",         bar: true,  desk: false, width: Theme.cardWidth, height: Theme.cardHeight(2, 0) },
+        { id: "codex",         name: "Codex",         bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(2, 0) },
         { id: "battery",       name: "Battery",       bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(3, 0) },
         { id: "volume",        name: "Volume",        bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(2, 0) },
         { id: "brightness",    name: "Brightness",    bar: true,  width: Theme.cardWidth, height: Theme.cardHeight(1, 0) },
@@ -117,10 +117,20 @@ Singleton {
             || root.catalogue.some(item => item.id === id && item.bar)
     }
 
-    // A reading that polls keeps polling while a piece on the bar shows it,
-    // in either shape.
+    // A reading that polls keeps polling while a piece on the bar or a widget
+    // on the desk shows it.
     function watch(id: string, on: bool): void {
-        if (id === "weather") {
+        if (id === "claude") {
+            if (on)
+                ClaudeService.subscribe()
+            else
+                ClaudeService.release()
+        } else if (id === "codex") {
+            if (on)
+                CodexService.subscribe()
+            else
+                CodexService.release()
+        } else if (id === "weather") {
             if (on)
                 WeatherService.subscribe()
             else

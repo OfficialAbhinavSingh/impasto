@@ -32,6 +32,7 @@ Item {
         battery: batteryFace,
         stats: statsFace,
         claude: claudeFace,
+        codex: codexFace,
         media: mediaFace,
         calendar: calendarFace,
         timer: timerFace,
@@ -57,6 +58,7 @@ Item {
     Component { id: batteryFace;    BatteryFace    { family: root.family; ink: root.ink; seed: root.seed } }
     Component { id: statsFace;      StatsFace      { family: root.family; ink: root.ink; seed: root.seed } }
     Component { id: claudeFace;     ClaudeFace     { family: root.family; ink: root.ink; seed: root.seed } }
+    Component { id: codexFace;      CodexFace      { family: root.family; ink: root.ink; seed: root.seed } }
     Component { id: mediaFace;      MediaFace      { family: root.family; ink: root.ink; seed: root.seed } }
     Component { id: calendarFace;   CalendarFace   { family: root.family; ink: root.ink; seed: root.seed } }
     Component { id: timerFace;      TimerFace      { family: root.family; ink: root.ink; seed: root.seed } }

@@ -37,6 +37,7 @@ Item {
         stats: statsLarge,
         media: mediaLarge,
         claude: claudeLarge,
+        codex: codexLarge,
         notes: notesLarge,
         tasks: tasksLarge,
         photo: photoLarge,
@@ -306,6 +307,71 @@ Item {
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeSmall
                         color: root.ink.muted
+                    }
+                }
+            ]
+        }
+    }
+
+    // Every window the plan has, each with its bar; one past its reset shows
+    // an empty bar until Codex runs again.
+    Component {
+        id: codexLarge
+
+        WidgetFace {
+
+            ink: root.ink
+            label: "Codex"
+            reading: CodexService.figure
+            note: !CodexService.available ? "no usage found"
+                : [CodexService.plan, CodexService.age].filter(part => part !== "").join(" · ")
+
+            CodexMark {
+                anchors.centerIn: parent
+                width: 34
+                height: 34
+                color: CodexService.tint
+            }
+
+            body: [
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width
+                    spacing: 16
+                    visible: CodexService.available
+
+                    Repeater {
+                        model: CodexService.limits
+
+                        Column {
+                            id: window
+
+                            required property var modelData
+                            readonly property bool running: CodexService.current(window.modelData)
+
+                            width: parent.width
+                            spacing: 7
+
+                            Text {
+                                width: parent.width
+                                text: window.running
+                                    ? `${CodexService.windowLine(window.modelData)} · ${Math.round(window.modelData.used * 100)}%`
+                                    : `${window.modelData.name.toLowerCase()} · renewed`
+                                elide: Text.ElideRight
+                                font.family: Theme.fontFamily
+                                font.pixelSize: Theme.fontSizeSmall
+                                color: root.ink.muted
+                            }
+
+                            UsageBar {
+
+                                trackColor: root.ink.raised
+                                width: parent.width
+                                progress: window.running ? window.modelData.used : 0
+                                fillColor: window.modelData.used >= 0.85 ? Theme.indicatorBad
+                                    : window.modelData.used >= 0.6 ? Theme.indicatorWarn : root.ink.accent
+                            }
+                        }
                     }
                 }
             ]

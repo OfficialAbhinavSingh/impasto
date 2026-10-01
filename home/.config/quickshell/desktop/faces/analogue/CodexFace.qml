@@ -1,48 +1,41 @@
 // ╭──────────────────────────────────────────────────────────────────────────╮
 // │                                                                          │
-// │   C   L   A   U   D   E       F   A   C   E                              │
-// │   claude code usage as a fuel gauge                                      │
+// │   C   O   D   E   X       F   A   C   E                                  │
+// │   codex usage as a fuel gauge                                            │
 // │                                                                          │
 // │   github.com/andreumassanet/impasto                                      │
 // │                                                                          │
 // ╰──────────────────────────────────────────────────────────────────────────╯
 
 import QtQuick
-import Quickshell
 
 import "../../../theme"
 import "../../../services"
 import "../../../components"
 
-// Claude usage as a fuel gauge: F with the block untouched, E when it is spent,
-// red at the empty end. Uses the account's figure when available, else the
-// block's elapsed time.
+// Codex usage as a fuel gauge: F with the fullest window untouched, E when it
+// is spent, red at the empty end. Wide, the window it reads and its reset.
 Instrument {
     id: face
 
-    readonly property string figure: !ClaudeService.available ? "—"
-        : ClaudeService.sessionMeasured
-        ? ClaudeService.percent(ClaudeService.sessionFraction)
-        : ClaudeService.compact(ClaudeService.blockTokens)
-
-    line: !ClaudeService.available ? "No usage found"
-        : (ClaudeService.sessionMeasured ? `${face.figure} of this block` : `${face.figure} this block`)
-    reading: face.figure
-    note: !ClaudeService.available ? "no usage found"
-        : ClaudeService.sessionMeasured
-        ? `of this block · ${ClaudeService.resetsIn}`
-        : `this block · ${ClaudeService.resetsIn}`
+    line: !CodexService.available ? "No usage found"
+        : CodexService.fullest ? `${CodexService.figure} of the ${CodexService.fullestName}`
+        : "Nothing to read until Codex runs"
+    reading: CodexService.figure
+    note: !CodexService.available ? "no usage found"
+        : CodexService.fullest ? CodexService.windowLine(CodexService.fullest)
+        : "until Codex runs again"
     filled: true
 
     Gauge {
         anchors.centerIn: parent
         ink: face.ink
         size: Math.min(parent.width, parent.height)
-        fraction: 1 - ClaudeService.gauge
+        fraction: 1 - CodexService.gauge
         lowIsBad: true
         ends: ["E", "F"]
 
-        ClaudeMark {
+        CodexMark {
             x: (parent.width - width) / 2
             y: parent.height * 0.28
             width: 22
@@ -60,14 +53,13 @@ Instrument {
 
             UsageBar {
                 width: parent.width
-                progress: ClaudeService.weeklyFraction
+                progress: CodexService.gauge
                 fillColor: face.ink.accent
                 trackColor: face.ink.raised
             }
 
             Text {
-                text: ClaudeService.weeklyMeasured
-                    ? `${ClaudeService.percent(ClaudeService.weeklyFraction)} of the week` : "this week"
+                text: [CodexService.plan, CodexService.age].filter(part => part !== "").join(" · ")
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSizeLabel
                 color: face.ink.muted

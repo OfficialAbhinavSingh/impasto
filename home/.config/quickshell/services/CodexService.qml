@@ -51,6 +51,28 @@ Singleton {
     readonly property real gauge: root.live.reduce((worst, limit) => Math.max(worst, limit.used), 0)
     readonly property bool measured: root.live.length > 0
 
+    // The fullest window still running, which the faces lead with.
+    readonly property var fullest: root.live.reduce(
+        (worst, limit) => worst === null || limit.used > worst.used ? limit : worst, null)
+
+    readonly property string fullestName: root.fullest ? root.fullest.name.toLowerCase() : ""
+
+    // "80%", or a dash with nothing running to read.
+    readonly property string figure: root.measured ? `${Math.round(root.gauge * 100)}%` : "—"
+
+    // "month · resets in 3 h", "week · resets Mon 14:20".
+    function windowLine(limit: var): string {
+        if (!limit)
+            return ""
+        const left = limit.resets * 1000 - root.clock.date.getTime()
+        const minutes = Math.ceil(left / 60000)
+        const when = minutes <= 0 ? "renewed"
+            : minutes < 60 ? `resets in ${minutes} min`
+            : minutes < 24 * 60 ? `resets in ${Math.floor(minutes / 60)} h`
+            : `resets ${Qt.formatDateTime(new Date(Math.round(limit.resets / 60) * 60000), "ddd HH:mm")}`
+        return `${limit.name.toLowerCase()} · ${when}`
+    }
+
     readonly property color tint: {
         if (!root.measured)
             return Theme.indicator
