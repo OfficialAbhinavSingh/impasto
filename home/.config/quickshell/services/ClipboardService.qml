@@ -101,15 +101,23 @@ Singleton {
     // previous holder, so a race still ends with one watcher. stdout is not
     // collected; a collector on a long-lived pipe only grows.
     readonly property Process watcher: Process {
-        onExited: root.tend()
+        onExited: {
+            root.launched = false
+            root.tend()
+        }
     }
 
     // Start time of the last watcher, for the respawn guard below.
     property real started: 0
+    // A start was asked for and no exit has come back. Quickshell runs a
+    // process only once the shell has loaded, so `running` reads false until
+    // then.
+    property bool launched: false
 
     function tend(): void {
+        const same = JSON.stringify(root.watcher.command) === JSON.stringify(root.wanted)
         if (root.watcher.running) {
-            if (JSON.stringify(root.watcher.command) === JSON.stringify(root.wanted))
+            if (same)
                 return
             root.watcher.running = false
             // A restart for new arguments is not a crash; without this the
@@ -118,6 +126,8 @@ Singleton {
         }
         if (root.wanted.length === 0)
             return
+        if (root.launched && same)
+            return
         // A watcher that dies within 5 s is a broken command (e.g. wl-paste
         // missing), not a crash; don't respawn it in a tight loop.
         if (root.started > 0 && Date.now() - root.started < 5000) {
@@ -125,6 +135,7 @@ Singleton {
             return
         }
         root.started = Date.now()
+        root.launched = true
         root.watcher.command = root.wanted
         root.watcher.running = true
     }
