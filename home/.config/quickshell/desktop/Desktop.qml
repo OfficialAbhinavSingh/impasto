@@ -260,14 +260,25 @@ PanelWindow {
         // One widget per key: a Repeater given a new array rebuilds every
         // delegate. The rows change on every drop; the keys only on add and
         // remove.
-        Repeater {
-            model: ScriptModel {
-                values: DesktopService.keysOn(root.screenName)
-            }
+        // The board with the dock's band given back, which is what the grid is
+        // laid out over. The widgets sit in it, so the board moving with the
+        // dock moves them not at all instead of sliding them back into place.
+        Item {
+            id: field
 
-            Widget {
-                board: surface
-                screenName: root.screenName
+            x: -DesktopService.insets.left
+            width: surface.width + DesktopService.insets.left + DesktopService.insets.right
+            height: surface.height + DesktopService.insets.bottom
+
+            Repeater {
+                model: ScriptModel {
+                    values: DesktopService.keysOn(root.screenName)
+                }
+
+                Widget {
+                    board: surface
+                    screenName: root.screenName
+                }
             }
         }
 

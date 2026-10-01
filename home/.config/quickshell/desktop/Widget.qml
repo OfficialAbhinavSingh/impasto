@@ -67,7 +67,7 @@ Item {
     Binding {
         target: root
         property: "x"
-        value: root.box.x
+        value: root.box.x + DesktopService.insets.left
         when: !drag.active
         restoreMode: Binding.RestoreBindingOrValue
     }
@@ -296,9 +296,9 @@ Item {
         // on, and the way to move one to another screen is to take it off here
         // and put it back there, where the card already is.
         xAxis.minimum: 0
-        xAxis.maximum: Math.max(0, root.board.width - root.width)
+        xAxis.maximum: Math.max(0, root.parent.width - root.width)
         yAxis.minimum: 0
-        yAxis.maximum: Math.max(0, root.board.height - root.height)
+        yAxis.maximum: Math.max(0, root.parent.height - root.height)
 
         onActiveChanged: {
             if (drag.active) {
@@ -329,7 +329,7 @@ Item {
                 return
             }
             DesktopService.place(root.key, root.screenName,
-                DesktopService.cellX(root.screenName, root.x),
+                DesktopService.cellX(root.screenName, root.x - DesktopService.insets.left),
                 DesktopService.cellY(root.screenName, root.y))
         }
     }
@@ -367,7 +367,7 @@ Item {
         }
         DeckService.receiving = ""
         const spot = DesktopService.nearestFree(root.screenName,
-            DesktopService.cellX(root.screenName, root.x),
+            DesktopService.cellX(root.screenName, root.x - DesktopService.insets.left),
             DesktopService.cellY(root.screenName, root.y), root.family, root.key)
         DesktopService.landing = spot
             ? { screen: root.screenName, col: spot.col, row: spot.row, family: root.family } : null

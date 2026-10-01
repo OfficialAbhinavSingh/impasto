@@ -189,7 +189,8 @@ Singleton {
     //
     // The desktop surface covers the whole screen and ignores exclusive zones
     // so drags can cross the bar. The board is the surface minus the bar and
-    // dock reservations; the grid and the decks share these insets.
+    // dock reservations; the decks share these insets, and the grid is laid
+    // out as if there were no dock (`wholeGrid`).
     // One answer for every board: the dock's band is kept clear wherever the
     // dock could be, not where it happens to be painting (`DockService.zone`),
     // so nothing on a grid moves because a window went fullscreen or a hand
@@ -288,10 +289,21 @@ Singleton {
         }
     }
 
+    // Laid out over the screen below the bar, dock or no dock, then placed
+    // on the board, which the dock's inset has moved: the dock is drawn over
+    // the widgets, and reserving, hiding or moving it moves none of them.
+    function wholeGrid(width: real, height: real): var {
+        const grid = root.gridFor(width + root.insets.left + root.insets.right,
+            height + root.insets.bottom)
+        if (width > 0 && height > 0)
+            grid.originX -= root.insets.left
+        return grid
+    }
+
     readonly property var grids: {
         const out = {}
         for (const name in root.boards)
-            out[name] = root.gridFor(root.boards[name].width, root.boards[name].height)
+            out[name] = root.wholeGrid(root.boards[name].width, root.boards[name].height)
         return out
     }
 
