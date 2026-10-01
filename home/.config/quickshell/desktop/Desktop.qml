@@ -351,10 +351,10 @@ PanelWindow {
         // The board's part of the screen, and the bar's band in zen, where
         // the grid reaches into it; the dock keeps its band.
         ClippingRectangle {
-            readonly property real top: DesktopService.insets.top - DesktopService.zenBand
+            readonly property real bandTop: DesktopService.insets.top - DesktopService.zenBand
 
             x: DesktopService.insets.left
-            y: top
+            y: bandTop
             width: surface.width
             height: surface.height + DesktopService.zenBand
             color: "transparent"
@@ -370,7 +370,7 @@ PanelWindow {
                     backdropWindow.screen ? backdropWindow.screen.devicePixelRatio : 1
 
                 x: -DesktopService.insets.left
-                y: -parent.top
+                y: -parent.bandTop
                 width: backdropWindow.width
                 height: backdropWindow.height
                 source: WallpaperService.currentWallpaper !== ""
