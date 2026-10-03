@@ -101,11 +101,7 @@ QtObject {
                 root.currentProcess.running = true
             } else {
                 console.warn("Could not apply wallpaper:", root.asked)
-                // The console warning above is invisible unless something is
-                // tailing the shell's log, so a failed apply (most often
-                // awww-daemon not running) otherwise looks identical to a
-                // successful one from the desk: nothing on screen explains
-                // why the wallpaper did not change.
+                // the warning alone only reaches the log
                 OsdService.requested("󰀦", "Could not apply wallpaper", -1)
                 // `apply` named it already: read back what is really up
                 root.asked = ""
