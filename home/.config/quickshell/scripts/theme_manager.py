@@ -3986,9 +3986,20 @@ def set_wallpaper(chosen, transition="wipe"):
         command = ["awww", "img", image_path, "--transition-type", transition,
                    "--transition-duration", "1"]
         try:
-            subprocess.run(command, capture_output=True, timeout=15)
+            result = subprocess.run(command, capture_output=True, timeout=15)
         except (OSError, subprocess.SubprocessError) as error:
             sys.stderr.write(f"awww failed: {error}\n")
+            return False
+        if result.returncode != 0:
+            # Falling through here used to still return True: the state was
+            # saved and the palette extracted from an image awww never
+            # actually painted (most often awww-daemon not running), so the
+            # shell believed the wallpaper had changed while the screen
+            # stayed on whatever was there before, with nothing to explain
+            # why.
+            stderr = result.stderr.decode(errors="replace").strip()
+            sys.stderr.write(f"awww failed: {stderr or f'exit {result.returncode}'}\n")
+            return False
 
     if motion:
         start_motion(motion, delay=1)
